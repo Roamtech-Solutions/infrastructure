@@ -1,17 +1,18 @@
 # GitLab OIDC
 
+The OIDC setup allows us to grant access to Google Cloud from the GitLab pipelines.
+A workload identity pool and provider are setup in Google Cloud, the GitLab pipeline can then assume the permissions of service account we have setup in Google Cloud.
+
 ## Getting the Audience Value
+The audience value is the name property for the workload identity resource.
+
 1. Make sure you are logged in:
    ```shell
    gcloud auth application-default login
    ```
-2. Configure the backend to use the management state:
+2. Show the outputs for the management environment
    ```shell
-   make init ENV=management
+   make output ENV=management
    ```
-3. Display the workload identity pool provider resource:
-   ```shell
-   terraform -chdir=terraform state show module.management[0].module.gitlab_oidc.google_iam_workload_identity_pool_provider.gitlab_provider_jwt
-   ```
-   There will be a `name` property in this resource, the value is required for the audience attribute in an OIDC exchange.
+   There will be a `workload_identity_pool_provider_name` property in this resource, the value is required for the audience attribute in an OIDC exchange.
 

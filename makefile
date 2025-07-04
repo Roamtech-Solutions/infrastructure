@@ -20,3 +20,7 @@ plan: init
 apply: init
 	terraform -chdir=terraform apply -var-file=vars/$(ENV).tfvars
 
+.PHONY: output
+output: init
+	terraform -chdir=terraform output
+
