@@ -4,7 +4,7 @@
 1. Make sure you are logged in:
    ```shell
    gcloud auth application-default login
-  ```
+   ```
 2. Configure the backend to use the management state:
    ```shell
    make init ENV=management
