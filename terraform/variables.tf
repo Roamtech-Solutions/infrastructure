@@ -30,3 +30,10 @@ variable "management_project_id" {
 	default = "management-1ddd"
 }
 
+variable "allowed_networks" {
+	type = map(string)
+	default = {
+		bob = "81.151.140.163/32"
+	}
+}
+

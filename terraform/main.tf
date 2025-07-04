@@ -16,6 +16,12 @@ module "project" {
   }
 }
 
+module "network_security" {
+	source = "./modules/network-security"
+	project_id = module.project.project_id
+	allowed_networks = var.allowed_networks
+}
+
 module "management" {
 	/* Only for the management environment */
 	count = (var.name == "management") ? 1 : 0
@@ -38,5 +44,17 @@ module "gke" {
 			zones = value.names
 		}
 	]
+	allowed_networks = var.allowed_networks
+}
+
+module "keycloak_service" {
+	/* Management doesn't get a cluster */
+	count = (var.name == "management") ? 0 : 1
+	source = "./modules/service"
+	project_id = module.project.project_id
+	name = "keycloak"
+	host_name = "keycloak.roamtech.whitemire-technologies.com"
+	dns_managed_zone_project_id = var.management_project_id
+	dns_managed_zone_name = "root"
 }
 

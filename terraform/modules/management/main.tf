@@ -10,6 +10,7 @@ resource "google_storage_bucket" "tfstate" {
   }
 }
 
+/* GitLab CI */
 resource "google_service_account" "gitlab_ci" {
 	project = var.project_id
 	account_id = "gitlab-ci"
@@ -33,5 +34,13 @@ module "gitlab_oidc" {
       attribute = "attribute.project_id/${var.gitlab_project_id}"
     }
   }
+}
+
+/* DNS */
+resource "google_dns_managed_zone" "root" {
+  project     = var.project_id
+  name        = "root"
+  dns_name    = "roamtech.whitemire-technologies.com."
+  description = "Root zone"
 }
 

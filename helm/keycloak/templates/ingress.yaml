@@ -1,0 +1,60 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: keycloak
+    networking.gke.io/managed-certificates: keycloak
+    # I0704 18:13:01.777034  141498 warnings.go:110] "Warning: annotation \"kubernetes.io/ingress.class\" is deprecated, please use 'spec.ingressClassName' instead"
+    # ingress.class is deprecated how it is what GKE relies on, for now.
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "false"
+    networking.gke.io/v1beta1.FrontendConfig: keycloak
+spec:
+  rules:
+  - host: "keycloak.roamtech.whitemire-technologies.com"
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: keycloak
+spec:
+#  securityPolicy:
+#    name: default
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    # requestPath: /realms/master/protocol/openid-connect/auth
+    requestPath: /health
+    port: 9000
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: keycloak
+spec:
+  sslPolicy: default
+  redirectToHttps:
+    enabled: true
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: keycloak
+spec:
+  domains:
+    - "keycloak.roamtech.whitemire-technologies.com"
+
