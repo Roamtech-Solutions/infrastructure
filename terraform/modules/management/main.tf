@@ -16,6 +16,12 @@ resource "google_service_account" "gitlab_ci" {
 	display_name = "GitLab CI"
 }
 
+resource "google_project_iam_member" "gitlab_ci" {
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = google_service_account.gitlab_ci.member
+}
+
 module "gitlab_oidc" {
   source = "gitlab.com/gitlab-com/gcp-oidc/google"
   version = "3.3.0"

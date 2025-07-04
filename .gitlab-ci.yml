@@ -13,5 +13,5 @@ terraform:
     WI_POOL_PROVIDER: //iam.googleapis.com/projects/599344128877/locations/global/workloadIdentityPools/gitlab-pool-oidc-71366608/providers/gitlab-jwt-71366608
     SERVICE_ACCOUNT: gitlab-ci@management-1ddd.iam.gserviceaccount.com
   script:
-    - gcloud auth list
+    - gcloud storage ls
 
