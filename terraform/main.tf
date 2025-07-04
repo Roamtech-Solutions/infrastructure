@@ -16,18 +16,12 @@ module "project" {
   }
 }
 
-resource "google_storage_bucket" "tfstate" {
-	/* TF state only stored in management */
+module "management" {
+	/* Only for the management environment */
 	count = (var.name == "management") ? 1 : 0
-  project                     = module.project.project_id
-  name                        = "${module.project.project_id}-tfstate"
-  force_destroy               = false
-  location                    = var.regions[0]
-  public_access_prevention    = "enforced"
-  uniform_bucket_level_access = true
-  versioning {
-    enabled = true
-  }
+	source = "./modules/management"
+	project_id = module.project.project_id
+	region = var.regions[0]
 }
 
 module "gke" {
