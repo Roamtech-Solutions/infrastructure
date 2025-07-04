@@ -1,0 +1,17 @@
+include:
+  - remote: 'https://gitlab.com/gitlab-com/gl-security/security-operations/infrastructure-security-public/oidc-modules/-/raw/3.3.0/templates/gcp_auth.yaml'
+
+terraform:
+  image:
+    name: google/cloud-sdk:latest
+    # name: hashicorp/terraform:1.5.3
+    # entrypoint:
+    #   - /usr/bin/env
+    #   - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  extends: .google-oidc:auth
+  variables:
+    WI_POOL_PROVIDER: //iam.googleapis.com/projects/599344128877/locations/global/workloadIdentityPools/gitlab-pool-oidc-71366608/providers/gitlab-jwt-71366608
+    SERVICE_ACCOUNT: gitlab-ci@management-1ddd.iam.gserviceaccount.com
+  script:
+    - gcloud auth list
+
