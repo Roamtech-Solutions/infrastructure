@@ -36,8 +36,11 @@ resource "google_secret_manager_secret_version" "admin" {
 /* Helm */
 resource "helm_release" "keycloak" {
   name       = "keycloak"
-  chart      = "${path.root}/../helm/keycloak"
+  chart      = "${path.module}/../../../helm/charts/keycloak"
 	namespace = "keycloak"
+
 	create_namespace = true
+	# 15 Minute timeout, can take longer on intial cluster setup.
+	timeout = 900
 }
 

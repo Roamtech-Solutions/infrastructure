@@ -14,10 +14,9 @@ variable "billing_account" {
 	description = "ID of the billing account to use for the environment"
 }
 
-variable "regions" {
-	type = list(string)
-	description = "Regions to deploy to"
-	default = ["africa-south1"]
+variable "region" {
+	type = string
+	default = "africa-south1"
 }
 
 variable "services" {

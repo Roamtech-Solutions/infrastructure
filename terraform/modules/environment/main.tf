@@ -17,33 +17,49 @@ module "project" {
 }
 
 module "network_security" {
-	source = "./modules/network-security"
+	source = "../network-security"
 	project_id = module.project.project_id
 	allowed_networks = var.allowed_networks
 }
 
 module "gke" {
-	source = "./modules/gke"
+	source = "../gke"
 	name = var.name
 	project_id = module.project.project_id
 	gar_project_id = var.management_project_id
-	gar_region = var.regions[0]
-	regions = [
-		for index, value in data.google_compute_zones.available : {
-			name = var.regions[index]
-			zones = value.names
-		}
-	]
+	gar_region = var.region
+	region = var.region
 	allowed_networks = var.allowed_networks
 }
 
 module "keycloak" {
-	source = "./modules/keycloak"
+	source = "../keycloak"
 	project_id = module.project.project_id
 	name = "keycloak"
 	host_name = "keycloak.roamtech.whitemire-technologies.com"
 	dns_managed_zone_project_id = var.management_project_id
 	dns_managed_zone_name = "root"
 	depends_on = [module.gke]
+}
+
+module "external_secrets" {
+	source = "../external-secrets"
+	project_id = module.project.project_id
+}
+
+resource "helm_release" "environment_core" {
+  name       = "environment-core"
+  chart      = "${path.module}/../../../helm/charts/environment-core"
+
+	# 15 Minute timeout, can take longer on intial cluster setup.
+	timeout = 900
+
+	values = [yamlencode({
+		projectId = module.project.project_id
+		region = var.region
+		name = module.gke.name
+	})]
+
+	depends_on = [module.external_secrets]
 }
 

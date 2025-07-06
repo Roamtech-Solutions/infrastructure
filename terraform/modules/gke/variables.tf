@@ -6,11 +6,8 @@ variable "name" {
   type = string
 }
 
-variable "regions" {
-  type = list(object({
-    name  = string
-    zones = list(string)
-  }))
+variable "region" {
+	type = string
 }
 
 variable "gar_project_id" {

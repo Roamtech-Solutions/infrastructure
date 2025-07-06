@@ -1,3 +1,7 @@
+output "name" {
+	value = module.gke.name
+}
+
 output "network" {
 	value = {
 		id = module.network.network_id

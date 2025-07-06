@@ -1,7 +1,7 @@
 name = "development"
 organisation = "457648173822"
 billing_account = "012060-EBF262-CF6077"
-regions = ["africa-south1"]
+region = "africa-south1"
 services = [
 	"compute.googleapis.com",
 	"container.googleapis.com",

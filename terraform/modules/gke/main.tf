@@ -3,43 +3,58 @@ module "network" {
   version      = "9.2.0"
   project_id   = var.project_id
   network_name = var.name
-  # Subnet per region, additional subnets are concatenated
   subnets = [
-    for i, region in var.regions : {
-      subnet_name           = "${region.name}-private"
-      subnet_ip             = "10.10.${i * 16}.0/20"
-      subnet_region         = region.name
+    {
+      subnet_name           = "${var.name}-private"
+      subnet_ip             = "10.10.0.0/20"
+      subnet_region         = var.region
       subnet_private_access = true
       subnet_flow_logs      = true
     }
   ]
-  # Two secondary ranges per region, for each GKE cluster
   secondary_ranges = {
-    for i, region in var.regions : "${region.name}-private" => [
+    "${var.name}-private" = [
       {
-        range_name    = "${region.name}-private-pods"
-        ip_cidr_range = "10.${length(var.regions) + i + 1}.64.0/18"
+        range_name    = "${var.name}-private-pods"
+        ip_cidr_range = "10.2.64.0/18"
       },
       {
-        range_name    = "${region.name}-private-services"
-        ip_cidr_range = "10.${length(var.regions) + i + 1}.128.0/20"
+        range_name    = "${var.name}-private-services"
+        ip_cidr_range = "10.2.128.0/20"
       },
     ]
   }
   shared_vpc_host = false
 }
 
+resource "google_compute_address" "nat" {
+	count = 2
+  project = var.project_id
+	name = "gke-${var.name}-nat-${count.index}"
+  region  = var.region
+}
+
+module "nat" {
+  source        = "terraform-google-modules/cloud-nat/google"
+  version       = "5.3.0"
+  project_id    = var.project_id
+  region        = var.region
+  network       = module.network.network_name
+  create_router = true
+  router        = "${module.network.network_name}-gke-nat-router"
+	nat_ips = google_compute_address.nat[*].self_link
+}
+
 module "gke" {
-  for_each          = { for i, region in var.regions : region.name => i }
   source            = "terraform-google-modules/kubernetes-engine/google//modules/beta-autopilot-private-cluster"
   version           = "36.0.1"
   project_id        = var.project_id
-  name              = "${var.name}-${each.key}"
-  region            = each.key
+  name              = var.name
+  region            = var.region
   network           = module.network.network_name
-  subnetwork        = "${each.key}-private"
-  ip_range_pods     = "${each.key}-private-pods"
-  ip_range_services = "${each.key}-private-services"
+  subnetwork        = "${var.name}-private"
+  ip_range_pods     = "${var.name}-private-pods"
+  ip_range_services = "${var.name}-private-services"
   release_channel   = "STABLE"
 
   horizontal_pod_autoscaling      = true
@@ -47,7 +62,7 @@ module "gke" {
   http_load_balancing             = true
 
   enable_private_nodes   = true
-  master_ipv4_cidr_block = "10.${each.value}.0.0/28"
+  master_ipv4_cidr_block = "10.0.0.0/28"
   master_authorized_networks = [
     for k, v in var.allowed_networks : {
       display_name = k

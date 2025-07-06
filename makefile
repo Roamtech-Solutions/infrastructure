@@ -8,13 +8,13 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
   $(error ENV must be one of: $(ALLOWED_ENVS))
 endif
 
+VARS := ../../vars
+
 # Management environment is built out of the module folder
 ifeq ($(ENV),management)
 CHDIR := terraform/modules/management
-VARS := ../../vars
 else
-CHDIR := terraform
-VARS := vars
+CHDIR := terraform/modules/environment
 endif
 
 .PHONY: init
