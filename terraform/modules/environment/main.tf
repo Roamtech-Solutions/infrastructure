@@ -39,7 +39,7 @@ module "keycloak" {
 	host_name = "keycloak.roamtech.whitemire-technologies.com"
 	dns_managed_zone_project_id = var.management_project_id
 	dns_managed_zone_name = "root"
-	depends_on = [module.gke]
+	depends_on = [module.gke, helm_release.environment_core]
 }
 
 module "external_secrets" {

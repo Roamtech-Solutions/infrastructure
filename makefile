@@ -19,7 +19,13 @@ endif
 
 .PHONY: init
 init:
-	terraform -chdir=$(CHDIR) init -reconfigure -backend-config="prefix=$(ENV)"
+	terraform -chdir=$(CHDIR) init \
+		-reconfigure -backend-config="prefix=$(ENV)"
+
+.PHONY: init-upgrade
+init-upgrade:
+	terraform -chdir=$(CHDIR) init -upgrade \
+		-reconfigure -backend-config="prefix=$(ENV)"
 
 .PHONY: plan
 plan: init
@@ -36,7 +42,6 @@ destroy: init
 .PHONY: destroy-cluster
 destroy-cluster: init
 	terraform -chdir=$(CHDIR) destroy -var-file=$(VARS)/$(ENV).tfvars -target=module.gke
-
 
 .PHONY: output
 output: init
