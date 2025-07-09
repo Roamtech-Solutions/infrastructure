@@ -16,7 +16,7 @@ services = [
 
 application_services = {
 	"nginx-service" = {
-		tag = "edea0fbd"
+		tag = "e521e425"
 		ingress = true
 	}
 }

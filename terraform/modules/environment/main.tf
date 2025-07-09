@@ -35,7 +35,7 @@ module "keycloak" {
 	source = "../keycloak"
 	project_id = module.project.project_id
 	name = "keycloak"
-	host_name = "keycloak.roamtech.whitemire-technologies.com"
+	host = "keycloak.${var.name}.roamtech.whitemire-technologies.com"
 	dns_managed_zone_project_id = var.management_project_id
 	dns_managed_zone_name = "root"
 	depends_on = [module.gke, helm_release.environment_core]
@@ -71,6 +71,7 @@ module "application_service" {
 	/* TODO: Use management outputs */
 	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
 	ingress = (each.value.ingress) ? {
+    host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
 		dns_managed_zone = {
 			project_id = var.management_project_id
 			name = "root"

@@ -6,7 +6,7 @@ variable "name" {
 	type = string
 }
 
-variable "host_name" {
+variable "host" {
 	type = string
 }
 

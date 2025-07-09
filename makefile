@@ -1,4 +1,4 @@
-ALLOWED_ENVS := management development
+ALLOWED_ENVS := management development staging
 
 # Check if ENV is set and valid
 ifndef ENV

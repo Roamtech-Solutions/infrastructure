@@ -36,6 +36,13 @@ spec:
             # Using volume mount for PostgreSQL's data folder as it is otherwise not writable
             - name: postgres-data
               mountPath: /var/lib/postgresql
+          resources:
+            limits:
+              cpu: 200m
+              memory: 756Mi
+            requests:
+              cpu: 100m
+              memory: 512Mi
       volumes:
         - name: postgres-data
           emptyDir: {}

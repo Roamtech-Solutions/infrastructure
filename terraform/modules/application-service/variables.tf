@@ -16,6 +16,7 @@ variable "gar" {
 
 variable "ingress" {
 	type = object({
+    host = string
 		dns_managed_zone = object({
 			project_id = string
 			name = string

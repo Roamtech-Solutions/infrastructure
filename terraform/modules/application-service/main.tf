@@ -5,8 +5,10 @@ resource "helm_release" "application_service" {
 		image =  "${var.gar}/${var.name}:${var.tag}"
 		port = 80
 		ingress = (var.ingress != null)
-		host = local.host
+		host = var.ingress.host
 	})]
+	# 15 Minute timeout, can take longer on intial cluster setup.
+	timeout = 900
 }
 
 /* Ingress */
@@ -20,7 +22,7 @@ resource "google_dns_record_set" "default" {
 	for_each = (var.ingress != null) ? toset(["0"]) : toset([])
   project      = var.ingress.dns_managed_zone.project_id
 	/* TODO: Get domain name from a variable */
-  name         = "${local.host}."
+  name         = "${var.ingress.host}."
  	managed_zone = var.ingress.dns_managed_zone.name
   type         = "A"
   ttl          = "300"
