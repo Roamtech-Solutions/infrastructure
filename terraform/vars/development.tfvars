@@ -14,3 +14,10 @@ services = [
 	"servicenetworking.googleapis.com",
 ]
 
+application_services = {
+	"nginx-service" = {
+		tag = "edea0fbd"
+		ingress = true
+	}
+}
+

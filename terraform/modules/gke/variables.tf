@@ -10,15 +10,14 @@ variable "region" {
 	type = string
 }
 
-variable "gar_project_id" {
-  type = string
-	description = "Project to create the GARs in"
+variable "docker_gar" {
+	type = object({
+		name = string
+		location = string
+		project_id = string
+	})
 }
 
-variable "gar_region" {
-	type = string
-	description = "Region where the GARs are hosted"
-}
 
 variable "cluster_developers" {
 	type = list(string)

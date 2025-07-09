@@ -26,7 +26,6 @@ variable "services" {
 
 variable "management_project_id" {
 	type = string
-	default = "management-1ddd"
 }
 
 variable "allowed_networks" {
@@ -34,5 +33,13 @@ variable "allowed_networks" {
 	default = {
 		bob = "81.151.140.163/32"
 	}
+}
+
+variable "application_services" {
+	type = map(object({
+		tag = string
+		ingress = optional(bool, false)
+	}))
+	default = {}
 }
 

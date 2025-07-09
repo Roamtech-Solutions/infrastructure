@@ -26,8 +26,7 @@ module "gke" {
 	source = "../gke"
 	name = var.name
 	project_id = module.project.project_id
-	gar_project_id = var.management_project_id
-	gar_region = var.region
+	docker_gar = data.terraform_remote_state.management.outputs.docker_gar
 	region = var.region
 	allowed_networks = var.allowed_networks
 }
@@ -61,5 +60,21 @@ resource "helm_release" "environment_core" {
 	})]
 
 	depends_on = [module.external_secrets]
+}
+
+module "application_service" {
+	for_each = var.application_services
+	source = "../application-service"
+	project_id = module.project.project_id
+	name = each.key
+	tag = each.value.tag
+	/* TODO: Use management outputs */
+	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
+	ingress = (each.value.ingress) ? {
+		dns_managed_zone = {
+			project_id = var.management_project_id
+			name = "root"
+		}
+	} : null
 }
 

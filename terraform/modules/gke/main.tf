@@ -71,7 +71,7 @@ module "gke" {
   ]
 
   create_service_account  = true
-  registry_project_ids    = [var.gar_project_id]
+  registry_project_ids    = [var.project_id, var.docker_gar.project_id]
   grant_registry_access   = true
   cluster_resource_labels = {}
   deletion_protection     = false
@@ -93,35 +93,12 @@ resource "google_project_iam_member" "logging_viewer" {
   member   = each.value
 }
 
-# Docker GAR
-resource "google_artifact_registry_repository" "docker" {
-  project                = var.gar_project_id
-  location               = var.gar_region
-  repository_id          = "${var.name}-docker"
-  description            = "${var.name} Docker Repository"
-  format                 = "DOCKER"
-  cleanup_policy_dry_run = false
-  docker_config {
-    immutable_tags = true
-  }
-  vulnerability_scanning_config {
-    enablement_config = "INHERITED"
-  }
-}
-
-# Helm GAR
-resource "google_artifact_registry_repository" "helm" {
-  project                = var.gar_project_id
-  location               = var.gar_region
-  repository_id          = "${var.name}-helm"
-  description            = "${var.name} Helm Chart Repository"
-  format                 = "DOCKER"
-  cleanup_policy_dry_run = false
-  docker_config {
-    immutable_tags = true
-  }
-  vulnerability_scanning_config {
-    enablement_config = "INHERITED"
-  }
-}
+# GKE Service Account GAR read permissions
+#resource "google_artifact_registry_repository_iam_member" "gke_sa" {
+#  project    = var.docker_gar.project_id
+#  location   = var.docker_gar.location
+#  repository = var.docker_gar.name
+#  role       = "roles/artifactregistry.reader"
+#  member     = "serviceAccount:${module.gke.service_account}"
+#}
 

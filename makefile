@@ -8,7 +8,9 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
   $(error ENV must be one of: $(ALLOWED_ENVS))
 endif
 
-VARS := ../../vars
+VAR_FILES := \
+	-var-file=../../vars/common.tfvars \
+	-var-file=../../vars/$(ENV).tfvars
 
 # Management environment is built out of the module folder
 ifeq ($(ENV),management)
@@ -20,28 +22,30 @@ endif
 .PHONY: init
 init:
 	terraform -chdir=$(CHDIR) init \
-		-reconfigure -backend-config="prefix=$(ENV)"
+		-reconfigure \
+		-backend-config="prefix=$(ENV)"
 
 .PHONY: init-upgrade
 init-upgrade:
 	terraform -chdir=$(CHDIR) init -upgrade \
-		-reconfigure -backend-config="prefix=$(ENV)"
+		-reconfigure \
+		-backend-config="prefix=$(ENV)"
 
 .PHONY: plan
 plan: init
-	terraform -chdir=$(CHDIR) plan -var-file=$(VARS)/$(ENV).tfvars
+	terraform -chdir=$(CHDIR) plan $(VAR_FILES)
 
 .PHONY: apply
 apply: init
-	terraform -chdir=$(CHDIR) apply -var-file=$(VARS)/$(ENV).tfvars
+	terraform -chdir=$(CHDIR) apply $(VAR_FILES)
 
 .PHONY: destroy
 destroy: init
-	terraform -chdir=$(CHDIR) destroy -var-file=$(VARS)/$(ENV).tfvars
+	terraform -chdir=$(CHDIR) destroy $(VAR_FILES)
 
 .PHONY: destroy-cluster
 destroy-cluster: init
-	terraform -chdir=$(CHDIR) destroy -var-file=$(VARS)/$(ENV).tfvars -target=module.gke
+	terraform -chdir=$(CHDIR) destroy $(VAR_FILES) -target=module.gke
 
 .PHONY: output
 output: init

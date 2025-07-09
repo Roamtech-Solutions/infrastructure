@@ -28,7 +28,7 @@ resource "google_storage_bucket" "tfstate" {
   }
 }
 
-/* GitLab CI */
+/* === GitLab CI === */
 resource "google_service_account" "gitlab_ci" {
 	project = module.project.project_id
 	account_id = "gitlab-ci"
@@ -46,12 +46,33 @@ module "gitlab_oidc" {
   version = "3.3.0"
   google_project_id = module.project.project_id
   gitlab_project_id = var.gitlab_project_id
+	gitlab_namespace_path = "roamtech1"
+	gitlab_url = "https://auth.gcp.gitlab.com/oidc/roamtech1"
+	bind_to_namespace = true
+	authoritative_iam_binding = false
   oidc_service_account = {
     "sa" = {
       sa_email  = google_service_account.gitlab_ci.email
-      attribute = "attribute.project_id/${var.gitlab_project_id}"
+			attribute = "attribute.namespace_id/110450032"
     }
   }
+}
+
+/* Allow GitLab CI service account to push Docker images */
+resource "google_artifact_registry_repository_iam_member" "gitlab_ci" {
+  project    = module.project.project_id
+  location   = google_artifact_registry_repository.docker.location
+  repository = google_artifact_registry_repository.docker.name
+  role       = "roles/artifactregistry.writer"
+  member     = google_service_account.gitlab_ci.member
+}
+
+resource "google_artifact_registry_repository_iam_member" "gitlab_ci_docker" {
+  project    = module.project.project_id
+  location   = google_artifact_registry_repository.docker.location
+  repository = google_artifact_registry_repository.docker.name
+  role       = "roles/artifactregistry.writer"
+  member     = "principalSet://iam.googleapis.com/projects/599344128877/locations/global/workloadIdentityPools/gitlab-pool-oidc-71366608/*"
 }
 
 /* DNS */
@@ -60,5 +81,21 @@ resource "google_dns_managed_zone" "root" {
   name        = "root"
   dns_name    = "roamtech.whitemire-technologies.com."
   description = "Root zone"
+}
+
+/* Docker GAR */
+resource "google_artifact_registry_repository" "docker" {
+  project                = module.project.project_id
+  location               = var.region
+  repository_id          = "docker"
+  description            = "Docker Repository"
+  format                 = "DOCKER"
+  cleanup_policy_dry_run = false
+  docker_config {
+    immutable_tags = true
+  }
+  vulnerability_scanning_config {
+    enablement_config = "INHERITED"
+  }
 }
 

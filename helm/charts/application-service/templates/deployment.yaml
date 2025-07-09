@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          resources:
+          limits:
+            cpu: 50m
+            ephemeral-storage: 1Gi
+            memory: 128Mi
+          requests:
+            cpu: 25m
+            ephemeral-storage: 1Gi
+            memory: 64Mi
+

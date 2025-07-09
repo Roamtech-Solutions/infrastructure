@@ -1,0 +1,6 @@
+apiVersion: v2
+description: Application Service
+name: application-service
+type: application
+version: 0.0.1
+
