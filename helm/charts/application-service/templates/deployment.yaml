@@ -22,12 +22,12 @@ spec:
             - name: http
               containerPort: {{ .Values.port }}
           resources:
-          limits:
-            cpu: 50m
-            ephemeral-storage: 1Gi
-            memory: 64Mi
-          requests:
-            cpu: 50m
-            ephemeral-storage: 1Gi
-            memory: 64Mi
+            limits:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
 

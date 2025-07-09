@@ -1,4 +1,4 @@
-name = "development"
+name = "staging"
 services = [
 	"compute.googleapis.com",
 	"container.googleapis.com",
@@ -13,7 +13,7 @@ services = [
 
 application_services = {
 	"nginx-service" = {
-		tag = "5325398b"
+		tag = "0de7e4ee"
 		ingress = true
 	}
 }

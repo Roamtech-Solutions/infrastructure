@@ -31,6 +31,14 @@ init-upgrade:
 		-reconfigure \
 		-backend-config="prefix=$(ENV)"
 
+.PHONY: bootstrap
+bootstrap: init
+	terraform -chdir=$(CHDIR) apply $(VAR_FILES) \
+		-target=module.project
+	terraform -chdir=$(CHDIR) apply $(VAR_FILES) \
+		-target=module.network
+	terraform -chdir=$(CHDIR) apply $(VAR_FILES)
+
 .PHONY: plan
 plan: init
 	terraform -chdir=$(CHDIR) plan $(VAR_FILES)
