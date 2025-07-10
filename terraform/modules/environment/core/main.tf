@@ -1,0 +1,18 @@
+module "project" {
+  source            = "terraform-google-modules/project-factory/google"
+  version           = "18.0.0"
+  name              = var.name
+  random_project_id = true
+  org_id            = var.organisation
+  billing_account   = var.billing_account
+
+  /* Services */
+  activate_apis               = var.services
+  disable_services_on_destroy = false
+  disable_dependent_services  = false
+
+  labels = {
+    env = var.name
+  }
+}
+

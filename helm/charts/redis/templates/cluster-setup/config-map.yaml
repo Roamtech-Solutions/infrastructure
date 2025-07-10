@@ -1,0 +1,25 @@
+{{ if eq .Values.cluster.enabled true }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-cluster-setup
+  namespace: {{ .Values.namespace }}
+data:
+  cluster-setup.sh: |-
+    #! /bin/bash
+    set -e
+    kubectl rollout status statefulset redis-cluster
+
+    urls=$(kubectl get pods -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} ')
+    command="kubectl exec -it redis-cluster-0 -- redis-cli --cluster create --cluster-yes --cluster-replicas 1 "
+
+    for url in $urls
+    do
+        command+=$url":{{ .Values.port }} "
+    done
+
+    echo "Executing command: " $command
+    $command
+{{ end }}
+

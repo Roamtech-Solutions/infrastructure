@@ -1,3 +1,7 @@
+# Variables for all environment modules are configured here.
+# This saves on repeated configurations and stops the warnings
+# from Terraform when providing variables that aren't needed.
+
 variable "name" {
 	type = string
 	description = "Environment name"

@@ -1,0 +1,30 @@
+{{ if eq .Values.cluster.enabled true }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: redis-cluster-setup
+  namespace: {{ .Values.namespace }}
+spec:
+  template:
+    spec:
+      serviceAccountName: redis-cluster-setup
+      automountServiceAccountToken: true
+      containers:
+        - name: kubectl
+          image:  bitnami/kubectl:latest
+          command:
+            - /bin/cluster-setup.sh
+          volumeMounts:
+            - name: configmap-volume
+              mountPath: /bin/cluster-setup.sh
+              readOnly: true
+              subPath: cluster-setup.sh
+      volumes:
+        - name: configmap-volume
+          configMap:
+            defaultMode: 0755
+            name: redis-cluster-setup
+      restartPolicy: Never
+  backoffLimit: 1
+{{ end }}
+

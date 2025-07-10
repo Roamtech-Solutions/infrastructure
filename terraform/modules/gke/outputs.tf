@@ -10,7 +10,3 @@ output "network" {
 	}
 }
 
-// output "external_secrets_sa" {
-//   value = google_service_account.external_secrets
-// }
-

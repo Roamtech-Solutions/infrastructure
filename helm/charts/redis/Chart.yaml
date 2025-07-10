@@ -1,0 +1,8 @@
+apiVersion: v2
+name: redis
+description: Redis with Cluster deployment option
+
+type: application
+
+version: 0.2.1
+

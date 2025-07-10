@@ -1,4 +1,7 @@
+STATE_BUCKET = "management-1ddd-tfstate"
+
 ALLOWED_ENVS := management development staging
+ALLOWED_LAYERS := core infra k8s
 
 # Check if ENV is set and valid
 ifndef ENV
@@ -8,36 +11,42 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
   $(error ENV must be one of: $(ALLOWED_ENVS))
 endif
 
-VAR_FILES := \
-	-var-file=../../vars/common.tfvars \
-	-var-file=../../vars/$(ENV).tfvars
+# Layer check
+LAYER ?= core
+ifneq ($(filter $(LAYER),$(ALLOWED_LAYERS)),$(LAYER))
+  $(error LAYER must be one of: $(ALLOWED_LAYERS))
+endif
 
-# Management environment is built out of the module folder
+
+# State prefix and directory depends on environment and layer
 ifeq ($(ENV),management)
 CHDIR := terraform/modules/management
+PREFIX := $(ENV)
+VARS_DIR := ../../vars
 else
-CHDIR := terraform/modules/environment
+CHDIR := terraform/modules/environment/$(LAYER)
+PREFIX := $(ENV)/$(LAYER)
+VARS_DIR := ../../../vars
 endif
+
+# Variable files specific to the environment
+VAR_FILES := \
+	-var-file=$(VARS_DIR)/common.tfvars \
+	-var-file=$(VARS_DIR)/$(ENV).tfvars
+
 
 .PHONY: init
 init:
 	terraform -chdir=$(CHDIR) init \
 		-reconfigure \
-		-backend-config="prefix=$(ENV)"
+		-backend-config="bucket=$(STATE_BUCKET)" \
+		-backend-config="prefix=$(PREFIX)"
 
 .PHONY: init-upgrade
 init-upgrade:
 	terraform -chdir=$(CHDIR) init -upgrade \
 		-reconfigure \
-		-backend-config="prefix=$(ENV)"
-
-.PHONY: bootstrap
-bootstrap: init
-	terraform -chdir=$(CHDIR) apply $(VAR_FILES) \
-		-target=module.project
-	terraform -chdir=$(CHDIR) apply $(VAR_FILES) \
-		-target=module.network
-	terraform -chdir=$(CHDIR) apply $(VAR_FILES)
+		-backend-config="prefix=$(PREFIX)"
 
 .PHONY: plan
 plan: init
@@ -51,20 +60,7 @@ apply: init
 destroy: init
 	terraform -chdir=$(CHDIR) destroy $(VAR_FILES)
 
-.PHONY: destroy-cluster
-destroy-cluster: init
-	terraform -chdir=$(CHDIR) destroy $(VAR_FILES) -target=module.gke
-
 .PHONY: output
 output: init
 	terraform -chdir=$(CHDIR) output
-
-
-.PHONY: helm-external-secrets
-helm-external-secrets:
-	helm install external-secrets external-secrets/external-secrets \
-	    -n external-secrets \
-	    --create-namespace \
-	    -f helm/values/external-secrets.yaml \
-	    --set-json 'serviceAccount.annotations={"iam.gke.io/gcp-service-account": "external-secrets@PROJECT_ID.iam.gserviceaccount.com"}'
 

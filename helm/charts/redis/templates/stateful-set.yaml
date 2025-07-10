@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: redis
+{{ if eq .Values.cluster.enabled true }}
+  replicas: {{ .Values.cluster.replicas }}
+{{ else }}
+  replicas: 1
+{{ end }}
+  selector:
+    matchLabels:
+      app: redis
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
+  template:
+    metadata:
+      labels:
+        app: redis
+        appCluster: redis
+    spec:
+      terminationGracePeriodSeconds: 20
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redis
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: redis
+        image: "redis:{{ .Values.version }}"
+        command:
+          - "redis-server"
+        args:
+          - "/conf/redis.conf"
+          - "--protected-mode"
+          - "no"
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+        ports:
+            - name: redis
+              containerPort: {{ .Values.port }}
+              protocol: "TCP"
+            - name: cluster
+              containerPort: 16379
+              protocol: "TCP"
+        startupProbe:
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 20
+          tcpSocket:
+            port: redis
+        livenessProbe:
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command: ["sh", "-c", "/probes/liveness.sh"]
+        readinessProbe:
+          periodSeconds: 5
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+          exec:
+            command: ["sh", "-c", "/probes/readiness.sh"]
+        volumeMounts:
+        - name: conf
+          mountPath: /conf
+          readOnly: false
+        - name: data
+          mountPath: /data
+          readOnly: false
+        - name: probes
+          mountPath: /probes
+          readOnly: true
+      volumes:
+      - name: conf
+        secret:
+          secretName: redis-config
+          items:
+            - key: conf
+              path: redis.conf
+      - name: probes
+        configMap:
+          name: redis-probes
+          defaultMode: 0555
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        limits:
+          cpu: {{ .Values.cpu }}
+          memory: {{ .Values.memory }}
+          storage: {{ .Values.storage }}
+        requests:
+          cpu: {{ .Values.cpu }}
+          memory: {{ .Values.memory }}
+          storage: {{ .Values.storage }}
+
