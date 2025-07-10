@@ -19,5 +19,9 @@ application_services = {
 		tag = "5325398b"
 		ingress = true
 	}
+	"paykit-core" = {
+		tag = "1638a43c"
+		port = 8080
+	}
 }
 

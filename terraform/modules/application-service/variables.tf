@@ -25,3 +25,7 @@ variable "ingress" {
 	default = null
 }
 
+variable "port" {
+	type = number
+}
+

@@ -43,6 +43,7 @@ variable "application_services" {
 	type = map(object({
 		tag = string
 		ingress = optional(bool, false)
+		port = optional(number, 80)
 	}))
 	default = {}
 }

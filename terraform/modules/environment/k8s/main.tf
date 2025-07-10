@@ -44,6 +44,7 @@ module "application_service" {
 			name = "root"
 		}
 	} : null
+	port = each.value.port
 }
 
 resource "helm_release" "kafka" {
