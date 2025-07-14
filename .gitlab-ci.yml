@@ -14,7 +14,9 @@ terraform:
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
   script:
-    - apk add make
+    - apk add make curl
+    - export TF_VAR_gitlab_runner_ip=$(curl --ipv4 ifconfig.me)
+    - make apply ENV=development LAYER=infra
     - make apply ENV=development LAYER=k8s
 
 include:

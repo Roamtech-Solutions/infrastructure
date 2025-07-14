@@ -1,6 +1,5 @@
 # Variables for all environment modules are configured here.
-# This saves on repeated configurations and stops the warnings
-# from Terraform when providing variables that aren't needed.
+# This saves on repeated configurations and stops the warnings # from Terraform when providing variables that aren't needed.
 
 variable "name" {
 	type = string
@@ -37,6 +36,11 @@ variable "allowed_networks" {
 	default = {
 		bob = "81.151.140.163/32"
 	}
+}
+
+variable "gitlab_runner_ip" {
+	type = string
+	default = ""
 }
 
 variable "application_services" {

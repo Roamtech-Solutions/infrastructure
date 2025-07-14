@@ -10,7 +10,12 @@ module "gke" {
 	project_id = local.project_id
 	docker_gar = data.terraform_remote_state.management.outputs.docker_gar
 	region = var.region
-	allowed_networks = var.allowed_networks
+	allowed_networks = merge(
+		var.allowed_networks,
+		(var.gitlab_runner_ip != "") ? {
+			gitlab_runner = "${var.gitlab_runner_ip}/32"
+		} : {}
+	)
 }
 
 /* Allow the GitLab CI service account to manage the project */
