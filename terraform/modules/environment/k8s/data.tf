@@ -30,3 +30,9 @@ data "google_container_cluster" "default" {
   location     = data.terraform_remote_state.infra.outputs.gke_cluster.region
 }
 
+data "google_storage_bucket_object_content" "application_service_values" {
+	for_each = toset(var.application_services)
+	name = "${var.name}/${each.key}.yaml"
+	bucket = "${var.management_project_id}-values"
+}
+

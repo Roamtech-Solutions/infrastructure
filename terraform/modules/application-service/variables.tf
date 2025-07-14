@@ -26,7 +26,7 @@ variable "ingress" {
 }
 
 variable "values" {
-	type = map(any)
-	default = {}
+	type = string
+	default = ""
 }
 

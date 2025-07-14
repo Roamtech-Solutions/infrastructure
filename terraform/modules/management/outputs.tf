@@ -3,9 +3,9 @@
 #   value = module.gitlab_oidc.workload_identity_pool_provider_name
 # }
 
-# output "gitlab_ci_sa_email" {
-#   value = google_service_account.gitlab_ci.email
-# }
+output "gitlab_ci_sa_member" {
+  value = module.gitlab_oidc.service_account_member
+}
 
 output "docker_gar" {
   value = {

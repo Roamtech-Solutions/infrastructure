@@ -13,3 +13,10 @@ module "gke" {
 	allowed_networks = var.allowed_networks
 }
 
+/* Allow the GitLab CI service account to manage the project */
+resource "google_project_iam_member" "gitlab_admin" {
+  project = local.project_id
+  role    = "roles/admin"
+  member  = data.terraform_remote_state.management.outputs.gitlab_ci_sa_member
+}
+

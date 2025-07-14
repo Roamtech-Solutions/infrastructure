@@ -14,20 +14,7 @@ allowed_networks = {
 	bob = "81.151.140.163/32"
 }
 
-application_services = {
-	"nginx-service" = {
-		tag = "5325398b"
-		ingress = true
-	}
-	"paykit-core" = {
-		tag = "1638a43c"
-		port = 8080
-		env = [
-			{
-				name = "SERVER_PORT"
-				value = 8080
-			}
-		]
-	}
-}
+application_services = [
+	"paykit-core"
+]
 

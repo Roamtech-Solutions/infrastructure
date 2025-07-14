@@ -48,21 +48,21 @@ module "redis" {
 }
 
 module "application_service" {
-	for_each = var.application_services
+	for_each = data.google_storage_bucket_object_content.application_service_values
 	source = "../../application-service"
 	project_id = local.project_id
 	name = each.key
-	tag = each.value.tag
+	tag = yamldecode(each.value.content).tag
 	/* TODO: Use management outputs */
 	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
-	ingress = (each.value.ingress) ? {
+	ingress = (lookup(yamldecode(each.value.content), "ingress", false)) ? {
     host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
 		dns_managed_zone = {
 			project_id = var.management_project_id
 			name = "root"
 		}
 	} : null
-	values = each.value
+	values = each.value.content
 	depends_on = [
 		resource.helm_release.kafka,
 		module.redis
