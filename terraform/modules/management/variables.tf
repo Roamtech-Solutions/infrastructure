@@ -31,3 +31,9 @@ variable "allowed_networks" {
 	type = map(string)
 }
 
+/* Unused variables */
+variable "management_project_id" {
+	type = string
+	default = ""
+}
+

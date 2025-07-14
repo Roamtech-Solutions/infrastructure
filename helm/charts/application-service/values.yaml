@@ -1,0 +1,18 @@
+# === Ingress === #
+ingress: false
+host: ""
+
+# === Deployment === #
+replicas: 1
+port: 80
+env: []
+resources:
+  limits:
+    cpu: 50m
+    ephemeral-storage: 1Gi
+    memory: 64Mi
+  requests:
+    cpu: 50m
+    ephemeral-storage: 1Gi
+    memory: 64Mi
+

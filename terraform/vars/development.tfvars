@@ -22,6 +22,12 @@ application_services = {
 	"paykit-core" = {
 		tag = "1638a43c"
 		port = 8080
+		env = [
+			{
+				name = "SERVER_PORT"
+				value = 8080
+			}
+		]
 	}
 }
 

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -22,12 +22,15 @@ spec:
             - name: http
               containerPort: {{ .Values.port }}
           resources:
-            limits:
-              cpu: 50m
-              ephemeral-storage: 1Gi
-              memory: 64Mi
-            requests:
-              cpu: 50m
-              ephemeral-storage: 1Gi
-              memory: 64Mi
+            {{- toYaml .Values.resources | nindent 10 }}
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              {{- if .value }}
+              value: {{ .value | quote }}
+              {{- else if .valueFrom }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 14 }}
+              {{- end }}
+            {{- end }}
 

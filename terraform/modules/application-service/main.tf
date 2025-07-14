@@ -1,12 +1,13 @@
 resource "helm_release" "application_service" {
 	name = var.name
   chart      = "${path.module}/../../../helm/charts/application-service"
-	values = [yamlencode({
-		image =  "${var.gar}/${var.name}:${var.tag}"
-		port = var.port
-		ingress = (var.ingress != null)
-		host = (var.ingress != null) ? var.ingress.host : ""
-	})]
+	values = [
+		yamlencode({
+			image =  "${var.gar}/${var.name}:${var.tag}"
+			host = (var.ingress != null) ? var.ingress.host : ""
+		}),
+		yamlencode(var.values),
+	]
 	# 15 Minute timeout, can take longer on intial cluster setup.
 	timeout = 900
 }

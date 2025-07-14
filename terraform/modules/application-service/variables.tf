@@ -25,7 +25,8 @@ variable "ingress" {
 	default = null
 }
 
-variable "port" {
-	type = number
+variable "values" {
+	type = map(any)
+	default = {}
 }
 

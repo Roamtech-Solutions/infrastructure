@@ -75,6 +75,7 @@ module "gke" {
   grant_registry_access   = true
   cluster_resource_labels = {}
   deletion_protection     = false
+	depends_on = [module.network]
 }
 
 # IAM Permissions for connecting and deploying to the cluster
@@ -92,13 +93,4 @@ resource "google_project_iam_member" "logging_viewer" {
   role     = "roles/logging.viewer"
   member   = each.value
 }
-
-# GKE Service Account GAR read permissions
-#resource "google_artifact_registry_repository_iam_member" "gke_sa" {
-#  project    = var.docker_gar.project_id
-#  location   = var.docker_gar.location
-#  repository = var.docker_gar.name
-#  role       = "roles/artifactregistry.reader"
-#  member     = "serviceAccount:${module.gke.service_account}"
-#}
 

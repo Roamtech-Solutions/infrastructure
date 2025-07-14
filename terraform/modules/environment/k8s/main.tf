@@ -29,24 +29,6 @@ resource "helm_release" "environment_core" {
 	depends_on = [module.external_secrets]
 }
 
-module "application_service" {
-	for_each = var.application_services
-	source = "../../application-service"
-	project_id = local.project_id
-	name = each.key
-	tag = each.value.tag
-	/* TODO: Use management outputs */
-	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
-	ingress = (each.value.ingress) ? {
-    host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
-		dns_managed_zone = {
-			project_id = var.management_project_id
-			name = "root"
-		}
-	} : null
-	port = each.value.port
-}
-
 resource "helm_release" "kafka" {
   name       = "kafka"
   chart      = "kafka"
@@ -63,5 +45,27 @@ module "redis" {
 	project_id = local.project_id
 	users = ["paykit-core"]
 	depends_on = [helm_release.environment_core]
+}
+
+module "application_service" {
+	for_each = var.application_services
+	source = "../../application-service"
+	project_id = local.project_id
+	name = each.key
+	tag = each.value.tag
+	/* TODO: Use management outputs */
+	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
+	ingress = (each.value.ingress) ? {
+    host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
+		dns_managed_zone = {
+			project_id = var.management_project_id
+			name = "root"
+		}
+	} : null
+	values = each.value
+	depends_on = [
+		resource.helm_release.kafka,
+		module.redis
+	]
 }
 
