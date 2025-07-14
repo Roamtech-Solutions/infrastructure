@@ -1,0 +1,42 @@
+stages:
+  - build
+  - publish
+  - deploy
+
+variables:
+  GITLAB_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+build-image:
+  image: docker:24.0.5
+  stage: build
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd ledgers-core
+    - docker build -t $GITLAB_IMAGE .
+    - docker push $GITLAB_IMAGE
+
+update-values:
+  image:
+    name: google/cloud-sdk:latest
+  stage: deploy
+  extends: .google-oidc:auth
+  variables:
+    # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
+  script:
+    - apt update && apt install -y gettext
+    - envsubst < ./helm/development.yaml > /tmp/values.yaml
+    - cat /tmp/values.yaml
+    - gcloud storage cp /tmp/values.yaml gs://management-1ddd-values/development/${CI_PROJECT_NAME}.yaml
+
+include:
+  - remote: 'https://gitlab.com/gitlab-com/gl-security/security-operations/infrastructure-security-public/oidc-modules/-/raw/3.3.0/templates/gcp_auth.yaml'
+  # Component for uploading to the GAR
+  - component: gitlab.com/google-gitlab-components/artifact-registry/upload-artifact-registry@0.1.0
+    inputs:
+      stage: publish
+      source: ${GITLAB_IMAGE}
+      target: africa-south1-docker.pkg.dev/management-1ddd/docker/${CI_PROJECT_NAME}:${CI_COMMIT_SHORT_SHA}
+
