@@ -5,6 +5,7 @@ terraform:
   image:
     #name: google/cloud-sdk:latest
     name: hashicorp/terraform:1.12.1
+    entrypoint: [""]
   stage: build
   extends: .google-oidc:auth
   variables:
