@@ -2,6 +2,9 @@ stages:
   - build
 
 terraform:
+  # Only run if it is a downstream pipeline
+  rules:
+      - if: $CI_PIPELINE_SOURCE == "pipeline"
   image:
     #name: google/cloud-sdk:latest
     name: hashicorp/terraform:1.12.1
@@ -12,7 +15,7 @@ terraform:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
   script:
     - apk add make
-    - make plan ENV=development LAYER=k8s
+    - make apply ENV=development LAYER=k8s
 
 include:
   - remote: 'https://gitlab.com/gitlab-com/gl-security/security-operations/infrastructure-security-public/oidc-modules/-/raw/3.3.0/templates/gcp_auth.yaml'

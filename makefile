@@ -54,7 +54,7 @@ plan: init
 
 .PHONY: apply
 apply: init
-	terraform -chdir=$(CHDIR) apply $(VAR_FILES)
+	terraform -chdir=$(CHDIR) apply -auto-approve $(VAR_FILES)
 
 .PHONY: destroy
 destroy: init
