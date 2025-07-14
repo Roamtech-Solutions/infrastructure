@@ -11,6 +11,7 @@ terraform:
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
   script:
+    - apk add make
     - make plan ENV=development LAYER=k8s
 
 include:
