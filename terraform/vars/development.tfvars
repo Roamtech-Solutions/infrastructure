@@ -15,6 +15,7 @@ allowed_networks = {
 }
 
 application_services = [
+	"nginx-service",
 	"paykit-core"
 ]
 
