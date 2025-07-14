@@ -1,7 +1,6 @@
 stages:
   - build
   - publish
-  - deploy
 
 variables:
   GITLAB_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
@@ -21,7 +20,7 @@ build-image:
 update-values:
   image:
     name: google/cloud-sdk:latest
-  stage: deploy
+  stage: publish
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
