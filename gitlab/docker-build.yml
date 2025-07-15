@@ -13,6 +13,7 @@ build-image:
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
+    # Paykit Core is in a sub directory
     - test -d ledgers-core && cd ledgers-core || echo "skipping cd"
     - docker build -t $GITLAB_IMAGE .
     - docker push $GITLAB_IMAGE
