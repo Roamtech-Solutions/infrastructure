@@ -33,6 +33,17 @@ resource "google_secret_manager_secret_version" "admin" {
   secret_data = random_password.admin.result
 }
 
+
+/* Admin CLI */
+resource "google_secret_manager_secret" "admin-cli" {
+	for_each = toset(["guid", "secret"])
+  project   = var.project_id
+  secret_id = "keycloak-admin-cli-${each.key}"
+  replication {
+    auto {}
+  }
+}
+
 /* Helm */
 resource "helm_release" "keycloak" {
   name       = "keycloak"
