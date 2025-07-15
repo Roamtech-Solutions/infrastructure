@@ -16,3 +16,5 @@ resources:
     ephemeral-storage: 1Gi
     memory: 64Mi
 
+# === Secrets === #
+secrets: {}

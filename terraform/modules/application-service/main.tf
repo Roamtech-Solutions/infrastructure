@@ -29,3 +29,13 @@ resource "google_dns_record_set" "default" {
   rrdatas      = [google_compute_global_address.default.0.address]
 }
 
+/* Secrets */
+resource "google_secret_manager_secret" "default" {
+	for_each = local.secrets
+	project = var.project_id
+	secret_id = each.key
+  replication {
+    auto {}
+  }
+}
+
