@@ -9,6 +9,7 @@ services = [
 	"containerscanning.googleapis.com",
 	"networkmanagement.googleapis.com",
 	"servicenetworking.googleapis.com",
+	"cloudresourcemanager.googleapis.com",
 ]
 gitlab_project_id = "71366608"
 allowed_networks = {
