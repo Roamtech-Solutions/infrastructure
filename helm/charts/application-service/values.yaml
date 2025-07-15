@@ -18,3 +18,8 @@ resources:
 
 # === Secrets === #
 secrets: {}
+
+# === MySQL === #
+# The MySQL deployment is only for testing purposes
+mysql: false
+

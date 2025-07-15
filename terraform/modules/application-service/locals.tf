@@ -3,5 +3,7 @@ locals {
 	ingress = (var.ingress == null) ? {} : { "0" = var.ingress }
 
 	secrets = lookup(yamldecode(var.values), "secrets", {})
+
+	mysql = lookup(yamldecode(var.values), "mysql", false)
 }
 

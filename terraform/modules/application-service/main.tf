@@ -39,3 +39,26 @@ resource "google_secret_manager_secret" "default" {
   }
 }
 
+/* MySQL root password */
+resource "random_password" "mysql_root" {
+	count = (local.mysql) ? 1 : 0
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "google_secret_manager_secret" "mysql_root" {
+	count = (local.mysql) ? 1 : 0
+  project   = var.project_id
+  secret_id = "${var.name}-mysql-root-password"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "mysql_root" {
+	count = (local.mysql) ? 1 : 0
+  secret      = google_secret_manager_secret.mysql_root[0].id
+  secret_data = random_password.mysql_root[0].result
+}
+
