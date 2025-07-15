@@ -52,6 +52,12 @@ resource "google_project_iam_member" "storage_admin" {
   member  = google_service_account.default.member
 }
 
+resource "google_project_iam_member" "admin" {
+  project = var.project_id
+  role    = "roles/admin"
+  member  = google_service_account.default.member
+}
+
 resource "google_service_account_iam_member" "default" {
   service_account_id = google_service_account.default.id
   role               = "roles/iam.workloadIdentityUser"
