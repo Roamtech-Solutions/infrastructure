@@ -27,9 +27,12 @@ update-values:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
   script:
     - apt update && apt install -y gettext
+    # TODO: HOST and ENVIRONMENT shouldn't be hardcoded here
+    - export ENVIRONMENT=development
+    - export HOST=${ENVIRONMENT}.roamtech.whitemire-technologies.com
     - envsubst < ./helm/development.yaml > /tmp/values.yaml
     - cat /tmp/values.yaml
-    - gcloud storage cp /tmp/values.yaml gs://management-1ddd-values/development/${CI_PROJECT_NAME}.yaml
+    - gcloud storage cp /tmp/values.yaml gs://management-1ddd-values/${ENVIRONMENT}/${CI_PROJECT_NAME}.yaml
 
 include:
   - remote: 'https://gitlab.com/gitlab-com/gl-security/security-operations/infrastructure-security-public/oidc-modules/-/raw/3.3.0/templates/gcp_auth.yaml'
