@@ -58,7 +58,7 @@ apply: init
 
 .PHONY: destroy
 destroy: init
-	terraform -chdir=$(CHDIR) destroy $(VAR_FILES)
+	terraform -chdir=$(CHDIR) destroy -auto-approve $(VAR_FILES)
 
 .PHONY: output
 output: init
