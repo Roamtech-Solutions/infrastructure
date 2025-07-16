@@ -1,6 +1,7 @@
-# === Ingress === #
+# === Ingress & Service === #
 ingress: false
 host: ""
+healthCheckPath: "/"
 
 # === Deployment === #
 replicas: 1
