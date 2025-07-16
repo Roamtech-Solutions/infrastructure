@@ -31,8 +31,13 @@ data "google_container_cluster" "default" {
 }
 
 data "google_storage_bucket_object_content" "application_service_values" {
-	for_each = toset(var.application_services)
+	for_each = toset(local.application_services)
 	name = "${var.name}/${each.key}.yaml"
 	bucket = "${var.management_project_id}-values"
+}
+
+data "google_storage_bucket_objects" "application_services" {
+	bucket = "${var.management_project_id}-values"
+	match_glob = "${var.name}/*.yaml"
 }
 

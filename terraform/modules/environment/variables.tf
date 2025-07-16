@@ -43,8 +43,3 @@ variable "gitlab_runner_ip" {
 	default = ""
 }
 
-variable "application_services" {
-	type = list(string)
-	default = []
-}
-
