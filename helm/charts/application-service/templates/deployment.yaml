@@ -22,7 +22,7 @@ spec:
             - name: http
               containerPort: {{ .Values.port }}
           resources:
-            {{- toYaml .Values.resources | nindent 10 }}
+            {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- range .Values.env }}
             - name: {{ .name }}
@@ -30,7 +30,7 @@ spec:
               value: {{ .value | quote }}
               {{- else if .valueFrom }}
               valueFrom:
-                {{- toYaml .valueFrom | nindent 14 }}
+                {{- toYaml .valueFrom | nindent 16 }}
               {{- end }}
             {{- end }}
 
