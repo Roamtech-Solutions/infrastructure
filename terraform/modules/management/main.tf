@@ -1,7 +1,7 @@
 module "project" {
   source            = "terraform-google-modules/project-factory/google"
   version           = "18.0.0"
-  name              = var.name
+	name              = var.name
   random_project_id = true
   org_id            = var.organisation
   billing_account   = var.billing_account
@@ -14,6 +14,21 @@ module "project" {
   labels = {
     env = var.name
   }
+}
+
+module "vpn" {
+	count = 0
+	source = "../vpn"
+	project_id = module.project.project_id
+	region = var.region
+	host = "vpn.roamtech.whitemire-technologies.com"
+	dns_managed_zone = {
+		project_id = module.project.project_id
+		name = "root"
+	}
+	allowed_networks = {
+		"bob" = "81.151.140.163/32"
+	}
 }
 
 resource "google_storage_bucket" "tfstate" {
