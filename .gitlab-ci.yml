@@ -3,9 +3,6 @@ spec:
     environment:
       type: string
       description: "Environment to deploy to"
-    service_group:
-      type: string
-      description: "Service group to deploy"
 ---
 stages:
   - build
@@ -29,7 +26,7 @@ terraform:
     - export TF_VAR_gitlab_runner_ip=$(curl --ipv4 ifconfig.me)
     - make apply MODULE=infra
     # Apply the Helm charts and related infrastructure
-    - make apply MODULE=$[[ inputs.service_group ]]
+    - make apply MODULE=${SERVICE_GROUP}
     # Remove the GitLab runner IP from being allowed to connect to the cluster
     - export TF_VAR_gitlab_runner_ip=""
     - make apply MODULE=infra

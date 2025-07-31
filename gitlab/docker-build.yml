@@ -3,9 +3,6 @@ spec:
     environment:
       type: string
       description: "Environment to deploy to"
-    service_group:
-      type: string
-      description: "Service group to deploy"
 ---
 stages:
   - build
@@ -35,7 +32,6 @@ update-values:
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
     ENVIRONMENT: $[[ inputs.environment ]]
-    SERVICE_GROUP: $[[ inputs.service_group ]]
   script:
     - apt update && apt install -y gettext
     - envsubst < ./helm/${ENVIRONMENT}.yaml > /tmp/values.yaml
