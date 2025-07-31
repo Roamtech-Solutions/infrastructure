@@ -1,3 +1,12 @@
+spec:
+  inputs:
+    environment:
+      type: string
+      description: "Environment to deploy to"
+    service_group:
+      type: string
+      description: "Service group to deploy"
+---
 stages:
   - build
   - publish
@@ -25,11 +34,12 @@ update-values:
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
+
   script:
     - apt update && apt install -y gettext
-    - envsubst < ./helm/${ENV}.yaml > /tmp/values.yaml
+    - envsubst < ./helm/$[[ inputs.environment ]].yaml > /tmp/values.yaml
     - cat /tmp/values.yaml
-    - gcloud storage cp /tmp/values.yaml gs://${MANAGEMENT_PROJECT_ID}-values/${ENV}/${SERVICE_GROUP}/${CI_PROJECT_NAME}.yaml
+    - gcloud storage cp /tmp/values.yaml gs://${MANAGEMENT_PROJECT_ID}-values/$[[ inputs.environment ]]/$[[ inputs.service_group ]]/${CI_PROJECT_NAME}.yaml
 
 include:
   - remote: 'https://gitlab.com/gitlab-com/gl-security/security-operations/infrastructure-security-public/oidc-modules/-/raw/3.3.0/templates/gcp_auth.yaml'
