@@ -11,10 +11,3 @@ services = [
 	"servicenetworking.googleapis.com",
 ]
 
-application_services = {
-	"nginx-service" = {
-		tag = "0de7e4ee"
-		ingress = true
-	}
-}
-

@@ -1,0 +1,8 @@
+rabbitmq:
+  enabled: false
+  storage: 5Gi
+  cpu: 250m
+  memory: 1Gi
+
+cloudsqlServices: {}
+

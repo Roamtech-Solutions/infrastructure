@@ -29,14 +29,36 @@ resource "google_dns_record_set" "default" {
   rrdatas      = [google_compute_global_address.default.0.address]
 }
 
-/* Secrets */
-resource "google_secret_manager_secret" "default" {
-	for_each = local.secrets
+/* === Secrets === */
+resource "google_secret_manager_secret" "empty" {
+	for_each = local.secrets_empty
 	project = var.project_id
 	secret_id = each.key
   replication {
     auto {}
   }
+}
+
+resource "google_secret_manager_secret" "generated" {
+	for_each = local.secrets_generated
+	project = var.project_id
+	secret_id = each.key
+  replication {
+    auto {}
+  }
+}
+
+resource "random_password" "generated" {
+	for_each = local.secrets_generated
+  length           = lookup(each.value, "length", 16)
+  special          = lookup(each.value, "special", true)
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "google_secret_manager_secret_version" "generated" {
+	for_each = google_secret_manager_secret.generated
+  secret      = each.value.id
+  secret_data = random_password.generated[each.key]
 }
 
 /* MySQL root password */

@@ -6,6 +6,8 @@ module "project" {
   org_id            = var.organisation
   billing_account   = var.billing_account
 
+	deletion_policy = "DELETE"
+
   /* Services */
   activate_apis               = var.services
   disable_services_on_destroy = false
@@ -34,7 +36,7 @@ module "vpn" {
 resource "google_storage_bucket" "tfstate" {
   project                     = module.project.project_id
   name                        = "${module.project.project_id}-tfstate"
-  force_destroy               = false
+  force_destroy               = true
   location                    = var.region
   public_access_prevention    = "enforced"
   uniform_bucket_level_access = true
@@ -71,11 +73,11 @@ resource "google_artifact_registry_repository_iam_member" "gitlab_ci_docker" {
 }
 
 /* DNS */
-resource "google_dns_managed_zone" "root" {
+resource "google_dns_managed_zone" "default" {
+	for_each = toset(var.hosts)
   project     = module.project.project_id
-  name        = "root"
-  dns_name    = "roamtech.whitemire-technologies.com."
-  description = "Root zone"
+  name    = replace(each.key, ".", "-")
+  dns_name    = "${each.key}."
 }
 
 /* Docker GAR */

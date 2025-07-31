@@ -5,3 +5,18 @@ output "gke_cluster" {
 		}
 }
 
+output "gke_network" {
+	value = {
+		id = module.gke.network.id
+		name = module.gke.network.name
+	}
+}
+
+output "gke_pod_cidr" {
+	value = module.gke.pod_cidr
+}
+
+output "gke_svc_cidr" {
+	value = module.gke.svc_cidr
+}
+

@@ -1,0 +1,18 @@
+{{ if (.Values.rabbitmq.enabled) }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq
+spec:
+  persistence:
+    storage: {{ .Values.rabbitmq.storage }}
+  resources:
+    requests:
+      cpu: {{ .Values.rabbitmq.cpu }}
+      memory: {{ .Values.rabbitmq.memory }}
+    limits:
+      cpu: {{ .Values.rabbitmq.cpu }}
+      memory: {{ .Values.rabbitmq.memory }}
+{{ end }}
+

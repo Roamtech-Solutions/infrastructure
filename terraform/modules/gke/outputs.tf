@@ -10,3 +10,11 @@ output "network" {
 	}
 }
 
+output "pod_cidr" {
+	value = local.pod_cidr
+}
+
+output "svc_cidr" {
+	value = local.svc_cidr
+}
+

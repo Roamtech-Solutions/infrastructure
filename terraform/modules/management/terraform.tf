@@ -1,7 +1,6 @@
 terraform {
   required_version = "1.12.1"
   backend "gcs" {
-    bucket = "management-1ddd-tfstate"
   }
   required_providers {
     # google = {

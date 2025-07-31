@@ -15,3 +15,7 @@ output "docker_gar" {
   }
 }
 
+output "dns_zones" {
+	value = google_dns_managed_zone.default
+}
+

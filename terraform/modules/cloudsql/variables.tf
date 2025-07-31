@@ -1,0 +1,38 @@
+variable "project_id" {
+  type = string
+}
+
+variable "region" {
+	type = string
+}
+
+variable "zone" {
+	type = string
+}
+
+variable "name" {
+  type    = string
+}
+
+variable "tier_primary" {
+  type    = string
+  default = "db-n1-standard-1"
+}
+
+variable "network" {
+  type = object({
+    id   = string
+    name = string
+  })
+}
+
+variable "database_version" {
+	type = string
+}
+
+
+variable "disk_size" {
+	type = string
+	default = "10"
+}
+

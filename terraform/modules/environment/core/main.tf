@@ -6,6 +6,8 @@ module "project" {
   org_id            = var.organisation
   billing_account   = var.billing_account
 
+	deletion_policy   = "DELETE"
+
   /* Services */
   activate_apis               = var.services
   disable_services_on_destroy = false

@@ -1,7 +1,0 @@
-apiVersion: v2
-name: environment-core
-description: Environment resources
-
-type: application
-
-version: 0.0.2

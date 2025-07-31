@@ -1,8 +1,9 @@
-organisation = "457648173822"
-billing_account = "012060-EBF262-CF6077"
-region = "africa-south1"
-
-management_project_id = "management-1ddd"
+organisation = "997922026414"
+billing_account = "00A1F6-3EAE5E-A078E6"
+region = "europe-west1"
+hosts = [
+	"roamtech.whitemire-technologies.com"
+]
 
 allowed_networks = {
 	bob = "81.151.140.163/32"

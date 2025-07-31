@@ -31,9 +31,8 @@ variable "allowed_networks" {
 	type = map(string)
 }
 
-/* Unused variables */
-variable "management_project_id" {
-	type = string
-	default = ""
+variable "hosts" {
+	type = list(string)
+	description = "Domain names that services will be hosted under"
 }
 

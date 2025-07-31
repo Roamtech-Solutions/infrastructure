@@ -6,6 +6,11 @@ variable "name" {
 	description = "Environment name"
 }
 
+variable "service_group" {
+	type = string
+	description = "Service Group"
+}
+
 variable "organisation" {
 	type = string
 	default = null
@@ -22,6 +27,10 @@ variable "region" {
 	default = "africa-south1"
 }
 
+variable "hosts" {
+	type = list(string)
+}
+
 variable "services" {
 	type = list(string)
 	description = "List of services to be enabled on the project"
@@ -33,9 +42,6 @@ variable "management_project_id" {
 
 variable "allowed_networks" {
 	type = map(string)
-	default = {
-		bob = "81.151.140.163/32"
-	}
 }
 
 variable "gitlab_runner_ip" {

@@ -16,17 +16,26 @@ module "network" {
     "${var.name}-private" = [
       {
         range_name    = "${var.name}-private-pods"
-        ip_cidr_range = "10.2.64.0/18"
+        ip_cidr_range = local.pod_cidr
       },
       {
         range_name    = "${var.name}-private-services"
-        ip_cidr_range = "10.2.128.0/20"
+        ip_cidr_range = local.svc_cidr
       },
     ]
   }
   shared_vpc_host = false
 }
 
+/* Allow for private network access to CloudSQL */
+module "private_service_access" {
+  source      = "terraform-google-modules/sql-db/google//modules/private_service_access"
+  version     = "26.1.1"
+  project_id  = var.project_id
+  vpc_network = module.network.network_name
+}
+
+/* NAT for the cluster */
 resource "google_compute_address" "nat" {
 	count = 2
   project = var.project_id
@@ -45,6 +54,7 @@ module "nat" {
 	nat_ips = google_compute_address.nat[*].self_link
 }
 
+/* The Cluster */
 module "gke" {
   source            = "terraform-google-modules/kubernetes-engine/google//modules/beta-autopilot-private-cluster"
   version           = "36.0.1"
@@ -78,7 +88,7 @@ module "gke" {
 	depends_on = [module.network]
 }
 
-# IAM Permissions for connecting and deploying to the cluster
+/* IAM Permissions for connecting and deploying to the cluster */
 resource "google_project_iam_member" "container_developer" {
   for_each = toset(var.cluster_developers)
   project  = var.project_id
@@ -86,7 +96,7 @@ resource "google_project_iam_member" "container_developer" {
   member   = each.value
 }
 
-# Log viewing permissions
+/* Log viewing permissions */
 resource "google_project_iam_member" "logging_viewer" {
   for_each = toset(var.cluster_developers)
   project  = var.project_id

@@ -36,9 +36,12 @@ resource "google_service_account_iam_member" "default" {
   member             = "serviceAccount:${var.project_id}.svc.id.goog[external-secrets/external-secrets]"
 }
 
-resource "google_project_iam_member" "external_secrets" {
+/* TODO: Restrict token creator access to just the external secrets service 
+ * 			 accounts.
+ */
+resource "google_project_iam_member" "service_account_token_creator" {
   project = var.project_id
-  role    = "roles/secretmanager.admin"
+  role    = "roles/iam.serviceAccountTokenCreator"
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 

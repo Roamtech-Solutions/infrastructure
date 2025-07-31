@@ -1,0 +1,101 @@
+{{- if not (empty .Values.cloudsqlServices) }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudsql-root
+spec:
+  refreshInterval: 60s
+  secretStoreRef:
+    name: default
+    kind: SecretStore
+  target:
+    name: cloudsql-root
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: {{ $.Release.Name }}-cloudsql-root
+
+# === Configure Secrets for Each Service === #
+{{- range $k, $v := .Values.cloudsqlServices }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudsql-{{ $k }}
+spec:
+  refreshInterval: 60s
+  secretStoreRef:
+    name: default
+    kind: SecretStore
+  target:
+    name: cloudsql-{{ $k }}
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: {{ $.Release.Name }}-cloudsql-{{ $k }}
+{{ end }}
+
+# === Setup SQL User Accounts on the Server === #
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $.Release.Name }}-mysql-init
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: mysql-init
+        image: mysql:8.0
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
+            {{- range $k, $v := .Values.cloudsqlServices }}
+            CREATE USER IF NOT EXISTS '{{ $k }}'@'{{ $.Values.podCidr }}' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
+            {{- end }}
+            "
+        env:
+        # --- Connection info & root credentials --- #
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-root
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-root
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-root
+              key: user
+        - name: MYSQL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-root
+              key: pass
+        # --- User credentials for each service --- #
+        {{- range $k, $v := .Values.cloudsqlServices }}
+        - name: SVC_PASS_{{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-{{ $k }}
+              key: pass
+        {{- end }}
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+
+{{- end }}
+

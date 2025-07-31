@@ -1,0 +1,6 @@
+apiVersion: v2
+name: service-group
+description: Service Group
+type: application
+version: 0.0.6
+

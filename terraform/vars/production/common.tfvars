@@ -1,4 +1,4 @@
-name = "development"
+name = "production"
 services = [
 	"compute.googleapis.com",
 	"container.googleapis.com",
@@ -10,7 +10,4 @@ services = [
 	"networkmanagement.googleapis.com",
 	"servicenetworking.googleapis.com",
 ]
-allowed_networks = {
-	bob = "81.151.140.163/32"
-}
 

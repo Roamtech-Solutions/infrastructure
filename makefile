@@ -1,7 +1,8 @@
-STATE_BUCKET = "management-1ddd-tfstate"
+MANAGEMENT_PROJECT_ID := management-b6d6
+STATE_BUCKET := $(MANAGEMENT_PROJECT_ID)-tfstate
 
-ALLOWED_ENVS := management development staging
-ALLOWED_LAYERS := core infra k8s
+ALLOWED_ENVS := management development staging production
+ALLOWED_MODULES := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
 
 # Check if ENV is set and valid
 ifndef ENV
@@ -12,9 +13,9 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
 endif
 
 # Layer check
-LAYER ?= core
-ifneq ($(filter $(LAYER),$(ALLOWED_LAYERS)),$(LAYER))
-  $(error LAYER must be one of: $(ALLOWED_LAYERS))
+MODULE ?= core
+ifneq ($(filter $(MODULE),$(ALLOWED_MODULES)),$(MODULE))
+  $(error MODULE must be one of: $(ALLOWED_MODULES))
 endif
 
 
@@ -22,23 +23,33 @@ endif
 ifeq ($(ENV),management)
 CHDIR := terraform/modules/management
 PREFIX := $(ENV)
+VARS := 
 VARS_DIR := ../../vars
-else
-CHDIR := terraform/modules/environment/$(LAYER)
-PREFIX := $(ENV)/$(LAYER)
-VARS_DIR := ../../../vars
-endif
-
-# Variable files specific to the environment
-VAR_FILES := \
+VARS := \
 	-var-file=$(VARS_DIR)/common.tfvars \
 	-var-file=$(VARS_DIR)/$(ENV).tfvars
-
+else
+CHDIR := terraform/modules/environment/$(MODULE)
+PREFIX := $(ENV)/$(MODULE)
+VARS_DIR := ../../../vars/$(ENV)
+VARS := \
+	-var="management_project_id=$(MANAGEMENT_PROJECT_ID)" \
+	-var-file=$(VARS_DIR)/../common.tfvars \
+	-var-file=$(VARS_DIR)/common.tfvars \
+	-var-file=$(VARS_DIR)/$(MODULE).tfvars
+endif
 
 .PHONY: init
 init:
 	terraform -chdir=$(CHDIR) init \
 		-reconfigure \
+		-backend-config="bucket=$(STATE_BUCKET)" \
+		-backend-config="prefix=$(PREFIX)"
+
+.PHONY: init-migrate
+init-migrate:
+	terraform -chdir=$(CHDIR) init \
+		-migrate-state \
 		-backend-config="bucket=$(STATE_BUCKET)" \
 		-backend-config="prefix=$(PREFIX)"
 
@@ -50,15 +61,15 @@ init-upgrade:
 
 .PHONY: plan
 plan: init
-	terraform -chdir=$(CHDIR) plan $(VAR_FILES)
+	terraform -chdir=$(CHDIR) plan $(VARS)
 
 .PHONY: apply
 apply: init
-	terraform -chdir=$(CHDIR) apply -auto-approve $(VAR_FILES)
+	terraform -chdir=$(CHDIR) apply -auto-approve $(VARS)
 
 .PHONY: destroy
 destroy: init
-	terraform -chdir=$(CHDIR) destroy -auto-approve $(VAR_FILES)
+	terraform -chdir=$(CHDIR) destroy -auto-approve $(VARS)
 
 .PHONY: output
 output: init

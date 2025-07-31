@@ -1,3 +1,10 @@
+/* Allow the GitLab CI service account to manage the project */
+resource "google_project_iam_member" "gitlab_admin" {
+  project = local.project_id
+  role    = "roles/admin"
+  member  = data.terraform_remote_state.management.outputs.gitlab_ci_sa_member
+}
+
 module "network_security" {
 	source = "../../network-security"
 	project_id = local.project_id
@@ -14,14 +21,6 @@ module "gke" {
 		var.allowed_networks,
 		(var.gitlab_runner_ip != "") ? {
 			gitlab_runner = "${var.gitlab_runner_ip}/32"
-		} : {}
-	)
-}
-
-/* Allow the GitLab CI service account to manage the project */
-resource "google_project_iam_member" "gitlab_admin" {
-  project = local.project_id
-  role    = "roles/admin"
-  member  = data.terraform_remote_state.management.outputs.gitlab_ci_sa_member
+		} : {})
 }
 
