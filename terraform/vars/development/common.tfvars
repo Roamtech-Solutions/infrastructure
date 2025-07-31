@@ -9,6 +9,7 @@ services = [
 	"containerscanning.googleapis.com",
 	"networkmanagement.googleapis.com",
 	"servicenetworking.googleapis.com",
+	"sqladmin.googleapis.com",
 ]
 
 
