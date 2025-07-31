@@ -6,6 +6,10 @@ variable "name" {
 	type = string
 }
 
+variable "service_group" {
+	type = string
+}
+
 variable "tag" {
 	type = string
 }

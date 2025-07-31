@@ -89,3 +89,31 @@ resource "helm_release" "service_group" {
 	depends_on = [module.cloudsql, google_secret_manager_secret_version.cloudsql]
 }
 
+/* === Application Services === */
+module "application_service" {
+	for_each = data.google_storage_bucket_object_content.application_service_values
+	source = "../../application-service"
+	project_id = local.project_id
+
+	name = each.key
+	tag = yamldecode(each.value.content).tag
+	service_group = var.service_group
+
+	/* TODO: Use management outputs */
+	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
+
+	ingress = null
+	# ingress = (lookup(yamldecode(each.value.content), "ingress", false)) ? {
+  #   host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
+	# 	dns_managed_zone = {
+	# 		project_id = var.management_project_id
+	# 		name = "root"
+	# 	}
+	# } : null
+
+	values = each.value.content
+	depends_on = [
+		resource.helm_release.service_group,
+	]
+}
+

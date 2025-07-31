@@ -38,7 +38,6 @@ data "google_container_cluster" "default" {
   location     = data.terraform_remote_state.infra.outputs.gke_cluster.region
 }
 
-
 /* === Services === */
 data "google_storage_bucket_object_content" "application_service_values" {
 	for_each = toset(local.application_services)
