@@ -11,8 +11,6 @@ resource "helm_release" "application_service" {
 		}),
 		var.values,
 	]
-	# 15 Minute timeout, can take longer on intial cluster setup.
-	timeout = 900
 }
 
 /* Ingress */
