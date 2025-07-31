@@ -12,7 +12,7 @@ terraform:
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
-    - ENV: ${ENVIRONMENT}
+    ENV: ${ENVIRONMENT}
 
   script:
     - apk add make curl
