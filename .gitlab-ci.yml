@@ -1,9 +1,3 @@
-spec:
-  inputs:
-    environment:
-      type: string
-      description: "Environment to deploy to"
----
 stages:
   - build
 
@@ -18,9 +12,8 @@ terraform:
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
-    ENV: $[[ inputs.environment ]]
-
   script:
+    - test -n "${ENV}"
     - test -n "${SERVICE_GROUP}"
     - apk add make curl
     # Add GitLab Runner IP to allow for deployments to the GKE cluster
