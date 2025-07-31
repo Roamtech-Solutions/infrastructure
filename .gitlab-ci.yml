@@ -6,7 +6,7 @@ spec:
     service_group:
       type: string
       description: "Service group to deploy"
-
+---
 stages:
   - build
 
