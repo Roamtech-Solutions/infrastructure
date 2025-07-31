@@ -34,8 +34,8 @@ update-values:
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
-    - ENVIRONMENT: $[[ inputs.environment ]]
-    - SERVICE_GROUP: $[[ inputs.service_group ]]
+    ENVIRONMENT: $[[ inputs.environment ]]
+    SERVICE_GROUP: $[[ inputs.service_group ]]
   script:
     - apt update && apt install -y gettext
     - envsubst < ./helm/${ENVIRONMENT}.yaml > /tmp/values.yaml

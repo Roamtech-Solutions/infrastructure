@@ -1,3 +1,12 @@
+spec:
+  inputs:
+    environment:
+      type: string
+      description: "Environment to deploy to"
+    service_group:
+      type: string
+      description: "Service group to deploy"
+
 stages:
   - build
 
@@ -12,7 +21,8 @@ terraform:
   extends: .google-oidc:auth
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
-    ENV: ${ENVIRONMENT}
+    ENV: $[[ inputs.environment ]]
+    SERVICE_GROUP: $[[ inputs.service_group ]]
 
   script:
     - apk add make curl
