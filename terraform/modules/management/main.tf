@@ -64,6 +64,13 @@ resource "google_storage_bucket_iam_member" "member" {
 	member = module.gitlab_oidc.principal_set
 }
 
+/* TODO: Restrict token creation to the GitLab service account */
+resource "google_project_iam_member" "gitlab_ci_sa_user" {
+  project    = module.project.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+	member = module.gitlab_oidc.principal_set
+}
+
 resource "google_artifact_registry_repository_iam_member" "gitlab_ci_docker" {
   project    = module.project.project_id
   location   = google_artifact_registry_repository.docker.location

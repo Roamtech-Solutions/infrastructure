@@ -22,7 +22,6 @@ terraform:
   variables:
     # NOTE: OIDC variables are provided in the GitLab CI/CD group variables.
     ENV: $[[ inputs.environment ]]
-    SERVICE_GROUP: $[[ inputs.service_group ]]
 
   script:
     - apk add make curl
@@ -30,7 +29,7 @@ terraform:
     - export TF_VAR_gitlab_runner_ip=$(curl --ipv4 ifconfig.me)
     - make apply MODULE=infra
     # Apply the Helm charts and related infrastructure
-    - make apply MODULE=${SERVICE_GROUP}
+    - make apply MODULE=$[[ inputs.service_group ]]
     # Remove the GitLab runner IP from being allowed to connect to the cluster
     - export TF_VAR_gitlab_runner_ip=""
     - make apply MODULE=infra
