@@ -45,12 +45,6 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v2'
         with:
           version: '>= 416.0.0'
-      - name: GCR Login
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.GAR_REGION }}-docker.pkg.dev
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.auth_token }}
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.12.1"
@@ -70,6 +64,14 @@ jobs:
           repository: Roamtech-Solutions/infrastructure
           ref: master
           token: ${{ secrets.INFRASTRUCTURE_PAT }}
+      # Authenticate again because the checkout deletes the credentials file
+      - name: Google Cloud Authentication
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
       - name: Terraform
         run: |
           apt update && apt install -y make curl
