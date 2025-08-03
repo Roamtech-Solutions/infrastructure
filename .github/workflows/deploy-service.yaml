@@ -10,6 +10,10 @@ on:
         description: "Name of the service group to deploy"
         required: true
         type: string
+      environment:
+        description: "Environment to make the deployment to"
+        required: true
+        type: string
       ref:
         required: true
         type: string
@@ -62,8 +66,12 @@ jobs:
           cat /tmp/values.yaml
           gcloud storage cp /tmp/values.yaml gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
 
-
       # === Apply Terraform === #
+      - name: Checkout infrastructure repository
+        uses: actions/checkout@v4
+        with:
+          repository: Roamtech-Solutions/infrastructure
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Terraform
         run: |
           apk add make curl
