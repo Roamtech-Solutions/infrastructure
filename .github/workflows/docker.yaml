@@ -6,11 +6,10 @@ on:
         description: "Name of the service"
         required: true
         type: string
-      # TODO: implement service group usage
-      #service_group:
-      #  description: "Environment GAR to push the Docker image to"
-      #  required: true
-      #  type: string
+      service_group:
+        description: "Environment GAR to push the Docker image to"
+        required: true
+        type: string
       ref:
         required: true
         type: string
@@ -59,8 +58,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          # TODO: There should be a docker repo for each service group, not just the one.
-          tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/docker/${{ inputs.service_name}}:${{ inputs.ref }}"
+          tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/${{ inputs.service_group }}/${{ inputs.service_name}}:${{ inputs.ref }}"
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

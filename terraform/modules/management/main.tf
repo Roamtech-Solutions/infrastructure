@@ -55,9 +55,10 @@ module "github_oidc" {
 
 /* Allow uploads to the Docker registry */
 resource "google_artifact_registry_repository_iam_member" "github_oidc_docker" {
+  for_each   = google_artifact_registry_repository.service_groups
   project    = module.project.project_id
-  location   = google_artifact_registry_repository.docker.location
-  repository = google_artifact_registry_repository.docker.name
+  location   = each.value.location
+  repository = each.value.name
   role       = "roles/artifactregistry.writer"
 	member = module.github_oidc.principal_set
 }
@@ -111,12 +112,13 @@ resource "google_dns_managed_zone" "default" {
   dns_name    = "${each.key}."
 }
 
-/* Docker GAR */
-resource "google_artifact_registry_repository" "docker" {
+/* Docker GARs */
+resource "google_artifact_registry_repository" "service_groups" {
+	for_each = toset(var.service_groups)
   project                = module.project.project_id
   location               = var.region
-  repository_id          = "docker"
-  description            = "Docker Repository"
+  repository_id          = each.key
+  description            = "${title(each.key)} Docker Repository"
   format                 = "DOCKER"
   cleanup_policy_dry_run = false
   docker_config {

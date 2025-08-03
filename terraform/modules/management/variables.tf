@@ -36,3 +36,7 @@ variable "hosts" {
 	description = "Domain names that services will be hosted under"
 }
 
+variable "service_groups" {
+	type = list(string)
+}
+
