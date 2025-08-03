@@ -11,12 +11,12 @@ on:
       #  description: "Environment GAR to push the Docker image to"
       #  required: true
       #  type: string
+permissions:
+  id-token: write
+  #contents: read
 jobs:
   docker_build_push:
     name: "🐳📦 ${{ inputs.service_name }}:${{ github.event.ref }}"
-    permissions:
-      id-token: write
-      #contents: read
     runs-on: ubuntu-latest
     env:
       # NOTE: Values hardcoded here because you need GitHub enterprise to set
