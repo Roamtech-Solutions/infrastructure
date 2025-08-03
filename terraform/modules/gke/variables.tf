@@ -10,14 +10,9 @@ variable "region" {
 	type = string
 }
 
-variable "docker_gar" {
-	type = object({
-		name = string
-		location = string
-		project_id = string
-	})
+variable "registry_project_ids" {
+	type = list(string)
 }
-
 
 variable "cluster_developers" {
 	type = list(string)

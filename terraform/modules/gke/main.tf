@@ -81,7 +81,7 @@ module "gke" {
   ]
 
   create_service_account  = true
-  registry_project_ids    = [var.project_id, var.docker_gar.project_id]
+  registry_project_ids    = var.registry_project_ids
   grant_registry_access   = true
   cluster_resource_labels = {}
   deletion_protection     = false

@@ -12,3 +12,8 @@ output "dns_zones" {
 	value = google_dns_managed_zone.default
 }
 
+/* The CI member that will be able to control environment projects */
+output "ci_iam_member" {
+	value = module.github_oidc.principal_set
+}
+

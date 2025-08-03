@@ -18,3 +18,10 @@ module "project" {
   }
 }
 
+/* Allow CI to manage the project */
+resource "google_project_iam_member" "ci_admin" {
+  project = module.project.project_id
+  role    = "roles/admin"
+  member  = data.terraform_remote_state.management.outputs.ci_iam_member
+}
+
