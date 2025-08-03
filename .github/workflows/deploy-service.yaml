@@ -72,7 +72,8 @@ jobs:
           create_credentials_file: true
       - name: Terraform
         run: |
-          sudo apt update && apt install -y make curl
+          sudo apt update
+          sudo apt install -y make curl
 
           # Add GitLab Runner IP to allow for deployments to the GKE cluster.
           export TF_VAR_gitlab_runner_ip=$(curl --ipv4 ifconfig.me)
