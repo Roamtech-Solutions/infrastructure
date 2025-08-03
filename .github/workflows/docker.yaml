@@ -13,7 +13,7 @@ on:
       #  type: string
 jobs:
   docker_build_push:
-    name: "🐳📦 ${{ inputs.service_name }}:${{ inputs.ref }}"
+    name: "🐳📦 ${{ inputs.service_name }}:${{ github.event.ref }}"
     permissions:
       id-token: write
       #contents: read
