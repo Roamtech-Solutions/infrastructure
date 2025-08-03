@@ -1,0 +1,62 @@
+name: Docker Build
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        description: "Name of the service"
+        required: true
+        type: string
+      # TODO: implement service group usage
+      #service_group:
+      #  description: "Environment GAR to push the Docker image to"
+      #  required: true
+      #  type: string
+jobs:
+  docker_build_push:
+    name: "🐳📦 ${{ inputs.service_name }}:${{ inputs.ref }}"
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    env:
+      # NOTE: Values hardcoded here because you need GitHub enterprise to set
+      #       these at the org level.
+      MANAGEMENT_PROJECT_ID: management-b6d6
+      GOOGLE_CLOUD_WIP: 'projects/155168468510/locations/global/workloadIdentityPools/github/providers/github-provider'
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.repository.full_name }}
+          ref: ${{ github.event.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Google Cloud Authentication
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
+      - name: Setup Google Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 416.0.0'
+      - name: GCR Login
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west2-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.auth_token }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and Push Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          # TODO: There should be a docker repo for each service group, not just the one.
+          tags: "europe-west1-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/docker/${{ inputs.service_name}}:${{ inputs.ref }}"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+

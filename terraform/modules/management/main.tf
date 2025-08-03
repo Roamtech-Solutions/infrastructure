@@ -45,39 +45,63 @@ resource "google_storage_bucket" "tfstate" {
   }
 }
 
-/* === GitLab CI === */
-module "gitlab_oidc" {
-	source = "../gitlab-oidc"
+/* === GitHub CI === */
+module "github_oidc" {
+	source = "../github-oidc"
 	project_id = module.project.project_id
-	issuers = {
-		default = "https://gitlab.com"
-		gcp-gitlab = "https://auth.gcp.gitlab.com/oidc/roamtech1"
-	}
-	/* TODO: Don't hardcode GitLab namespace path */
-	gitlab_namespace_path = "roamtech1"
+	/* TODO: Don't hardcode GitHub org */
+	github_organisation = "Roamtech-Solutions"
 }
 
-/* Allow GitLab CI to update files in the values bucket */
-resource "google_storage_bucket_iam_member" "member" {
-  bucket = google_storage_bucket.values.name
-  role = "roles/storage.admin"
-	member = module.gitlab_oidc.principal_set
-}
-
-/* TODO: Restrict token creation to the GitLab service account */
-resource "google_project_iam_member" "gitlab_ci_sa_user" {
-  project    = module.project.project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
-	member = module.gitlab_oidc.principal_set
-}
-
-resource "google_artifact_registry_repository_iam_member" "gitlab_ci_docker" {
+/* Allow uploads to the Docker registry */
+resource "google_artifact_registry_repository_iam_member" "github_oidc_docker" {
   project    = module.project.project_id
   location   = google_artifact_registry_repository.docker.location
   repository = google_artifact_registry_repository.docker.name
   role       = "roles/artifactregistry.writer"
-	member = module.gitlab_oidc.principal_set
+	member = module.github_oidc.principal_set
 }
+
+/* Allow management of the values bucket */
+resource "google_storage_bucket_iam_member" "member" {
+  bucket = google_storage_bucket.values.name
+  role = "roles/storage.admin"
+	member = module.github_oidc.principal_set
+}
+
+# /* === GitLab CI === */
+# module "gitlab_oidc" {
+# 	source = "../gitlab-oidc"
+# 	project_id = module.project.project_id
+# 	issuers = {
+# 		default = "https://gitlab.com"
+# 		gcp-gitlab = "https://auth.gcp.gitlab.com/oidc/roamtech1"
+# 	}
+# 	/* TODO: Don't hardcode GitLab namespace path */
+# 	gitlab_namespace_path = "roamtech1"
+# }
+# 
+# /* Allow GitLab CI to update files in the values bucket */
+# resource "google_storage_bucket_iam_member" "member" {
+#   bucket = google_storage_bucket.values.name
+#   role = "roles/storage.admin"
+# 	member = module.gitlab_oidc.principal_set
+# }
+# 
+# /* TODO: Restrict token creation to the GitLab service account */
+# resource "google_project_iam_member" "gitlab_ci_sa_user" {
+#   project    = module.project.project_id
+#   role    = "roles/iam.serviceAccountTokenCreator"
+# 	member = module.gitlab_oidc.principal_set
+# }
+# 
+# resource "google_artifact_registry_repository_iam_member" "gitlab_ci_docker" {
+#   project    = module.project.project_id
+#   location   = google_artifact_registry_repository.docker.location
+#   repository = google_artifact_registry_repository.docker.name
+#   role       = "roles/artifactregistry.writer"
+# 	member = module.gitlab_oidc.principal_set
+# }
 
 /* DNS */
 resource "google_dns_managed_zone" "default" {
