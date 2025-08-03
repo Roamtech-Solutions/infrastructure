@@ -1,5 +1,5 @@
 # Roamtech Infrastructure
-
+Repository housing all of Roamtechs Google Cloud infrastructure.
 
 ## Quick Start
 
@@ -15,10 +15,10 @@
   ```
 
 > Note: Make will can pick up settings from environment variables.
->	For example, this will still deploy to development, saving you
->	from providing the value every time:
+>	For example, this will still deploy to the development environment,
+>	saving you from providing the value every time:
 >	```
 >	export ENV=development
->	make apply  MODULE=k8s
+>	make apply MODULE=k8s
 >	```
 
