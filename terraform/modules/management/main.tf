@@ -63,8 +63,15 @@ resource "google_artifact_registry_repository_iam_member" "github_oidc_docker" {
 	member = module.github_oidc.principal_set
 }
 
+/* Allow management of the state bucket */
+resource "google_storage_bucket_iam_member" "github-tfstate-admin" {
+  bucket = google_storage_bucket.tfstate.name
+  role = "roles/storage.admin"
+	member = module.github_oidc.principal_set
+}
+
 /* Allow management of the values bucket */
-resource "google_storage_bucket_iam_member" "member" {
+resource "google_storage_bucket_iam_member" "github-values-admin" {
   bucket = google_storage_bucket.values.name
   role = "roles/storage.admin"
 	member = module.github_oidc.principal_set
