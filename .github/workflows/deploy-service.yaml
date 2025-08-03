@@ -35,7 +35,6 @@ jobs:
       - name: Checkout caller repository
         uses: actions/checkout@v4
       - name: Google Cloud Authentication
-        id: auth
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
@@ -66,7 +65,6 @@ jobs:
           token: ${{ secrets.INFRASTRUCTURE_PAT }}
       # Authenticate again because the checkout deletes the credentials file
       - name: Google Cloud Authentication
-        id: auth
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
