@@ -14,9 +14,9 @@ on:
 jobs:
   docker_build_push:
     name: "🐳📦 ${{ inputs.service_name }}:${{ inputs.ref }}"
-    permissions:
-      contents: read
-      id-token: write
+    # permissions:
+    #   contents: read
+    #   id-token: write
     runs-on: ubuntu-latest
     env:
       # NOTE: Values hardcoded here because you need GitHub enterprise to set
