@@ -62,7 +62,7 @@ jobs:
       # === Deploy values file === #
       - name: Update values
         run: |
-          envsubst < ./helm/${{ env.environment }}.yaml > /tmp/values.yaml
+          envsubst < ./helm/${{ inputs.environment }}.yaml > /tmp/values.yaml
           cat /tmp/values.yaml
           gcloud storage cp /tmp/values.yaml gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
 
