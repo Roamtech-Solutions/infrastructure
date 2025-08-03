@@ -1,0 +1,47 @@
+{{ if not (empty .Values.ingressServices) }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: {{ .Release.Name }}
+    networking.gke.io/managed-certificates: {{ join ".Release.Name }}
+    kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.allow-http: "false"
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}
+spec:
+  rules:
+  - host: {{ .Values.host | quote }}
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: {{ .Values.port }}
+---
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  sslPolicy: default
+  redirectToHttps:
+    enabled: true
+
+{{- range $k := .Values.ingressServices }}
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Release.Name }}-{{ $k }}
+spec:
+  domains:
+    - {{ $k }}.{{ .Values.host }}
+{{- end }}
+
+{{ end }}
+

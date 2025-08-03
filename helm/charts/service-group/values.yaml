@@ -5,4 +5,5 @@ rabbitmq:
   memory: 1Gi
 
 cloudsqlServices: {}
+ingressServices: {}
 
