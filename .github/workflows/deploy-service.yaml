@@ -34,10 +34,6 @@ jobs:
       # === Setup === #
       - name: Checkout caller repository
         uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.repository.full_name }}
-          ref: ${{ inputs.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Google Cloud Authentication
         id: auth
         uses: 'google-github-actions/auth@v2'
@@ -70,6 +66,10 @@ jobs:
       # === Apply Terraform === #
       - name: Checkout infrastructure repository
         uses: actions/checkout@v4
+        with:
+          repository: Roamtech-Solutions/infrastructure
+          ref: master
+          token: ${{ secrets.INFRASTRUCTURE_PAT }}
       - name: Terraform
         run: |
           apk add make curl
