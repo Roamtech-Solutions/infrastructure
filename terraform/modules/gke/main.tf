@@ -37,9 +37,9 @@ module "private_service_access" {
 
 /* NAT for the cluster */
 resource "google_compute_address" "nat" {
-	count = 2
+  count   = 2
   project = var.project_id
-	name = "gke-${var.name}-nat-${count.index}"
+  name    = "gke-${var.name}-nat-${count.index}"
   region  = var.region
 }
 
@@ -51,7 +51,7 @@ module "nat" {
   network       = module.network.network_name
   create_router = true
   router        = "${module.network.network_name}-gke-nat-router"
-	nat_ips = google_compute_address.nat[*].self_link
+  nat_ips       = google_compute_address.nat[*].self_link
 }
 
 /* The Cluster */
@@ -85,7 +85,7 @@ module "gke" {
   grant_registry_access   = true
   cluster_resource_labels = {}
   deletion_protection     = false
-	depends_on = [module.network]
+  depends_on              = [module.network]
 }
 
 /* IAM Permissions for connecting and deploying to the cluster */

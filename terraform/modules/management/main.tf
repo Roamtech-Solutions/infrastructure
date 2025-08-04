@@ -1,12 +1,12 @@
 module "project" {
   source            = "terraform-google-modules/project-factory/google"
   version           = "18.0.0"
-	name              = var.name
+  name              = var.name
   random_project_id = true
   org_id            = var.organisation
   billing_account   = var.billing_account
 
-	deletion_policy = "DELETE"
+  deletion_policy = "DELETE"
 
   /* Services */
   activate_apis               = var.services
@@ -18,19 +18,17 @@ module "project" {
   }
 }
 
-module "vpn" {
-	source = "../vpn"
-	project_id = module.project.project_id
-	region = var.region
-	host = "vpn.roamtech.whitemire-technologies.com"
-	dns_managed_zone = {
-		project_id = module.project.project_id
-		name = "roamtech-whitemire-technologies-com"
-	}
-	allowed_networks = {
-		"bob" = "81.151.140.163/32"
-	}
-}
+# module "vpn" {
+# 	source = "../vpn"
+# 	project_id = module.project.project_id
+# 	region = var.region
+# 	host = "vpn.roamtech.whitemire-technologies.com"
+# 	dns_managed_zone = {
+# 		project_id = module.project.project_id
+# 		name = "roamtech-whitemire-technologies-com"
+# 	}
+# 	allowed_networks = var.allowed_networks
+# }
 
 resource "google_storage_bucket" "tfstate" {
   project                     = module.project.project_id
@@ -46,10 +44,10 @@ resource "google_storage_bucket" "tfstate" {
 
 /* === GitHub CI === */
 module "github_oidc" {
-	source = "../github-oidc"
-	project_id = module.project.project_id
-	/* TODO: Don't hardcode GitHub org */
-	github_organisation = "Roamtech-Solutions"
+  source     = "../github-oidc"
+  project_id = module.project.project_id
+  /* TODO: Don't hardcode GitHub org */
+  github_organisation = "Roamtech-Solutions"
 }
 
 /* Allow uploads to the Docker registry */
@@ -59,7 +57,7 @@ resource "google_artifact_registry_repository_iam_member" "github_oidc_docker" {
   location   = each.value.location
   repository = each.value.name
   role       = "roles/artifactregistry.writer"
-	member = module.github_oidc.principal_set
+  member     = module.github_oidc.principal_set
 }
 
 /* TODO: Restrict admin access for CI account */
@@ -72,28 +70,28 @@ resource "google_project_iam_member" "ci_admin" {
 /* Allow management of the state bucket */
 resource "google_storage_bucket_iam_member" "github-tfstate-admin" {
   bucket = google_storage_bucket.tfstate.name
-  role = "roles/storage.admin"
-	member = module.github_oidc.principal_set
+  role   = "roles/storage.admin"
+  member = module.github_oidc.principal_set
 }
 
 /* Allow management of the values bucket */
 resource "google_storage_bucket_iam_member" "github-values-admin" {
   bucket = google_storage_bucket.values.name
-  role = "roles/storage.admin"
-	member = module.github_oidc.principal_set
+  role   = "roles/storage.admin"
+  member = module.github_oidc.principal_set
 }
 
 /* DNS */
 resource "google_dns_managed_zone" "default" {
-	for_each = toset(var.hosts)
-  project     = module.project.project_id
-  name    = replace(each.key, ".", "-")
-  dns_name    = "${each.key}."
+  for_each = toset(var.hosts)
+  project  = module.project.project_id
+  name     = replace(each.key, ".", "-")
+  dns_name = "${each.key}."
 }
 
 /* Docker GARs */
 resource "google_artifact_registry_repository" "service_groups" {
-	for_each = toset(var.service_groups)
+  for_each               = toset(var.service_groups)
   project                = module.project.project_id
   location               = var.region
   repository_id          = each.key

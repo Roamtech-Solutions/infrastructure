@@ -1,8 +1,8 @@
 variable "project_id" {
-	type = string
+  type = string
 }
 
 variable "allowed_networks" {
-	type = map(string)
+  type = map(string)
 }
 

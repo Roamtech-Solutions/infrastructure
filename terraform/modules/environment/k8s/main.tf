@@ -1,22 +1,22 @@
 module "external-secrets" {
-	source = "../../external-secrets"
-	project_id = local.project_id
+  source     = "../../external-secrets"
+  project_id = local.project_id
 }
 
 /* === RabbitMQ Operater === */
 resource "helm_release" "rabbitmq_cluster_operator" {
   name       = "rabbitmq-cluster-operator"
   chart      = "rabbitmq-cluster-operator"
-	repository = "https://charts.bitnami.com/bitnami"
-	namespace = "rabbitmq"
+  repository = "https://charts.bitnami.com/bitnami"
+  namespace  = "rabbitmq"
 
-	create_namespace = true
-	# 15 Minute timeout, can take longer on intial cluster setup.
-	timeout = 900
+  create_namespace = true
+  # 15 Minute timeout, can take longer on intial cluster setup.
+  timeout = 900
 
-	values = [file(
-		"${path.module}/../../../../helm/values/rabbitmq-cluster-operator.yaml"
-	)]
+  values = [file(
+    "${path.module}/../../../../helm/values/rabbitmq-cluster-operator.yaml"
+  )]
 }
 
 #module "keycloak" {

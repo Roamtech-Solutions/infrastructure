@@ -5,7 +5,7 @@ module "umig" {
   region             = var.region
   hostname           = "${var.region}-vpn"
   instance_template  = google_compute_instance_template.default.self_link
-    subnetwork         = module.network.subnets_self_links[0]
+  subnetwork         = module.network.subnets_self_links[0]
   subnetwork_project = var.project_id
   named_ports = [
     {
@@ -19,7 +19,7 @@ module "umig" {
 resource "google_compute_instance_template" "default" {
   project        = var.project_id
   name           = "vpn"
-  machine_type   = "n2-standard-2"
+  machine_type   = "n1-standard-1"
   tags           = ["vpn", "allow-ssh-iap", "allow-health-check", "allow-lb-service"]
   can_ip_forward = true
   network_interface {

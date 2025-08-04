@@ -19,10 +19,10 @@ resource "google_storage_bucket_iam_member" "assets" {
 }
 
 resource "google_secret_manager_secret_iam_member" "accessor_all" {
-  for_each  = {
-		for k, v in google_secret_manager_secret.default : k => v
-		if k != "web-console-credentials"
-	}
+  for_each = {
+    for k, v in google_secret_manager_secret.default : k => v
+    if k != "web-console-credentials"
+  }
   project   = var.project_id
   secret_id = google_secret_manager_secret.default[each.key].id
   role      = "roles/secretmanager.secretAccessor"

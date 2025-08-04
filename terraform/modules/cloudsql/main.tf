@@ -7,7 +7,7 @@ module "cloudsql" {
   project_id           = var.project_id
   database_version     = var.database_version
   region               = var.region
-  deletion_protection  = true
+  deletion_protection  = var.deletion_protection
   disk_size            = var.disk_size
 
   database_flags = [
@@ -50,7 +50,7 @@ module "cloudsql" {
   db_charset   = "utf8mb4"
   db_collation = "utf8mb4_general_ci"
 
-  user_name     = "root"
+  user_name = "root"
 }
 
 /* === Generated root user password secret manager === */
@@ -63,12 +63,12 @@ resource "google_secret_manager_secret" "default" {
 }
 
 resource "google_secret_manager_secret_version" "default" {
-  secret      = google_secret_manager_secret.default.id
+  secret = google_secret_manager_secret.default.id
   secret_data = jsonencode({
-		host = module.cloudsql.private_ip_address
-		port = 3306
-		user = "root"
-		pass = module.cloudsql.generated_user_password
-	})
+    host = module.cloudsql.private_ip_address
+    port = 3306
+    user = "root"
+    pass = module.cloudsql.generated_user_password
+  })
 }
 

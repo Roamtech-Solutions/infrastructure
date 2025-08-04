@@ -1,15 +1,15 @@
 variable "project_id" {
-	type = string
+  type = string
 }
 
 variable "issuers" {
-	type = map(string)
-	default = {
-		default = "https://gitlab.com"
-	}
+  type = map(string)
+  default = {
+    default = "https://gitlab.com"
+  }
 }
 
 variable "gitlab_namespace_path" {
-	type = string
+  type = string
 }
 

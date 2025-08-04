@@ -12,11 +12,11 @@ variable "host" {
 }
 
 variable "dns_managed_zone" {
-	type = object({
-		project_id = string
-		name = string
-	})
-	description = "Managed zone to configure DNS records."
+  type = object({
+    project_id = string
+    name       = string
+  })
+  description = "Managed zone to configure DNS records."
 }
 
 variable "allowed_networks" {

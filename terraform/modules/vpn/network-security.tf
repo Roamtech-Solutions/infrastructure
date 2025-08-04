@@ -31,21 +31,21 @@ resource "google_compute_security_policy" "default" {
   }
 
   rule {
-      action   = "allow"
-      priority = 10
-      match {
-        expr {
-          expression = join(
-            " || ",
-            [
-							for r in [
-								"/key/*", "/k/*", "/ku/*"
-							] : "(request.path.matches('${r}'))"
-						]
-          )
-        }
+    action   = "allow"
+    priority = 10
+    match {
+      expr {
+        expression = join(
+          " || ",
+          [
+            for r in [
+              "/key/*", "/k/*", "/ku/*"
+            ] : "(request.path.matches('${r}'))"
+          ]
+        )
       }
-      description = "Allow VPN profile temporary links"
     }
+    description = "Allow VPN profile temporary links"
+  }
 }
 

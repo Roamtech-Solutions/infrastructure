@@ -21,6 +21,8 @@ kind: BackendConfig
 metadata:
   name: {{ .Release.Name }}
 spec:
+  securityPolicy:
+    name: {{ .Values.securityPolicy }}
   healthCheck:
     checkIntervalSec: 30
     timeoutSec: 5

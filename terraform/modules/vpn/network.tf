@@ -45,7 +45,7 @@ module "lb" {
   ssl                             = true
   managed_ssl_certificate_domains = ["${var.host}."]
   https_redirect                  = true
-	security_policy = google_compute_security_policy.default.self_link
+  security_policy                 = google_compute_security_policy.default.self_link
   backends = {
     vpn = {
       project    = var.project_id

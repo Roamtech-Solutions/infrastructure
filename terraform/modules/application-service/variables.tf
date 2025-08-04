@@ -1,36 +1,36 @@
 variable "project_id" {
-	type = string
+  type = string
 }
 
 variable "name" {
-	type = string
+  type = string
 }
 
 variable "service_group" {
-	type = string
+  type = string
 }
 
 variable "tag" {
-	type = string
+  type = string
 }
 
 variable "gar" {
-	type = string
+  type = string
 }
 
 variable "ingress" {
-	type = object({
+  type = object({
     host = string
-		dns_managed_zone = object({
-			project_id = string
-			name = string
-		})
-	})
-	default = null
+    dns_managed_zone = object({
+      project_id = string
+      name       = string
+    })
+  })
+  default = null
 }
 
 variable "values" {
-	type = string
-	default = ""
+  type    = string
+  default = ""
 }
 

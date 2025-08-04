@@ -4,7 +4,7 @@ resource "google_iam_workload_identity_pool" "default" {
 }
 
 resource "google_iam_workload_identity_pool_provider" "default" {
-	for_each = var.issuers
+  for_each                           = var.issuers
   project                            = var.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.default.workload_identity_pool_id
   workload_identity_pool_provider_id = "gitlab-jwt-${each.key}"
@@ -35,9 +35,9 @@ resource "google_iam_workload_identity_pool_provider" "default" {
 
 /* Service Account & IAM Permissions */
 resource "google_service_account" "default" {
-	project = var.project_id
-	account_id = "gitlab-ci"
-	display_name = "GitLab CI"
+  project      = var.project_id
+  account_id   = "gitlab-ci"
+  display_name = "GitLab CI"
 }
 
 resource "google_project_iam_member" "viewer" {

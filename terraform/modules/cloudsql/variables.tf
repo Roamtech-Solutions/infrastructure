@@ -3,15 +3,15 @@ variable "project_id" {
 }
 
 variable "region" {
-	type = string
+  type = string
 }
 
 variable "zone" {
-	type = string
+  type = string
 }
 
 variable "name" {
-  type    = string
+  type = string
 }
 
 variable "tier_primary" {
@@ -27,12 +27,16 @@ variable "network" {
 }
 
 variable "database_version" {
-	type = string
+  type = string
 }
 
-
 variable "disk_size" {
-	type = string
-	default = "10"
+  type    = string
+  default = "10"
+}
+
+variable "deletion_protection" {
+  type    = bool
+  default = false
 }
 

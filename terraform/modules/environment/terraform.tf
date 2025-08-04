@@ -1,6 +1,6 @@
 terraform {
   required_version = "1.12.1"
-  backend "gcs" { }
+  backend "gcs" {}
   required_providers {
     # google = {
     #   source  = "hashicorp/google"
@@ -15,7 +15,7 @@ terraform {
     #   version = "6.5.0"
     # }
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "3.0.2"
     }
   }

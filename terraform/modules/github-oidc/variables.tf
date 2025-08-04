@@ -3,6 +3,6 @@ variable "project_id" {
 }
 
 variable "github_organisation" {
-  type    = string
+  type = string
 }
 

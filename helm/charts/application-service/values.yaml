@@ -2,6 +2,7 @@
 ingress: false
 host: ""
 healthCheckPath: "/"
+securityPolicy: default
 
 # === Deployment === #
 replicas: 1

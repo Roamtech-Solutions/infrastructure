@@ -2,50 +2,50 @@
 # This saves on repeated configurations and stops the warnings # from Terraform when providing variables that aren't needed.
 
 variable "name" {
-	type = string
-	description = "Environment name"
+  type        = string
+  description = "Environment name"
 }
 
 variable "service_group" {
-	type = string
-	description = "Service Group"
+  type        = string
+  description = "Service Group"
 }
 
 variable "organisation" {
-	type = string
-	default = null
-	description = "ID for the organisation to create the project in"
+  type        = string
+  default     = null
+  description = "ID for the organisation to create the project in"
 }
 
 variable "billing_account" {
-	type = string
-	description = "ID of the billing account to use for the environment"
+  type        = string
+  description = "ID of the billing account to use for the environment"
 }
 
 variable "region" {
-	type = string
-	default = "africa-south1"
+  type    = string
+  default = "africa-south1"
 }
 
 variable "hosts" {
-	type = list(string)
+  type = list(string)
 }
 
 variable "services" {
-	type = list(string)
-	description = "List of services to be enabled on the project"
+  type        = list(string)
+  description = "List of services to be enabled on the project"
 }
 
 variable "management_project_id" {
-	type = string
+  type = string
 }
 
 variable "allowed_networks" {
-	type = map(string)
+  type = map(string)
 }
 
-variable "gitlab_runner_ip" {
-	type = string
-	default = ""
+variable "ci_runner_ip" {
+  type    = string
+  default = ""
 }
 

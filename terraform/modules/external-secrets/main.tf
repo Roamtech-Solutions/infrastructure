@@ -2,21 +2,21 @@
 resource "helm_release" "external_secrets" {
   name       = "external-secrets"
   chart      = "external-secrets"
-	repository = "https://charts.external-secrets.io"
-	namespace = "external-secrets"
+  repository = "https://charts.external-secrets.io"
+  namespace  = "external-secrets"
 
-	create_namespace = true
-	# 15 Minute timeout, can take longer on intial cluster setup.
-	timeout = 900
+  create_namespace = true
+  # 15 Minute timeout, can take longer on intial cluster setup.
+  timeout = 900
 
-	values = [file("${path.module}/../../../helm/values/external-secrets.yaml")]
-	set = [
+  values = [file("${path.module}/../../../helm/values/external-secrets.yaml")]
+  set = [
 
-		{
-			name = "serviceAccount.annotations.iam\\.gke\\.io\\/gcp-service-account"
-			value = "${google_service_account.default.email}"
-		}
-	]
+    {
+      name  = "serviceAccount.annotations.iam\\.gke\\.io\\/gcp-service-account"
+      value = "${google_service_account.default.email}"
+    }
+  ]
 }
 
 /*

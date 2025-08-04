@@ -30,11 +30,11 @@ resource "google_secret_manager_secret_version" "default" {
 }
 
 resource "helm_release" "redis" {
-  name       = "redis"
-  chart      = "${path.module}/../../../helm/charts/redis"
+  name  = "redis"
+  chart = "${path.module}/../../../helm/charts/redis"
 
-	create_namespace = true
-	# 15 Minute timeout, can take longer on intial cluster setup.
-	timeout = 900
+  create_namespace = true
+  # 15 Minute timeout, can take longer on intial cluster setup.
+  timeout = 900
 }
 

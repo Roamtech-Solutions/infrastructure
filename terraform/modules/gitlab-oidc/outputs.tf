@@ -1,5 +1,5 @@
 output "service_account_member" {
-	value = google_service_account.default.member
+  value = google_service_account.default.member
 }
 
 output "principal_set" {
