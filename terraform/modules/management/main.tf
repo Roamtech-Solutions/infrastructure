@@ -19,14 +19,13 @@ module "project" {
 }
 
 module "vpn" {
-	count = 0
 	source = "../vpn"
 	project_id = module.project.project_id
 	region = var.region
 	host = "vpn.roamtech.whitemire-technologies.com"
 	dns_managed_zone = {
 		project_id = module.project.project_id
-		name = "root"
+		name = "roamtech-whitemire-technologies-com"
 	}
 	allowed_networks = {
 		"bob" = "81.151.140.163/32"

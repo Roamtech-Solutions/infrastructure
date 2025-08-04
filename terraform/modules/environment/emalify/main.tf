@@ -100,7 +100,7 @@ module "application_service" {
 	service_group = var.service_group
 
 	/* TODO: Use management outputs */
-	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/docker"
+	gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/${var.service_group}"
 
 	ingress = null
 	# ingress = (lookup(yamldecode(each.value.content), "ingress", false)) ? {

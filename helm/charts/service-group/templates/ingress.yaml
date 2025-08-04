@@ -1,4 +1,5 @@
 {{ if not (empty .Values.ingressServices) }}
+# === Ingress for Service Group === #
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -6,22 +7,29 @@ metadata:
   name: {{ .Release.Name }}
   annotations:
     kubernetes.io/ingress.global-static-ip-name: {{ .Release.Name }}
-    networking.gke.io/managed-certificates: {{ .Release.Name }}
+    # Build a list of certificates with the service group prefix
+    {{- $certificates := list -}}
+    {{- range $k, $v := .Values.ingressServices -}}
+    {{- $certificates = append $certificates (printf "{{ $.Release.Name }}-%s" $k) -}}
+    {{- end -}}
+    networking.gke.io/managed-certificates: {{- join "," $certificates | quote -}}
     kubernetes.io/ingress.class: "gce"
     kubernetes.io/ingress.allow-http: "false"
     networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}
 spec:
   rules:
-  - host: {{ .Values.host | quote }}
+  {{- range $k, $v := .Values.ingressServices }}
+  - host: {{ $k }}.{{ $.Values.host }}
     http:
       paths:
       - path: /*
         pathType: ImplementationSpecific
         backend:
           service:
-            name: {{ .Release.Name }}
+            name: {{ $k }}
             port:
-              number: {{ .Values.port }}
+              number: {{ $v.port }}
+  {{- end }}
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
@@ -32,7 +40,8 @@ spec:
   redirectToHttps:
     enabled: true
 
-{{- range $k := .Values.ingressServices }}
+# === Certificates === #
+{{- range $k, $v := .Values.ingressServices }}
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
