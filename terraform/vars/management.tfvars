@@ -18,6 +18,7 @@ allowed_networks = {
 }
 
 service_groups = [
-	"emalify"
+	"adenzo",
+	"emalify",
 ]
 
