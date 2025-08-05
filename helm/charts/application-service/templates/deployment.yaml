@@ -33,4 +33,12 @@ spec:
                 {{- toYaml .valueFrom | nindent 16 }}
               {{- end }}
             {{- end }}
+            # Environment variables from secrets
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
 
