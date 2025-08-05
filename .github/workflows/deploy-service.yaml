@@ -77,15 +77,16 @@ jobs:
 
           # Add GitLab Runner IP to allow for deployments to the GKE cluster.
           export TF_VAR_ci_runner_ip=$(curl --ipv4 ifconfig.me)
-          make apply ENV=${{ inputs.environment }} MODULE=infra
+          make apply ENV=${{ inputs.environment }} MOD=infra
 
           # Apply the Helm charts and related infrastructure for the service
           # group.
           make apply ENV=${{ inputs.environment }} \
-            MODULE=${{ inputs.service_group }}
+            MOD=service-group \
+            SG=${{ inputs.service_group }}
 
           # Remove the GitLab runner IP from being allowed to connect to the
           # cluster.
           export TF_VAR_ci_runner_ip=""
-          make apply ENV=${{ inputs.environment }} MODULE=infra
+          make apply ENV=${{ inputs.environment }} MOD=infra
 

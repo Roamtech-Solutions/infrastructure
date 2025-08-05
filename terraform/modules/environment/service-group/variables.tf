@@ -1,0 +1,18 @@
+variable "name" {
+  type        = string
+  description = "Environment name"
+}
+
+variable "service_group" {
+  type        = string
+  description = "Service Group"
+}
+
+variable "management_project_id" {
+	type = string
+}
+
+variable "region" {
+	type = string
+}
+

@@ -19,6 +19,7 @@ resource "google_project_iam_member" "external_secrets" {
 
 /* === MySQL Database === */
 module "cloudsql" {
+	count = length(keys(local.mysql_services)) > 0 ? 1 : 0
   source           = "../../cloudsql"
   project_id       = local.project_id
   name             = var.service_group
@@ -32,7 +33,7 @@ module "cloudsql" {
 /* --- Database Secrets & Connection Information --- */
 /* A user and password is setup for each application service */
 resource "random_password" "cloudsql" {
-  for_each         = toset(local.application_services)
+  for_each         = local.mysql_services
   length           = 16
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
@@ -51,7 +52,7 @@ resource "google_secret_manager_secret_version" "cloudsql" {
   for_each = google_secret_manager_secret.cloudsql
   secret   = google_secret_manager_secret.cloudsql[each.key].id
   secret_data = jsonencode({
-    host = module.cloudsql.private_ip_address
+    host = module.cloudsql[0].private_ip_address
     port = 3306
     user = each.key
     pass = random_password.cloudsql[each.key].result
@@ -77,8 +78,7 @@ resource "helm_release" "service_group" {
     rabbitmq = {
       enabled = true
     }
-    # TODO: Consider tables required by the service
-    cloudsqlServices              = local.mysql_services
+    cloudsqlServices = local.mysql_services
     podCidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
     externalSecretsServiceAccount = google_service_account.external_secrets.email
   })]

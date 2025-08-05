@@ -1,8 +1,11 @@
+# === General Configurations === #
+
 MANAGEMENT_PROJECT_ID := management-b6d6
 STATE_BUCKET := $(MANAGEMENT_PROJECT_ID)-tfstate
 
+
+# === Environment configuration === #
 ALLOWED_ENVS := management development staging production
-ALLOWED_MODULES := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
 
 # Check if ENV is set and valid
 ifndef ENV
@@ -12,32 +15,64 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
   $(error ENV must be one of: $(ALLOWED_ENVS))
 endif
 
-# Layer check
-MODULE ?= core
-ifneq ($(filter $(MODULE),$(ALLOWED_MODULES)),$(MODULE))
-  $(error MODULE must be one of: $(ALLOWED_MODULES))
+
+# === Module configuration === #
+
+ALLOWED_MODS := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
+
+MOD ?= service-group
+ifneq ($(filter $(MOD),$(ALLOWED_MODS)),$(MOD))
+ $(error MOD must be one of: $(ALLOWED_MODS))
 endif
 
 
-# State prefix and directory depends on environment and layer
+# === Service Group === #
+
+ALLOWED_SGS := $(shell ls terraform/vars/$(ENV)/service-group | sed 's/.tfvars//g')
+ifeq ($(MOD),service-group)
+  ifneq ($(filter $(SG),$(ALLOWED_SGS)),$(SG))
+    $(error SG must be one of: $(ALLOWED_SGS))
+  endif
+endif
+
+
+# === Terraform arguments === #
+ 
+# State prefix and directory depends on environment, module and service group
 ifeq ($(ENV),management)
-CHDIR := terraform/modules/management
-PREFIX := $(ENV)
-VARS := 
-VARS_DIR := ../../vars
-VARS := \
+  CHDIR := terraform/modules/management
+  PREFIX := $(ENV)
+  VARS := 
+  VARS_DIR := ../../vars
+  VARS := \
 	-var-file=$(VARS_DIR)/common.tfvars \
 	-var-file=$(VARS_DIR)/$(ENV).tfvars
 else
-CHDIR := terraform/modules/environment/$(MODULE)
-PREFIX := $(ENV)/$(MODULE)
-VARS_DIR := ../../../vars/$(ENV)
-VARS := \
-	-var="management_project_id=$(MANAGEMENT_PROJECT_ID)" \
-	-var-file=$(VARS_DIR)/../common.tfvars \
-	-var-file=$(VARS_DIR)/common.tfvars \
-	-var-file=$(VARS_DIR)/$(MODULE).tfvars
+
+  CHDIR := terraform/modules/environment/$(MOD)
+  PREFIX := $(ENV)/$(MOD)
+  VARS_DIR := ../../../vars/$(ENV)
+
+  # --- Service Group --- #
+  ifdef SG
+    PREFIX := $(PREFIX)/$(SG)
+    VARS_DIR := $(VARS_DIR)/service-group
+    VARS := \
+      -var="management_project_id=$(MANAGEMENT_PROJECT_ID)" \
+      -var="name=$(ENV)" \
+      -var="service_group=$(SG)" \
+      -var-file=$(VARS_DIR)/$(SG).tfvars
+  else
+    VARS := \
+      -var="management_project_id=$(MANAGEMENT_PROJECT_ID)" \
+      -var-file=$(VARS_DIR)/../common.tfvars \
+      -var-file=$(VARS_DIR)/common.tfvars \
+      -var-file=$(VARS_DIR)/$(MOD).tfvars
+  endif
+
 endif
+
+# === Terraform Recipes === #
 
 .PHONY: init
 init:
