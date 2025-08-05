@@ -11,7 +11,7 @@ module "network_security" {
 
 module "gke" {
   source               = "../../gke"
-  name                 = var.name
+  name                 = var.region
   project_id           = local.project_id
   registry_project_ids = [local.project_id, var.management_project_id]
   region               = var.region

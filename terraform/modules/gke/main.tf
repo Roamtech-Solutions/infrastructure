@@ -2,10 +2,10 @@ module "network" {
   source       = "terraform-google-modules/network/google"
   version      = "9.2.0"
   project_id   = var.project_id
-  network_name = var.name
+  network_name = "gke-${var.name}"
   subnets = [
     {
-      subnet_name           = "${var.name}-private"
+      subnet_name           = "gke-${var.name}-private"
       subnet_ip             = "10.10.0.0/20"
       subnet_region         = var.region
       subnet_private_access = true
@@ -13,26 +13,18 @@ module "network" {
     }
   ]
   secondary_ranges = {
-    "${var.name}-private" = [
+    "gke-${var.name}-private" = [
       {
-        range_name    = "${var.name}-private-pods"
+        range_name    = "gke-${var.name}-private-pods"
         ip_cidr_range = local.pod_cidr
       },
       {
-        range_name    = "${var.name}-private-services"
+        range_name    = "gke-${var.name}-private-services"
         ip_cidr_range = local.svc_cidr
       },
     ]
   }
   shared_vpc_host = false
-}
-
-/* Allow for private network access to CloudSQL */
-module "private_service_access" {
-  source      = "terraform-google-modules/sql-db/google//modules/private_service_access"
-  version     = "26.1.1"
-  project_id  = var.project_id
-  vpc_network = module.network.network_name
 }
 
 /* NAT for the cluster */
@@ -62,9 +54,9 @@ module "gke" {
   name              = var.name
   region            = var.region
   network           = module.network.network_name
-  subnetwork        = "${var.name}-private"
-  ip_range_pods     = "${var.name}-private-pods"
-  ip_range_services = "${var.name}-private-services"
+  subnetwork        = "gke-${var.name}-private"
+  ip_range_pods     = "gke-${var.name}-private-pods"
+  ip_range_services = "gke-${var.name}-private-services"
   release_channel   = "STABLE"
 
   horizontal_pod_autoscaling      = true
@@ -102,5 +94,14 @@ resource "google_project_iam_member" "logging_viewer" {
   project  = var.project_id
   role     = "roles/logging.viewer"
   member   = each.value
+}
+
+/* Allow for private network access to CloudSQL */
+module "private_service_access" {
+  source      = "terraform-google-modules/sql-db/google//modules/private_service_access"
+  version     = "26.1.1"
+  project_id  = var.project_id
+  vpc_network = module.network.network_name
+	depends_on = [module.network, module.gke]
 }
 
