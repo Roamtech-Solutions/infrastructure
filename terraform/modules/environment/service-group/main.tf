@@ -76,7 +76,7 @@ resource "helm_release" "service_group" {
     name         = data.terraform_remote_state.infra.outputs.gke_cluster.name
     serviceGroup = var.service_group
     rabbitmq = {
-      enabled = true
+      enabled = (length(keys(local.rabbitmq_services)) > 0)
     }
     cloudsqlServices = local.mysql_services
     podCidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr

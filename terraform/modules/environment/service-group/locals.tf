@@ -22,5 +22,11 @@ locals {
     for k, v in local.application_service_values : k => lookup(v, "mysql", {})
     if lookup(v, "mysql", {}) != {}
   }
+
+  /* Application services which have a rabbitmq property */
+  rabbitmq_services = {
+    for k, v in local.application_service_values : k => lookup(v, "rabbitmq", {})
+    if lookup(v, "rabbitmq", {}) != {}
+  }
 }
 
