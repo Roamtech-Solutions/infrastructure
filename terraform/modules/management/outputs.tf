@@ -17,7 +17,7 @@ output "ci_iam_member" {
   value = module.github_oidc.principal_set
 }
 
-# output "vpn_address" {
-#   value = module.vpn.address
-# }
+output "vpn_address" {
+  value = module.vpn.address
+}
 

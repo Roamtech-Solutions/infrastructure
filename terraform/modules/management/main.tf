@@ -18,17 +18,17 @@ module "project" {
   }
 }
 
-# module "vpn" {
-# 	source = "../vpn"
-# 	project_id = module.project.project_id
-# 	region = var.region
-# 	host = "vpn.roamtech.whitemire-technologies.com"
-# 	dns_managed_zone = {
-# 		project_id = module.project.project_id
-# 		name = "roamtech-whitemire-technologies-com"
-# 	}
-# 	allowed_networks = var.allowed_networks
-# }
+module "vpn" {
+	source = "../vpn"
+	project_id = module.project.project_id
+	region = var.region
+	host = "vpn.roamtech.whitemire-technologies.com"
+	dns_managed_zone = {
+		project_id = module.project.project_id
+		name = "roamtech-whitemire-technologies-com"
+	}
+	allowed_networks = var.allowed_networks
+}
 
 resource "google_storage_bucket" "tfstate" {
   project                     = module.project.project_id
