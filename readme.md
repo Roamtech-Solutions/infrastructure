@@ -10,8 +10,12 @@ Repository housing all of Roamtechs Google Cloud infrastructure.
 - Deploy infrastructure changes with makefile wrapper for Terraform,
   in this case, for the development environment:
   ```shell
-  make apply ENV=development MODULE=infra
-  make apply ENV=development MODULE=k8s
+  # Apply core, infra and k8s modules
+  make apply ENV=development MOD=core
+  make apply ENV=development MOD=infra
+  make apply ENV=development MOD=k8s
+  # Apply apply a service group, in this case, afrisend
+  make apply ENV=development MOD=service-group SG=afrisend
   ```
 
 > Note: Make will can pick up settings from environment variables.
@@ -19,6 +23,6 @@ Repository housing all of Roamtechs Google Cloud infrastructure.
 >	saving you from providing the value every time:
 >	```
 >	export ENV=development
->	make apply MODULE=k8s
+>	make apply MOD=k8s
 >	```
 
