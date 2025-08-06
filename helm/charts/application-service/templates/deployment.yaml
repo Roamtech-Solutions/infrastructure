@@ -24,16 +24,56 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            {{- range .Values.env }}
-            - name: {{ .name }}
-              {{- if .value }}
-              value: {{ .value | quote }}
-              {{- else if .valueFrom }}
+
+            # === MySQL === #
+            {{- if not (empty .Values.mysql) }}
+            - name: {{ .Values.mysql.env.host }}
               valueFrom:
-                {{- toYaml .valueFrom | nindent 16 }}
-              {{- end }}
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: {{ .Values.mysql.env.port }}
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: {{ .Values.mysql.env.user }}
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: {{ .Values.mysql.env.pass }}
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
             {{- end }}
-            # Environment variables from secrets
+
+            # === RabbitMQ === #
+            {{- if not (empty .Values.rabbitmq) }}
+            - name: {{ .Values.rabbitmq.env.host }}
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: {{ .Values.rabbitmq.env.port }}
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: {{ .Values.rabbitmq.env.user }}
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: {{ .Values.rabbitmq.env.pass }}
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            {{- end }}
+
+            # === User Managed Secrets === #
             {{- range $s := .Values.secrets }}
             - name: {{ $s }}
               valueFrom:
