@@ -20,3 +20,9 @@ variable "host" {
 	type = string
 }
 
+variable "sub_host" {
+	type = string
+	default = ""
+}
+
+

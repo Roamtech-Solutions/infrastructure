@@ -1,6 +1,10 @@
 locals {
   project_id = data.terraform_remote_state.core.outputs.project_id
 
+  host         = (var.sub_host == "")
+		? "${var.environment}.${var.host}"
+	  : "${var.sub_host}.${var.environment}.${var.host}"
+
   /* Application services is based on the YAML files in the values bucket */
   application_services = [
     for k, v in data.google_storage_bucket_objects.application_services.bucket_objects :

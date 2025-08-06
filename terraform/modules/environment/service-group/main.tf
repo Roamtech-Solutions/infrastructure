@@ -71,7 +71,7 @@ resource "google_compute_global_address" "default" {
 resource "google_dns_record_set" "default" {
   count = length(google_compute_global_address.default)
   project      = var.management_project_id
-  name         = "*.${var.environment}.${var.host}."
+  name         = "*.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
