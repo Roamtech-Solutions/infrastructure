@@ -60,6 +60,25 @@ resource "google_secret_manager_secret_version" "cloudsql" {
 }
 
 /* === Service Group Setup === */
+
+/* --- Ingress --- */
+resource "google_compute_global_address" "default" {
+  count = (length(keys(local.ingress_services)) > 0) ? 1 : 0
+  project  = local.project_id
+  name     = "${var.service_group}-${var.environment}"
+}
+
+resource "google_dns_record_set" "default" {
+  count = length(google_compute_global_address.default)
+  project      = var.management_project_id
+  name         = "*.${var.environment}.${var.host}."
+  managed_zone = replace(var.host, ".", "-")
+  type         = "A"
+  ttl          = "300"
+  rrdatas      = [google_compute_global_address.default.0.address]
+}
+
+/* --- Service Group Helm Chart --- */
 resource "helm_release" "service_group" {
   name  = var.service_group
   chart = "${path.module}/../../../../helm/charts/service-group"
@@ -99,15 +118,6 @@ module "application_service" {
 
   /* TODO: Use management outputs */
   gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/${var.service_group}"
-
-  ingress = null
-  # ingress = (lookup(yamldecode(each.value.content), "ingress", false)) ? {
-  #   host = "${each.key}.${var.name}.roamtech.whitemire-technologies.com"
-  # 	dns_managed_zone = {
-  # 		project_id = var.management_project_id
-  # 		name = "root"
-  # 	}
-  # } : null
 
   values = each.value.content
   depends_on = [

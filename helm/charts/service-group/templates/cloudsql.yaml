@@ -55,8 +55,13 @@ spec:
           - -c
           - |
             mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
-            {{- range $k, $v := .Values.cloudsqlServices }}
-            CREATE USER IF NOT EXISTS '{{ $k }}'@'{{ $.Values.podCidr }}' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
+            {{- range $user, $schemas := .Values.cloudsqlServices }}
+            CREATE USER IF NOT EXISTS '{{ $user }}'@'{{ $.Values.podCidr }}' IDENTIFIED BY '${SVC_PASS_{{ $user }}}';
+            {{- range $schema, $tables := $schemas }}
+            {{- range $table, $privileges := $tables }}
+            GRANT {{ $privileges }} ON {{ $schema }}.{{ $table }} TO '{{ $user }}'@'{{ $.Values.podCidr }}';
+            {{- end }}
+            {{- end }}
             {{- end }}
             "
         env:

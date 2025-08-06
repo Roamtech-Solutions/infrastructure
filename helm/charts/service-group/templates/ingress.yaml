@@ -19,7 +19,7 @@ metadata:
 spec:
   rules:
   {{- range $k, $v := .Values.ingressServices }}
-  - host: {{ $k }}.{{ $.Values.host }}
+  - host: {{ $v.host | default $k }}.{{ $.Values.host }}
     http:
       paths:
       - path: /*

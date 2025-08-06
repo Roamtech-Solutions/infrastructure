@@ -59,7 +59,7 @@ else
     VARS_DIR := $(VARS_DIR)/service-group
     VARS := \
       -var="management_project_id=$(MANAGEMENT_PROJECT_ID)" \
-      -var="name=$(ENV)" \
+      -var="environment=$(ENV)" \
       -var="service_group=$(SG)" \
       -var-file=$(VARS_DIR)/$(SG).tfvars
   else

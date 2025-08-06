@@ -9,7 +9,7 @@ data "terraform_remote_state" "core" {
   backend = "gcs"
   config = {
     bucket = "${var.management_project_id}-tfstate"
-    prefix = "${var.name}/core"
+    prefix = "${var.environment}/core"
   }
 }
 
@@ -17,7 +17,7 @@ data "terraform_remote_state" "infra" {
   backend = "gcs"
   config = {
     bucket = "${var.management_project_id}-tfstate"
-    prefix = "${var.name}/infra"
+    prefix = "${var.environment}/infra"
   }
 }
 
@@ -41,12 +41,12 @@ data "google_container_cluster" "default" {
 /* === Services === */
 data "google_storage_bucket_object_content" "application_service_values" {
   for_each = toset(local.application_services)
-  name     = "${var.name}/${var.service_group}/${each.key}.yaml"
+  name     = "${var.environment}/${var.service_group}/${each.key}.yaml"
   bucket   = "${var.management_project_id}-values"
 }
 
 data "google_storage_bucket_objects" "application_services" {
   bucket     = "${var.management_project_id}-values"
-  match_glob = "${var.name}/${var.service_group}/*.yaml"
+  match_glob = "${var.environment}/${var.service_group}/*.yaml"
 }
 

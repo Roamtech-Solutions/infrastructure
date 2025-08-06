@@ -1,4 +1,4 @@
-variable "name" {
+variable "environment" {
   type        = string
   description = "Environment name"
 }
@@ -13,6 +13,10 @@ variable "management_project_id" {
 }
 
 variable "region" {
+	type = string
+}
+
+variable "host" {
 	type = string
 }
 
