@@ -12,7 +12,7 @@ services = [
   "cloudresourcemanager.googleapis.com",
   "sqladmin.googleapis.com",
 ]
-gitlab_project_id = "71366608"
+github_organisation = "Roamtech-Solutions"
 allowed_networks = {
   bob = "81.151.140.163/32"
 }

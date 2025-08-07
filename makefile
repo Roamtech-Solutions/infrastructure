@@ -5,6 +5,7 @@ STATE_BUCKET := $(MANAGEMENT_PROJECT_ID)-tfstate
 
 
 # === Environment configuration === #
+
 ALLOWED_ENVS := management development staging production
 
 # Check if ENV is set and valid
@@ -92,6 +93,7 @@ init-migrate:
 init-upgrade:
 	terraform -chdir=$(CHDIR) init -upgrade \
 		-reconfigure \
+		-backend-config="bucket=$(STATE_BUCKET)" \
 		-backend-config="prefix=$(PREFIX)"
 
 .PHONY: plan

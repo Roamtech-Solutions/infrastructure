@@ -2,10 +2,6 @@ variable "region" {
   type = string
 }
 
-variable "gitlab_project_id" {
-  type = string
-}
-
 variable "name" {
   type        = string
   description = "Environment name"
@@ -20,6 +16,10 @@ variable "organisation" {
 variable "billing_account" {
   type        = string
   description = "ID of the billing account to use for the environment"
+}
+
+variable "github_organisation" {
+	type = string
 }
 
 variable "services" {

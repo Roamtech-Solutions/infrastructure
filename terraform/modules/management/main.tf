@@ -46,8 +46,7 @@ resource "google_storage_bucket" "tfstate" {
 module "github_oidc" {
   source     = "../github-oidc"
   project_id = module.project.project_id
-  /* TODO: Don't hardcode GitHub org */
-  github_organisation = "Roamtech-Solutions"
+  github_organisation = var.github_organisation
 }
 
 /* Allow uploads to the Docker registry */
@@ -117,5 +116,12 @@ resource "google_storage_bucket" "values" {
   versioning {
     enabled = true
   }
+}
+
+/* GitHub Actions Set up */
+module "github_actions" {
+	source = "../github-actions"
+	project_id = module.project.project_id
+	github_organisation = var.github_organisation
 }
 

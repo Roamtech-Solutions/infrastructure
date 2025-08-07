@@ -1,0 +1,50 @@
+name: Build & Deploy Development
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # --- Validate Configurations --- #
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      continue: ${{ steps.validate.outputs.values_file }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check values file exists
+        id: values_file
+        run: |
+          if test -f "helm/development.yaml"; then
+            echo "values_file=true" >> $GITHUB_OUTPUT
+          else
+            echo "values_file=false" >> $GITHUB_OUTPUT
+          fi
+  # --- Build Docker Image --- #
+  build:
+    name: "Build"
+    needs:  validate
+    if: needs.check-file.outputs.continue == 'true'
+    uses: ${{ vars.GH_ORG }}/infrastructure/.github/workflows/docker.yaml@master
+    with:
+      service_name: ${{ vars.SERVICE_NAME }}
+      service_group: ${{ vars.SERVICE_GROUP }}
+      ref: ${{ github.sha }}
+  # --- Deploy --- #
+  deploy:
+    name: "Deploy"
+    needs: build
+    uses: ${{ vars.GH_ORG }}/infrastructure/.github/workflows/deploy-service.yaml@master
+    with:
+      service_name: ${{ vars.SERVICE_NAME }}
+      service_group: ${{ vars.SERVICE_GROUP }}
+      ref: ${{ github.sha }}
+      environment: development
+    secrets: inherit
+
