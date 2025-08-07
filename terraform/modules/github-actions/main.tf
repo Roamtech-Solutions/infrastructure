@@ -43,20 +43,16 @@ resource "github_actions_variable" "service_group" {
   value            = split("-", each.value.name)[0]
 }
 
-resource "github_actions_variable" "gh_org" {
- 	for_each = data.github_repository.default
-  repository          = each.value.name
-  variable_name    = "GH_ORG"
-  value            = var.github_organisation
-}
-
 /* === Workflows === */
 resource "github_repository_file" "workflow_development" {
 	for_each = data.github_repository.default
   repository          = each.value.name
   branch              = each.value.default_branch
   file                = ".github/workflows/development.yaml"
-  content             = file("${path.module}/resources/development.yaml")
+  content             = templatefile(
+		"${path.module}/resources/development.yaml",
+		{ github_organisation = var.github_organisation }
+	)
   commit_message      = "Managed by Terraform"
   commit_author       = "Terraform"
   commit_email        = "terraform@${var.project_id}.iam.gserviceaccount.com"
@@ -64,7 +60,6 @@ resource "github_repository_file" "workflow_development" {
 	depends_on = [
 		github_actions_variable.service_name,
 		github_actions_variable.service_group,
-		github_actions_variable.gh_org,
 	]
 }
 

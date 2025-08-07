@@ -15,7 +15,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     outputs:
-      continue: ${{ steps.validate.outputs.values_file }}
+      continue: $${{ steps.values_file.outputs.values_file }}
     steps:
       - uses: actions/checkout@v4
       - name: Check values file exists
@@ -30,21 +30,21 @@ jobs:
   build:
     name: "Build"
     needs:  validate
-    if: needs.check-file.outputs.continue == 'true'
-    uses: ${{ vars.GH_ORG }}/infrastructure/.github/workflows/docker.yaml@master
+    if: "$${{ needs.validate.outputs.continue == 'true' }}"
+    uses: ${github_organisation}/infrastructure/.github/workflows/docker.yaml@master
     with:
-      service_name: ${{ vars.SERVICE_NAME }}
-      service_group: ${{ vars.SERVICE_GROUP }}
-      ref: ${{ github.sha }}
+      service_name: $${{ vars.SERVICE_NAME }}
+      service_group: $${{ vars.SERVICE_GROUP }}
+      ref: $${{ github.sha }}
   # --- Deploy --- #
   deploy:
     name: "Deploy"
     needs: build
-    uses: ${{ vars.GH_ORG }}/infrastructure/.github/workflows/deploy-service.yaml@master
+    uses: ${github_organisation}/infrastructure/.github/workflows/deploy-service.yaml@master
     with:
-      service_name: ${{ vars.SERVICE_NAME }}
-      service_group: ${{ vars.SERVICE_GROUP }}
-      ref: ${{ github.sha }}
+      service_name: $${{ vars.SERVICE_NAME }}
+      service_group: $${{ vars.SERVICE_GROUP }}
+      ref: $${{ github.sha }}
       environment: development
     secrets: inherit
 
