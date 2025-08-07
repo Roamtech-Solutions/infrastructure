@@ -62,7 +62,7 @@ jobs:
         with:
           repository: Roamtech-Solutions/infrastructure
           ref: master
-          token: ${{ secrets.INFRASTRUCTURE_PAT }}
+          token: ${{ secrets.INFRA_PAT }}
       # Authenticate again because the checkout deletes the credentials file
       - name: Google Cloud Authentication
         uses: 'google-github-actions/auth@v2'
