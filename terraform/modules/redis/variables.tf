@@ -2,6 +2,10 @@ variable "project_id" {
   type = string
 }
 
+variable "prefix" {
+	type = string
+}
+
 variable "users" {
   type = list(string)
 }

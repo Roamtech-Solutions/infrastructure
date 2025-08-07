@@ -11,6 +11,7 @@ resource "google_service_account_iam_member" "external_secrets" {
   member             = "serviceAccount:${local.project_id}.svc.id.goog[${var.service_group}/external-secrets]"
 }
 
+/*TODO: Restrict secret manager access to just the service group */
 resource "google_project_iam_member" "external_secrets" {
   project = local.project_id
   role    = "roles/secretmanager.admin"
@@ -57,6 +58,15 @@ resource "google_secret_manager_secret_version" "cloudsql" {
     user = each.key
     pass = random_password.cloudsql[each.key].result
   })
+}
+
+/* === Redis === */
+module "redis" {
+	count = (length(keys(local.redis_services)) > 0) ? 1 : 0
+	source = "../../redis"
+	project_id = local.project_id
+	users = keys(local.redis_services)
+	prefix = var.service_group
 }
 
 /* === Service Group Setup === */

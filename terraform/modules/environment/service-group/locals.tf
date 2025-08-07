@@ -21,19 +21,25 @@ locals {
     )
   }
 
-  /* Application services which have a mysql property */
+	/* --- MySQL Services --- */
   mysql_services = {
     for k, v in local.application_service_values : k => lookup(v, "mysql", {})
     if lookup(v, "mysql", {}) != {}
   }
 
-  /* Application services which have a rabbitmq property */
+  /* --- RabbitMQ Services --- */
   rabbitmq_services = {
     for k, v in local.application_service_values : k => lookup(v, "rabbitmq", {})
     if lookup(v, "rabbitmq", {}) != {}
   }
 
-	/* Ingress services */
+	/* --- Redis Services --- */
+	redis_services = {
+    for k, v in local.application_service_values : k => lookup(v, "redis", {})
+		if lookup(v, "redis", {}) != {}
+	}
+
+	/* --- Ingress Services --- */
   ingress_services = {
     for k, v in local.application_service_values : k => merge(
 			lookup( v, "ingress", {}),

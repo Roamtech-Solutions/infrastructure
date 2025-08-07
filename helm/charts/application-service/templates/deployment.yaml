@@ -25,7 +25,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
 
-            # === MySQL === #
+            # --- MySQL --- #
             {{- if not (empty .Values.mysql) }}
             - name: {{ .Values.mysql.env.host }}
               valueFrom:
@@ -36,7 +36,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
-                  key: host
+                  key: port
             - name: {{ .Values.mysql.env.user }}
               valueFrom:
                 secretKeyRef:
@@ -49,7 +49,7 @@ spec:
                   key: pass
             {{- end }}
 
-            # === RabbitMQ === #
+            # --- RabbitMQ --- #
             {{- if not (empty .Values.rabbitmq) }}
             - name: {{ .Values.rabbitmq.env.host }}
               valueFrom:
@@ -60,7 +60,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
-                  key: host
+                  key: port
             - name: {{ .Values.rabbitmq.env.user }}
               valueFrom:
                 secretKeyRef:
@@ -73,7 +73,31 @@ spec:
                   key: password
             {{- end }}
 
-            # === User Managed Secrets === #
+            # --- Redis --- #
+            {{- if not (empty .Values.redis) }}
+            - name: {{ .Values.redis.env.host }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: host
+            - name: {{ .Values.redis.env.port }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: port
+            - name: {{ .Values.redis.env.user }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: user
+            - name: {{ .Values.redis.env.pass }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Secrets --- #
             {{- range $s := .Values.secrets }}
             - name: {{ $s }}
               valueFrom:
