@@ -55,7 +55,7 @@ resource "github_repository_file" "workflow_development" {
 	for_each = data.github_repository.default
   repository          = each.value.name
   branch              = each.value.default_branch
-  file                = ".github/workflow/development.yaml"
+  file                = ".github/workflows/development.yaml"
   content             = file("${path.module}/resources/development.yaml")
   commit_message      = "Managed by Terraform"
   commit_author       = "Terraform"
