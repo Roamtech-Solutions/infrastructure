@@ -29,10 +29,9 @@ endif
 
 # === Service Group === #
 
-ALLOWED_SGS := $(shell ls terraform/vars/$(ENV)/service-group | sed 's/.tfvars//g')
 ifeq ($(MOD),service-group)
-  ifneq ($(filter $(SG),$(ALLOWED_SGS)),$(SG))
-    $(error SG must be one of: $(ALLOWED_SGS))
+  ifndef SG
+    $(error SG (service group) not provided)
   endif
 endif
 

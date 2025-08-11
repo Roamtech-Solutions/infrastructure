@@ -1,4 +1,4 @@
-{{ if not (empty .Values.ingressServices) }}
+{{ if not (empty .Values.ingress_services) }}
 # === Ingress for Service Group === #
 ---
 apiVersion: networking.k8s.io/v1
@@ -9,7 +9,7 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: {{ .Release.Name }}
     # Build a list of certificates with the service group prefix
     {{- $certificates := list -}}
-    {{- range $k, $v := .Values.ingressServices -}}
+    {{- range $k := .Values.ingress_services -}}
     {{- $certificates = append $certificates (printf "{{ $.Release.Name }}-%s" $k) -}}
     {{- end -}}
     networking.gke.io/managed-certificates: {{- join "," $certificates | quote -}}
@@ -18,8 +18,8 @@ metadata:
     networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}
 spec:
   rules:
-  {{- range $k, $v := .Values.ingressServices }}
-  - host: {{ $v.host | default $k }}.{{ $.Values.host }}
+  {{- range $k := .Values.ingress_services }}
+  - host: {{ $k }}.{{ $.Values.host }}
     http:
       paths:
       - path: /*
@@ -28,7 +28,9 @@ spec:
           service:
             name: {{ $k }}
             port:
-              number: {{ $v.port }}
+              # NOTE: Services can always be listening on port 8080, this should
+              #       this should be fine for now.
+              number: 8080
   {{- end }}
 ---
 apiVersion: networking.gke.io/v1beta1
@@ -41,7 +43,7 @@ spec:
     enabled: true
 
 # === Certificates === #
-{{- range $k, $v := .Values.ingressServices }}
+{{- range $k := .Values.ingress_services }}
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate

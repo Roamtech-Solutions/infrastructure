@@ -16,17 +16,26 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
+          {{/* FPM container for PHP deployments */}}
+        - name: {{ .Release.Name }}-fpm
+          {{- if eq "php" .Values.type }} 
+          image: {{ .Release.Name }}-fpm:{{ .Values.tag }}
+
+          {{/* Otherwise, just the main deployment container */}}
+          {{- else }}
         - name: {{ .Release.Name }}
           image: {{ .Values.image | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.port }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+
           env:
 
             # --- MySQL --- #
-            {{- if not (empty .Values.mysql) }}
+            {{- if (.Values.mysql) }}
             - name: {{ .Values.mysql.env.host }}
               valueFrom:
                 secretKeyRef:
@@ -35,8 +44,7 @@ spec:
             - name: {{ .Values.mysql.env.port }}
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }}
-                  key: port
+                  name: cloudsql-{{ .Release.Name }} key: port
             - name: {{ .Values.mysql.env.user }}
               valueFrom:
                 secretKeyRef:
@@ -50,7 +58,7 @@ spec:
             {{- end }}
 
             # --- RabbitMQ --- #
-            {{- if not (empty .Values.rabbitmq) }}
+            {{- if (.Values.rabbitmq) }}
             - name: {{ .Values.rabbitmq.env.host }}
               valueFrom:
                 secretKeyRef:
@@ -74,7 +82,7 @@ spec:
             {{- end }}
 
             # --- Redis --- #
-            {{- if not (empty .Values.redis) }}
+            {{- if (.Values.redis) }}
             - name: {{ .Values.redis.env.host }}
               valueFrom:
                 secretKeyRef:
@@ -105,4 +113,9 @@ spec:
                   name: {{ $.Release.Name }}
                   key:  {{ $s }}
             {{- end }}
+
+        {{/* NGINX container for PHP deployments */}}
+        {{ if eq "php" .Values.type }} 
+        - name: 
+        {{- end }}
 

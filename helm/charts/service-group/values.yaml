@@ -4,6 +4,6 @@ rabbitmq:
   cpu: 250m
   memory: 1Gi
 
-cloudsqlServices: {}
-ingressServices: {}
+cloudsql_services: []
+ingress_services: []
 

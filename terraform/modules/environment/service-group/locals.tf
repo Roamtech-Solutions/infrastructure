@@ -22,29 +22,27 @@ locals {
   }
 
 	/* --- MySQL Services --- */
-  mysql_services = {
-    for k, v in local.application_service_values : k => lookup(v, "mysql", {})
-    if lookup(v, "mysql", {}) != {}
-  }
+	mysql_services = [
+    for k, v in local.application_service_values : k
+			if contains(lookup(v, "requires", []), "mysql")
+	]
 
   /* --- RabbitMQ Services --- */
-  rabbitmq_services = {
-    for k, v in local.application_service_values : k => lookup(v, "rabbitmq", {})
-    if lookup(v, "rabbitmq", {}) != {}
-  }
+  rabbitmq_services = [
+    for k, v in local.application_service_values : k
+			if contains(lookup(v, "requires", []), "rabbitmq")
+  ]
 
 	/* --- Redis Services --- */
-	redis_services = {
-    for k, v in local.application_service_values : k => lookup(v, "redis", {})
-		if lookup(v, "redis", {}) != {}
-	}
+	redis_services = [
+    for k, v in local.application_service_values : k
+			if contains(lookup(v, "requires", []), "redis")
+	]
 
 	/* --- Ingress Services --- */
-  ingress_services = {
-    for k, v in local.application_service_values : k => merge(
-			lookup( v, "ingress", {}),
-			{ port = v.port }
-		) if lookup(v, "ingress", {}) != {}
-	}
+	ingress_services = [
+    for k, v in local.application_service_values : k
+			if lookup(v, "ingress", false)
+	]
 }
 

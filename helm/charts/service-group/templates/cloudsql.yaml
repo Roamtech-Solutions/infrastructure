@@ -1,4 +1,4 @@
-{{- if not (empty .Values.cloudsqlServices) }}
+{{- if not (len .Values.cloudsql_services) }}
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -17,7 +17,7 @@ spec:
         key: {{ $.Release.Name }}-cloudsql-root
 
 # === Configure Secrets for Each Service === #
-{{- range $k, $v := .Values.cloudsqlServices }}
+{{- range $k := .Values.cloudsql_services }}
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -50,18 +50,15 @@ spec:
       containers:
       - name: mysql-init
         image: mysql:8.0
+        # TODO: Don't give all permissions to every user.
         command:
           - /bin/sh
           - -c
           - |
             mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
-            {{- range $user, $schemas := .Values.cloudsqlServices }}
-            CREATE USER IF NOT EXISTS '{{ $user }}'@'{{ $.Values.podCidr }}' IDENTIFIED BY '${SVC_PASS_{{ $user }}}';
-            {{- range $schema, $tables := $schemas }}
-            {{- range $table, $privileges := $tables }}
-            GRANT {{ $privileges }} ON {{ $schema }}.{{ $table }} TO '{{ $user }}'@'{{ $.Values.podCidr }}';
-            {{- end }}
-            {{- end }}
+            {{- range $k := .Values.cloudsql_services }}
+            CREATE USER IF NOT EXISTS '{{ $k }}'@'{{ $.Values.pod_cidr }}' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
+            GRANT ALL PRIVILEGES ON *.* TO '{{ $k }}'@'{{ $.Values.pod_cidr }}';
             {{- end }}
             "
         env:
@@ -87,7 +84,7 @@ spec:
               name: cloudsql-root
               key: pass
         # --- User credentials for each service --- #
-        {{- range $k, $v := .Values.cloudsqlServices }}
+        {{- range $k := .Values.cloudsql_services }}
         - name: SVC_PASS_{{ $k }}
           valueFrom:
             secretKeyRef:

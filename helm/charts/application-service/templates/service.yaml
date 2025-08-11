@@ -22,13 +22,13 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   securityPolicy:
-    name: {{ .Values.securityPolicy }}
+    name: {{ .Values.security_policy }}
   healthCheck:
     checkIntervalSec: 30
     timeoutSec: 5
     healthyThreshold: 1
     unhealthyThreshold: 2
     type: HTTP
-    requestPath: {{ .Values.healthCheckPath }}
+    requestPath: {{ .Values.health_check_path }}
     port: {{ .Values.port }}
 

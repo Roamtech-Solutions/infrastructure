@@ -20,7 +20,7 @@ resource "google_project_iam_member" "external_secrets" {
 
 /* === MySQL Database === */
 module "cloudsql" {
-	count = length(keys(local.mysql_services)) > 0 ? 1 : 0
+	count = length(local.mysql_services) > 0 ? 1 : 0
   source           = "../../cloudsql"
   project_id       = local.project_id
   name             = var.service_group
@@ -34,7 +34,7 @@ module "cloudsql" {
 /* --- Database Secrets & Connection Information --- */
 /* A user and password is setup for each application service */
 resource "random_password" "cloudsql" {
-  for_each         = local.mysql_services
+  for_each         = toset(local.mysql_services)
   length           = 16
   special          = true
   override_special = "!#$%&*()-_=+[]{}<>:?"
@@ -62,7 +62,7 @@ resource "google_secret_manager_secret_version" "cloudsql" {
 
 /* === Redis === */
 module "redis" {
-	count = (length(keys(local.redis_services)) > 0) ? 1 : 0
+	count = (length(local.redis_services) > 0) ? 1 : 0
 	source = "../../redis"
 	project_id = local.project_id
 	users = keys(local.redis_services)
@@ -73,7 +73,7 @@ module "redis" {
 
 /* --- Ingress --- */
 resource "google_compute_global_address" "default" {
-  count = (length(keys(local.ingress_services)) > 0) ? 1 : 0
+  count = (length(local.ingress_services) > 0) ? 1 : 0
   project  = local.project_id
   name     = "${var.service_group}-${var.environment}"
 }
@@ -100,16 +100,16 @@ resource "helm_release" "service_group" {
   timeout = 900
 
   values = [yamlencode({
-    projectId    = local.project_id
+    project_id    = local.project_id
     region       = var.region
     name         = data.terraform_remote_state.infra.outputs.gke_cluster.name
-    serviceGroup = var.service_group
+    service_group = var.service_group
     rabbitmq = {
-      enabled = (length(keys(local.rabbitmq_services)) > 0)
+      enabled = (length(local.rabbitmq_services) > 0)
     }
-    cloudsqlServices = local.mysql_services
-    podCidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
-    externalSecretsServiceAccount = google_service_account.external_secrets.email
+    mysql_services = local.mysql_services
+    pod_cidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
+    external_secrets_sa = google_service_account.external_secrets.email
   })]
   dependency_update = true
 

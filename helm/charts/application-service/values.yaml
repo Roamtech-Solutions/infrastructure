@@ -1,12 +1,12 @@
 # === Ingress & Service === #
 ingress: false
 host: ""
-healthCheckPath: "/"
-securityPolicy: default
+health_check_path: "/"
+security_policy: default
 
 # === Deployment === #
 replicas: 1
-port: 80
+port: 8080
 env: []
 resources:
   limits:
@@ -23,6 +23,6 @@ secrets: {}
 secret_refs: {}
 
 # === Other === #
-mysql: {}
-rabbitmq: {}
+mysql: false
+rabbitmq: false
 
