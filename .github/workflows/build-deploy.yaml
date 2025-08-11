@@ -1,4 +1,6 @@
-name: Docker Build
+name: Build & Deploy Service
+
+
 on:
   workflow_call:
     inputs:
@@ -7,22 +9,31 @@ on:
         required: true
         type: string
       service_group:
-        description: "Environment GAR to push the Docker image to"
+        description: "Name of the service group to deploy"
         required: true
         type: string
       environment:
-        description: "Environment GAR to push the Docker image to"
+        description: "Environment to make the deployment to"
         required: true
         type: string
+      deploy:
+        description: "Whether to also deploy the new builds"
+        default: false
+        type: bool
       ref:
         required: true
         type: string
+
+
 permissions:
   id-token: write
   contents: read
+
+
 jobs:
+
   matrix:
-    name: "Prepare Build Matrix"
+    name: "🔧 Prepare Build Matrix"
     runs-on: ubuntu-latest
     env:
       # NOTE: Values hardcoded here because you need GitHub enterprise to set
@@ -38,7 +49,7 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ github.event.repository.name }}
-      - name: Load build list
+      - name: Load build matrix
         id: setup
         run: |
           service_type=$(yq '.type' ./env/${{ inputs.environment }}.yaml)
@@ -46,8 +57,11 @@ jobs:
           echo matrix="'$(cat .github/matrix/docker-${service_type})'" >> $GITHUB_OUTPUTS
     outputs:
       matrix: ${{ steps.setup.outputs.matrix }}
+
+
+  # === Build === #
     
-  docker_build_push:
+  build:
     name: "🐳📦 ${{ inputs.service_name }}:${{ inputs.ref }}"
     runs-on: ubuntu-latest
     needs: matrix
@@ -102,4 +116,80 @@ jobs:
           tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/${{ inputs.service_group }}/${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+
+  # === Deployment === #
+
+  deploy:
+    name: "Deploy ${{ inputs.service_name }}:${{ inputs.ref }}"
+    if: ${{ github.event.inputs.deploy == 'true' }}
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      # NOTE: Values hardcoded here because you need GitHub enterprise to set
+      #       these at the org level.
+      MANAGEMENT_PROJECT_ID: management-b6d6
+      GOOGLE_CLOUD_WIP: 'projects/155168468510/locations/global/workloadIdentityPools/github/providers/github-provider'
+      GAR_REGION: europe-west1
+    steps:
+
+      # --- Setup --- #
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+      - name: Google Cloud Authentication
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
+      - name: Setup Google Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 416.0.0'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12.1"
+
+      # --- Upload values file --- #
+      - name: Update values
+        run: |
+          export SERVICE_NAME=${{ inputs.service_name }}
+          echo tag: "\"${GITHUB_SHA::8}\"" > /tmp/values.yaml
+          envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
+          cat /tmp/values.yaml
+          gcloud storage cp /tmp/values.yaml gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
+
+      # --- Apply Terraform --- #
+      - name: Checkout infrastructure repository
+        uses: actions/checkout@v4
+        with:
+          repository: Roamtech-Solutions/infrastructure
+          ref: master
+          token: ${{ secrets.INFRA_PAT }}
+      # Authenticate again because the checkout deletes the credentials file
+      - name: Google Cloud Authentication
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
+      - name: Terraform
+        run: |
+          sudo apt update
+          sudo apt install -y make curl
+
+          # Add GitLab Runner IP to allow for deployments to the GKE cluster.
+          export TF_VAR_ci_runner_ip=$(curl --ipv4 ifconfig.me)
+          make apply ENV=${{ inputs.environment }} MOD=infra
+
+          # Apply the Helm charts and related infrastructure for the service
+          # group.
+          make apply ENV=${{ inputs.environment }} \
+            MOD=service-group \
+            SG=${{ inputs.service_group }}
+
+          # Remove the GitLab runner IP from being allowed to connect to the
+          # cluster.
+          export TF_VAR_ci_runner_ip=""
+          make apply ENV=${{ inputs.environment }} MOD=infra
 

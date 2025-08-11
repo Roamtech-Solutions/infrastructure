@@ -1,0 +1,9 @@
+{
+	"include": [
+		{
+			"name": "custom",
+			"dockerfile": "Dockerfile"
+		}
+	]
+}
+

@@ -21,30 +21,22 @@ jobs:
       - name: Check values file exists
         id: values_file
         run: |
-          if test -f "helm/development.yaml"; then
+          if test -f "env/development.yaml"; then
             echo "values_file=true" >> $GITHUB_OUTPUT
           else
             echo "values_file=false" >> $GITHUB_OUTPUT
           fi
-  # --- Build Docker Image --- #
-  build:
+
+  # --- Build & Deploy --- #
+  build_deploy:
     name: "Build"
     needs:  validate
     if: "$${{ needs.validate.outputs.continue == 'true' }}"
-    uses: ${github_organisation}/infrastructure/.github/workflows/docker.yaml@master
-    with:
-      service_name: $${{ vars.SERVICE_NAME }}
-      service_group: $${{ vars.SERVICE_GROUP }}
-      ref: $${{ github.sha }}
-  # --- Deploy --- #
-  deploy:
-    name: "Deploy"
-    needs: build
-    uses: ${github_organisation}/infrastructure/.github/workflows/deploy-service.yaml@master
+    uses: ${github_organisation}/infrastructure/.github/workflows/build_deploy.yaml@master
     with:
       service_name: $${{ vars.SERVICE_NAME }}
       service_group: $${{ vars.SERVICE_GROUP }}
       ref: $${{ github.sha }}
       environment: development
-    secrets: inherit
+      deploy: false
 
