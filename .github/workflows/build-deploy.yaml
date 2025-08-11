@@ -61,7 +61,7 @@ jobs:
         run: |
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
-          echo matrix="'$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n')'" >> $GITHUB_OUTPUT
+          echo matrix="'$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t')'" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.setup.outputs.matrix }}
 
