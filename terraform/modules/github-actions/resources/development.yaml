@@ -32,7 +32,7 @@ jobs:
     name: "Build"
     needs:  validate
     if: "$${{ needs.validate.outputs.continue == 'true' }}"
-    uses: ${github_organisation}/infrastructure/.github/workflows/build_deploy.yaml@master
+    uses: ${github_organisation}/infrastructure/.github/workflows/build-deploy.yaml@master
     with:
       service_name: $${{ vars.SERVICE_NAME }}
       service_group: $${{ vars.SERVICE_GROUP }}
