@@ -19,7 +19,7 @@ on:
       deploy:
         description: "Whether to also deploy the new builds"
         default: false
-        type: bool
+        type: boolean
       ref:
         required: true
         type: string
