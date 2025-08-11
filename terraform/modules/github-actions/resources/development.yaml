@@ -39,4 +39,5 @@ jobs:
       ref: $${{ github.sha }}
       environment: development
       deploy: false
+    secrets: inherit
 
