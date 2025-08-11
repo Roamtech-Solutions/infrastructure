@@ -88,6 +88,9 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ github.event.repository.name }}
+      - name: Prepare Docker build
+        run: |
+          cp -r infrastructure/docker ${{ github.event.repository.name }}
       - name: Google Cloud Authentication
         id: auth
         uses: 'google-github-actions/auth@v2'
