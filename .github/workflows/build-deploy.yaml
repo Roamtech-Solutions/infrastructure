@@ -52,7 +52,7 @@ jobs:
       - name: Load build matrix
         id: setup
         run: |
-          service_type=$(yq '.type' ./${{ github.event.repository.name }}/${{ inputs.environment }}.yaml)
+          service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
           echo matrix="'$(cat .github/matrix/docker-${service_type})'" >> $GITHUB_OUTPUTS
     outputs:
