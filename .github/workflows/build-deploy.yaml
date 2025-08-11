@@ -16,10 +16,6 @@ on:
         description: "Environment to make the deployment to"
         required: true
         type: string
-      deploy:
-        description: "Whether to also deploy the new builds"
-        default: false
-        type: boolean
       ref:
         required: true
         type: string
@@ -132,7 +128,6 @@ jobs:
 
   deploy:
     name: "Deploy ${{ inputs.service_name }}:${{ inputs.ref }}"
-    if: ${{ github.event.inputs.deploy }}
     runs-on: ubuntu-latest
     needs: build
     env:
