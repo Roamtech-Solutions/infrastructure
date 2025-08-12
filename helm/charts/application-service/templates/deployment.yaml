@@ -17,14 +17,14 @@ spec:
     spec:
       containers:
           {{/* FPM container for PHP deployments */}}
-        - name: {{ .Release.Name }}-fpm
           {{- if eq "php" .Values.type }} 
-          image: {{ .Release.Name }}-fpm:{{ .Values.tag }}
+        - name: {{ .Release.Name }}-fpm
+          image: {{ .Values.image }}-fpm:{{ .Values.tag }}
 
           {{/* Otherwise, just the main deployment container */}}
           {{- else }}
         - name: {{ .Release.Name }}
-          image: {{ .Values.image | quote }}
+          image: {{ .Values.image }}:{{ .Values.tag }}
           ports:
             - name: http
               containerPort: {{ .Values.port }}
@@ -116,6 +116,19 @@ spec:
 
         {{/* NGINX container for PHP deployments */}}
         {{ if eq "php" .Values.type }} 
-        - name: 
+        - name: {{ .Release.Name }}-nginx
+          image: {{ .Values.image }}-nginx:{{ .Values.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
         {{- end }}
 

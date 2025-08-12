@@ -3,8 +3,7 @@ port: 6379
 cluster:
   enabled: false
   replicas: 6
-namespace: default
 cpu: 50m
 memory: 64Mi
 storage: 1Gi
-
+config_secret: redis-config

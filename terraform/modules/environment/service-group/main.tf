@@ -60,15 +60,6 @@ resource "google_secret_manager_secret_version" "cloudsql" {
   })
 }
 
-/* === Redis === */
-module "redis" {
-	count = (length(local.redis_services) > 0) ? 1 : 0
-	source = "../../redis"
-	project_id = local.project_id
-	users = keys(local.redis_services)
-	prefix = var.service_group
-}
-
 /* === Service Group Setup === */
 
 /* --- Ingress --- */
@@ -114,6 +105,17 @@ resource "helm_release" "service_group" {
   dependency_update = true
 
   depends_on = [module.cloudsql, google_secret_manager_secret_version.cloudsql]
+}
+
+/* === Redis === */
+module "redis" {
+	count = (length(local.redis_services) > 0) ? 1 : 0
+	source = "../../redis"
+	project_id = local.project_id
+	users = local.redis_services
+	prefix = var.service_group
+	namespace = var.service_group
+	depends_on = [helm_release.service_group]
 }
 
 /* === Application Services === */

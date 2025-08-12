@@ -7,7 +7,6 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: redis-cluster-setup
-  namespace: default
 roleRef:
   kind: ClusterRole
   name: redis-cluster-setup

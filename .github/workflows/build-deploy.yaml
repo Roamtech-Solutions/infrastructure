@@ -58,14 +58,16 @@ jobs:
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
+          echo tag="${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.setup.outputs.matrix }}
+      tag: ${{ steps.setup.outputs.tag }}
 
 
   # === Build === #
     
   build:
-    name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
+    name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ matrix.tag }}"
     runs-on: ubuntu-latest
     needs: matrix
     strategy:
@@ -127,9 +129,11 @@ jobs:
   # === Deployment === #
 
   deploy:
-    name: "Deploy ${{ inputs.service_name }}:${{ inputs.ref }}"
+    name: "Deploy ${{ inputs.service_name }}:${{ needs.matrix.outputs.tag }}"
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build
+      - matrix
     env:
       # NOTE: Values hardcoded here because you need GitHub enterprise to set
       #       these at the org level.
@@ -159,7 +163,7 @@ jobs:
       - name: Update values
         run: |
           export SERVICE_NAME=${{ inputs.service_name }}
-          echo tag: "\"${GITHUB_SHA::8}\"" > /tmp/values.yaml
+          echo tag: ${{ needs.matrix.outputs.tag }} > /tmp/values.yaml
           envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
           cat /tmp/values.yaml
           gcloud storage cp /tmp/values.yaml gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml

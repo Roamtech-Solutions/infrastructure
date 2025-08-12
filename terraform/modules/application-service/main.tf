@@ -5,9 +5,9 @@ resource "helm_release" "application_service" {
   create_namespace = true
   values = [
     yamlencode({
-      image        = "${var.gar}/${var.name}:${var.tag}"
+      image        = "${var.gar}/${var.name}"
       host         = (var.ingress != null) ? var.ingress.host : ""
-      serviceGroup = var.service_group
+      service_group = var.service_group
     }),
     var.values,
   ]

@@ -28,7 +28,7 @@ resource "google_secret_manager_secret_version" "users" {
 # === Redis Configuration === #
 resource "google_secret_manager_secret" "default" {
   project   = var.project_id
-  secret_id = "redis-config"
+  secret_id = "${var.prefix}-redis-config"
   replication {
     auto {}
   }
@@ -54,5 +54,13 @@ resource "google_secret_manager_secret_version" "default" {
 resource "helm_release" "redis" {
   name  = "redis"
   chart = "${path.module}/../../../helm/charts/redis"
+	namespace = var.namespace
+	create_namespace = true
+  timeout = 600
+	values = [
+		yamlencode({
+			config_secret = google_secret_manager_secret.default.secret_id
+		})
+	]
 }
 

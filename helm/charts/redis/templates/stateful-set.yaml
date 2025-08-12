@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis
-  namespace: {{ .Values.namespace }}
 spec:
   serviceName: redis
 {{ if eq .Values.cluster.enabled true }}
