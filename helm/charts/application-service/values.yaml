@@ -8,6 +8,11 @@ security_policy: default
 replicas: 1
 port: 8080
 env: []
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
 resources:
   limits:
     cpu: 50m

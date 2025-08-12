@@ -1,4 +1,4 @@
-{{- if false }}
+{{- if eq "php" .Values.type }} 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -8,6 +8,8 @@ metadata:
     app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicas }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -17,15 +19,14 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Release.Name }}
-          image: {{ .Values.image }}:{{ .Values.tag }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.port }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-
+        # --- FPM container accepting CGI requests from NGINX --- #
+        - name: {{ .Release.Name }}-fpm
+          image: {{ .Values.image }}-fpm:{{ .Values.tag }}
           env:
+            - name: APP_NAME
+              value: {{ .Release.Name }}
+            - name: VITE_APP_NAME
+              value: {{ .Release.Name }}
 
             # --- MySQL --- #
             {{- if (.Values.mysql) }}
@@ -76,6 +77,8 @@ spec:
 
             # --- Redis --- #
             {{- if (.Values.redis) }}
+            - name: REDIS_CLIENT
+              value: phpredis
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
@@ -86,12 +89,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: port
-            - name: REDIS_USER
+            - name: REDIS_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: user
-            - name: REDIS_PASS
+            - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
@@ -106,4 +109,45 @@ spec:
                   name: {{ $.Release.Name }}
                   key:  {{ $s }}
             {{- end }}
+
+          volumeMounts:
+            - name: public-assets
+              mountPath: /var/www/public/build
+
+        # --- NGINX container for ingress --- #
+        - name: {{ .Release.Name }}-nginx
+          image: {{ .Values.image }}-nginx:{{ .Values.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          volumeMounts:
+            - name: public-assets
+              mountPath: /var/www/public/build
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+
+      initContainers:
+        # --- Prepare Shared Volume --- #
+        # The build folder will just be empty unless it is preloaded
+        # with the data already available on the NGINX container image.
+        - name: init-shared-volume
+          image: {{ .Values.image }}-nginx:{{ .Values.tag }}
+          command: [sh, -c]
+          args: ["cp -r /var/www/public/build/* /data"]
+          volumeMounts:
+            - name: public-assets
+              mountPath: /data
+
+      volumes:
+        # Public assets are shared across the NGINX and FPM container
+        - name: public-assets
+          emptyDir: {}
 {{- end }}
+
