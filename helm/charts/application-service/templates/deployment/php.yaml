@@ -30,21 +30,23 @@ spec:
 
             # --- MySQL --- #
             {{- if (.Values.mysql) }}
-            - name: MYSQL_HOST
+            - name: DB_CONNECTION
+              value: mysql
+            - name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: host
-            - name: MYSQL_PORT
+            - name: DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }} key: port
-            - name: MYSQL_USER
+            - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: user
-            - name: MYSQL_PASS
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
@@ -77,8 +79,12 @@ spec:
 
             # --- Redis --- #
             {{- if (.Values.redis) }}
+            # Set Laravel to use redis
             - name: REDIS_CLIENT
               value: phpredis
+            - name: SESSION_DRIVER
+              value: redis
+            # Provide redis connection information
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
