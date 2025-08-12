@@ -99,9 +99,12 @@ resource "helm_release" "service_group" {
       enabled = (length(local.rabbitmq_services) > 0)
     }
     mysql_services = local.mysql_services
+		ingress_services = local.ingress_services
+		host = "${var.sub_host}.${var.host}"
     pod_cidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
     external_secrets_sa = google_service_account.external_secrets.email
   })]
+
   dependency_update = true
 
   depends_on = [module.cloudsql, google_secret_manager_secret_version.cloudsql]

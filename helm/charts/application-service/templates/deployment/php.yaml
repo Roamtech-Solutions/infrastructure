@@ -29,7 +29,7 @@ spec:
               value: {{ .Release.Name }}
 
             # --- MySQL --- #
-            {{- if (.Values.mysql) }}
+            {{- if has "mysql" .Values.requires }}
             - name: DB_CONNECTION
               value: mysql
             - name: DB_HOST
@@ -40,7 +40,8 @@ spec:
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }} key: port
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -54,7 +55,7 @@ spec:
             {{- end }}
 
             # --- RabbitMQ --- #
-            {{- if (.Values.rabbitmq) }}
+            {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
@@ -78,7 +79,7 @@ spec:
             {{- end }}
 
             # --- Redis --- #
-            {{- if (.Values.redis) }}
+            {{- if has "redis" .Values.requires }}
             # Set Laravel to use redis
             - name: REDIS_CLIENT
               value: phpredis

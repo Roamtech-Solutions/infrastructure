@@ -1,4 +1,4 @@
-{{- if not (len .Values.cloudsql_services) }}
+{{- if (len .Values.mysql_services) }}
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -17,7 +17,7 @@ spec:
         key: {{ $.Release.Name }}-cloudsql-root
 
 # === Configure Secrets for Each Service === #
-{{- range $k := .Values.cloudsql_services }}
+{{- range $k := .Values.mysql_services }}
 ---
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
@@ -34,7 +34,7 @@ spec:
   dataFrom:
     - extract:
         key: {{ $.Release.Name }}-cloudsql-{{ $k }}
-{{ end }}
+{{- end }}
 
 # === Setup SQL User Accounts on the Server === #
 ---
@@ -56,7 +56,7 @@ spec:
           - -c
           - |
             mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
-            {{- range $k := .Values.cloudsql_services }}
+            {{- range $k := .Values.mysql_services }}
             CREATE USER IF NOT EXISTS '{{ $k }}'@'{{ $.Values.pod_cidr }}' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
             GRANT ALL PRIVILEGES ON *.* TO '{{ $k }}'@'{{ $.Values.pod_cidr }}';
             {{- end }}
@@ -84,7 +84,7 @@ spec:
               name: cloudsql-root
               key: pass
         # --- User credentials for each service --- #
-        {{- range $k := .Values.cloudsql_services }}
+        {{- range $k := .Values.mysql_services }}
         - name: SVC_PASS_{{ $k }}
           valueFrom:
             secretKeyRef:

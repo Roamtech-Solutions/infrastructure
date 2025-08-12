@@ -48,10 +48,10 @@ spec:
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ .Release.Name }}-{{ $k }}
+  name: {{ $.Release.Name }}-{{ $k }}
 spec:
   domains:
-    - {{ $k }}.{{ .Values.host }}
+    - {{ $k }}.{{ $.Values.host }}
 {{- end }}
 
 {{ end }}
