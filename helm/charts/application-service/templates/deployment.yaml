@@ -36,21 +36,21 @@ spec:
 
             # --- MySQL --- #
             {{- if (.Values.mysql) }}
-            - name: {{ .Values.mysql.env.host }}
+            - name: MYSQL_HOST
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: host
-            - name: {{ .Values.mysql.env.port }}
+            - name: MYSQL_PORT
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }} key: port
-            - name: {{ .Values.mysql.env.user }}
+            - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: user
-            - name: {{ .Values.mysql.env.pass }}
+            - name: MYSQL_PASS
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
@@ -59,22 +59,22 @@ spec:
 
             # --- RabbitMQ --- #
             {{- if (.Values.rabbitmq) }}
-            - name: {{ .Values.rabbitmq.env.host }}
+            - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: host
-            - name: {{ .Values.rabbitmq.env.port }}
+            - name: RABBITMQ_PORT
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: port
-            - name: {{ .Values.rabbitmq.env.user }}
+            - name: RABBITMQ_USER
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: username
-            - name: {{ .Values.rabbitmq.env.pass }}
+            - name: RABBITMQ_PASS
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
@@ -83,22 +83,22 @@ spec:
 
             # --- Redis --- #
             {{- if (.Values.redis) }}
-            - name: {{ .Values.redis.env.host }}
+            - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: host
-            - name: {{ .Values.redis.env.port }}
+            - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: port
-            - name: {{ .Values.redis.env.user }}
+            - name: REDIS_USER
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: user
-            - name: {{ .Values.redis.env.pass }}
+            - name: REDIS_PASS
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
