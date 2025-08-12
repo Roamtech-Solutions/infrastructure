@@ -67,7 +67,7 @@ jobs:
   # === Build === #
     
   build:
-    name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ matrix.tag }}"
+    name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ needs.matrix.outputs.tag }}"
     runs-on: ubuntu-latest
     needs: matrix
     strategy:
@@ -121,7 +121,7 @@ jobs:
           context: ${{ github.event.repository.name }}
           file: ${{ github.event.repository.name }}/${{ matrix.dockerfile }}
           push: true
-          tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/${{ inputs.service_group }}/${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
+          tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/${{ inputs.service_group }}/${{ inputs.service_name }}-${{ matrix.name }}:${{ needs.matrix.outputs.tag }}"
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
