@@ -123,7 +123,7 @@ spec:
 
           volumeMounts:
             - name: public-assets
-              mountPath: /var/www/public/build
+              mountPath: /var/www/public
             {{- if has "mysql" .Values.requires }}
             - name: mysql-cert
               mountPath: /etc/ssl/certs
@@ -138,7 +138,7 @@ spec:
               containerPort: {{ .Values.port }}
           volumeMounts:
             - name: public-assets
-              mountPath: /var/www/public/build
+              mountPath: /var/www/public
           resources:
             limits:
               cpu: 50m
@@ -156,7 +156,7 @@ spec:
         - name: init-shared-volume
           image: {{ .Values.image }}-nginx:{{ .Values.tag }}
           command: [sh, -c]
-          args: ["cp -r /var/www/public/build/* /data"]
+          args: ["cp -r /var/www/public/* /data"]
           volumeMounts:
             - name: public-assets
               mountPath: /data
