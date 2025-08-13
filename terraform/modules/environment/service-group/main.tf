@@ -73,7 +73,7 @@ resource "helm_release" "service_group" {
     }
     mysql_services = local.mysql_services
 		ingress_services = local.ingress_services
-		host = "${var.sub_host}.${var.host}"
+		host = local.host
     pod_cidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
     external_secrets_sa = google_service_account.external_secrets.email
   })]
