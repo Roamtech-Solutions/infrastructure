@@ -1,4 +1,4 @@
-{{- if (eq "php" .Values.type) }} 
+{{- if (eq "php-slim" .Values.type) }} 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -25,15 +25,9 @@ spec:
           env:
             - name: APP_NAME
               value: {{ .Release.Name }}
-            - name: VITE_APP_NAME
-              value: {{ .Release.Name }}
-            - name: APP_URL
-              value: https://{{ .Values.host }}
 
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}
-            - name: DB_CONNECTION
-              value: mysql
             - name: MYSQL_ATTR_SSL_CA
               value: /etc/ssl/certs/mysql-ca.pem
             - name: DB_HOST
@@ -46,12 +40,12 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: port
-            - name: DB_USERNAME
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: user
-            - name: DB_PASSWORD
+            - name: DB_PASS
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
@@ -60,22 +54,22 @@ spec:
 
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
-            - name: RABBITMQ_HOST
+            - name: RABBIT_HOST
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: host
-            - name: RABBITMQ_PORT
+            - name: RABBIT_PORT
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: port
-            - name: RABBITMQ_USER
+            - name: RABBIT_USER
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: username
-            - name: RABBITMQ_PASS
+            - name: RABBIT_PASS
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
