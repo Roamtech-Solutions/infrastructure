@@ -8,7 +8,7 @@ resource "random_password" "users" {
 resource "google_secret_manager_secret" "users" {
 	for_each = toset(var.users)
   project   = var.project_id
-  secret_id = "${var.prefix}-${each.key}"
+  secret_id = "${var.prefix}-${each.key}-redis"
   replication {
     auto {}
   }

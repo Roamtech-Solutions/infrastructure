@@ -32,6 +32,8 @@ spec:
             {{- if has "mysql" .Values.requires }}
             - name: DB_CONNECTION
               value: mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
@@ -120,6 +122,11 @@ spec:
           volumeMounts:
             - name: public-assets
               mountPath: /var/www/public/build
+            {{- if has "mysql" .Values.requires }}
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            {{- end }}
 
         # --- NGINX container for ingress --- #
         - name: {{ .Release.Name }}-nginx
@@ -153,8 +160,17 @@ spec:
               mountPath: /data
 
       volumes:
-        # Public assets are shared across the NGINX and FPM container
+        # --- Public assets are shared across the NGINX and FPM container --- #
         - name: public-assets
           emptyDir: {}
+        {{- if has "mysql" .Values.requires }}
+        # --- MySQL Certificate --- #
+        - name: mysql-cert
+          secret:
+            secretName: cloudsql-cert
+            items:
+              - key: data
+                path: mysql-ca.pem
+        {{- end }}
 {{- end }}
 

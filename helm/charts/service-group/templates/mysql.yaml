@@ -14,7 +14,25 @@ spec:
     creationPolicy: Owner
   dataFrom:
     - extract:
-        key: {{ $.Release.Name }}-cloudsql-root
+        key: {{ .Release.Name }}-cloudsql-root
+
+# === Certificate for the MySQL Server === #
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cloudsql-cert
+spec:
+  refreshInterval: 60s
+  secretStoreRef:
+    name: default
+    kind: SecretStore
+  target:
+    name: cloudsql-cert
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: {{ $.Release.Name }}-cloudsql-cert
 
 # === Configure Secrets for Each Service === #
 {{- range $k := .Values.mysql_services }}
@@ -36,6 +54,9 @@ spec:
         key: {{ $.Release.Name }}-cloudsql-{{ $k }}
 {{- end }}
 
+{{/* Disabled for now, need to get this working still */}}
+{{/* For some reason is breaks access for the root user */}}
+{{- if false }}
 # === Setup SQL User Accounts on the Server === #
 ---
 apiVersion: batch/v1
@@ -57,9 +78,11 @@ spec:
           - |
             mysql -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
             {{- range $k := .Values.mysql_services }}
-            CREATE USER IF NOT EXISTS '{{ $k }}'@'{{ $.Values.pod_cidr }}' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
-            GRANT ALL PRIVILEGES ON *.* TO '{{ $k }}'@'{{ $.Values.pod_cidr }}';
+            CREATE USER IF NOT EXISTS '{{ $k }}'@'%' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
+            GRANT ALL PRIVILEGES ON *.* TO '{{ $k }}'@'%';
             {{- end }}
+            GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+            FLUSH PRIVILEGES;
             "
         env:
         # --- Connection info & root credentials --- #
@@ -93,11 +116,12 @@ spec:
         {{- end }}
         resources:
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "100m"
+            memory: "128Mi"
           requests:
             cpu: "100m"
             memory: "128Mi"
 
+{{- end }}
 {{- end }}
 

@@ -29,36 +29,9 @@ module "cloudsql" {
   zone             = data.google_compute_zones.available.names[0]
   network          = data.terraform_remote_state.infra.outputs.gke_network
   tier_primary     = "db-f1-micro"
+	users = local.mysql_services
 }
 
-/* --- Database Secrets & Connection Information --- */
-/* A user and password is setup for each application service */
-resource "random_password" "cloudsql" {
-  for_each         = toset(local.mysql_services)
-  length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
-resource "google_secret_manager_secret" "cloudsql" {
-  for_each  = random_password.cloudsql
-  project   = local.project_id
-  secret_id = "${var.service_group}-cloudsql-${each.key}"
-  replication {
-    auto {}
-  }
-}
-
-resource "google_secret_manager_secret_version" "cloudsql" {
-  for_each = google_secret_manager_secret.cloudsql
-  secret   = google_secret_manager_secret.cloudsql[each.key].id
-  secret_data = jsonencode({
-    host = module.cloudsql[0].private_ip_address
-    port = 3306
-    user = each.key
-    pass = random_password.cloudsql[each.key].result
-  })
-}
 
 /* === Service Group Setup === */
 
@@ -107,7 +80,7 @@ resource "helm_release" "service_group" {
 
   dependency_update = true
 
-  depends_on = [module.cloudsql, google_secret_manager_secret_version.cloudsql]
+  depends_on = [module.cloudsql]
 }
 
 /* === Redis === */

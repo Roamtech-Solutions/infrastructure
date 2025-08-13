@@ -103,6 +103,10 @@ plan: init
 apply: init
 	terraform -chdir=$(CHDIR) apply -lock-timeout=5m -auto-approve $(VARS)
 
+.PHONY: refresh
+refresh: init
+	terraform -chdir=$(CHDIR) refresh $(VARS)
+
 .PHONY: destroy
 destroy: init
 	terraform -chdir=$(CHDIR) destroy -auto-approve $(VARS)

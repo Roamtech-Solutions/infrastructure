@@ -102,6 +102,5 @@ module "private_service_access" {
   version     = "26.1.1"
   project_id  = var.project_id
   vpc_network = module.network.network_name
-	depends_on = [module.network, module.gke]
 }
 

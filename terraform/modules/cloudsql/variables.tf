@@ -40,3 +40,8 @@ variable "deletion_protection" {
   default = false
 }
 
+variable "users" {
+	type = list(string)
+	default = []
+}
+
