@@ -1,0 +1,13 @@
+{
+	"include": [
+		{
+			"name": "nginx",	
+			"dockerfile": "docker/php-nginx-custom/Dockerfile"
+		},
+		{
+			"name": "fpm",
+			"dockerfile": "docker/php-fpm/Dockerfile"
+		}
+	]
+}
+

@@ -1,4 +1,4 @@
-{{- if eq "php" .Values.type }} 
+{{- if or (eq "php" .Values.type) (eq "php-slim" .Values.type) }} 
 ---
 apiVersion: apps/v1
 kind: Deployment
