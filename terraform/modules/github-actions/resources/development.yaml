@@ -38,6 +38,5 @@ jobs:
       service_group: $${{ vars.SERVICE_GROUP }}
       ref: $${{ github.sha }}
       environment: development
-      deploy: false
     secrets: inherit
 
