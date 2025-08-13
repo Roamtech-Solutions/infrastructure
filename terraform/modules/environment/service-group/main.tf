@@ -39,7 +39,7 @@ module "cloudsql" {
 resource "google_compute_global_address" "default" {
   count = (length(local.ingress_services) > 0) ? 1 : 0
   project  = local.project_id
-  name     = "${var.service_group}-${var.environment}"
+  name     = var.service_group
 }
 
 resource "google_dns_record_set" "default" {
@@ -73,6 +73,7 @@ resource "helm_release" "service_group" {
     }
     mysql_services = local.mysql_services
 		ingress_services = local.ingress_services
+		certificates = local.certificates
 		host = local.host
     pod_cidr                       = data.terraform_remote_state.infra.outputs.gke_pod_cidr
     external_secrets_sa = google_service_account.external_secrets.email

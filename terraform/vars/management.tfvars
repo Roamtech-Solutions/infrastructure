@@ -13,8 +13,9 @@ services = [
   "sqladmin.googleapis.com",
 ]
 github_organisation = "Roamtech-Solutions"
+
 allowed_networks = {
-  bob = "81.151.140.163/32"
+  bob = "81.151.140.163/32",
 }
 
 service_groups = [

@@ -8,9 +8,7 @@ locals {
   /* Application services is based on the YAML files in the values bucket */
   application_services = [
     for k, v in data.google_storage_bucket_objects.application_services.bucket_objects :
-    replace(
-      replace(v.name, "${var.environment}/${var.service_group}/", ""), ".yaml", ""
-    )
+    replace( replace(v.name, "${var.environment}/${var.service_group}/", ""), ".yaml", "")
   ]
 
   application_service_values = {
@@ -43,6 +41,10 @@ locals {
 	ingress_services = [
     for k, v in local.application_service_values : k
 			if lookup(v, "ingress", false)
+	]
+
+	certificates = [
+		for service in local.ingress_services : "${var.service_group}-${service}"
 	]
 }
 
