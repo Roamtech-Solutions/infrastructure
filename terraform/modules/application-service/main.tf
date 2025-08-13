@@ -6,7 +6,7 @@ resource "helm_release" "application_service" {
   values = [
     yamlencode({
       image        = "${var.gar}/${var.name}"
-      host         = (var.ingress != null) ? var.ingress.host : ""
+      host         = var.host
       service_group = var.service_group
     }),
     var.values,

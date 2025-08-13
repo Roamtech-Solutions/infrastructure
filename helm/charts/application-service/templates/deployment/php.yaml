@@ -27,6 +27,8 @@ spec:
               value: {{ .Release.Name }}
             - name: VITE_APP_NAME
               value: {{ .Release.Name }}
+            - name: APP_URL
+              value: https://{{ .Values.host }}
 
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}

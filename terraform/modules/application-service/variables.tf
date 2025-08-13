@@ -18,6 +18,10 @@ variable "gar" {
   type = string
 }
 
+variable "host" {
+	type = string 
+}
+
 variable "ingress" {
   type = object({
     host = string

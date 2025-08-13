@@ -104,6 +104,7 @@ module "application_service" {
   name          = each.key
   tag           = yamldecode(each.value.content).tag
   service_group = var.service_group
+	host = "${each.key}.${local.host}"
 
   /* TODO: Use management outputs */
   gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/${var.service_group}"
