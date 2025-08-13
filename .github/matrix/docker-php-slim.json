@@ -2,11 +2,11 @@
 	"include": [
 		{
 			"name": "nginx",	
-			"dockerfile": "docker/php-nginx-custom/Dockerfile"
+			"dockerfile": "docker/php-slim-nginx/Dockerfile"
 		},
 		{
 			"name": "fpm",
-			"dockerfile": "docker/php-fpm/Dockerfile"
+			"dockerfile": "docker/php-slim-fpm/Dockerfile"
 		}
 	]
 }
