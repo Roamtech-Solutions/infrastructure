@@ -95,6 +95,9 @@ RUN sed -i '/\[www\]/a pm.status_path = /status' /usr/local/etc/php-fpm.d/zz-doc
 # Copy the application code and dependencies from the build stage
 COPY --from=builder /var/www /var/www
 
+# Make sure PHP can acces variables
+RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
+
 # Set working directory
 WORKDIR /var/www
 
