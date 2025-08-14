@@ -1,15 +1,23 @@
+ARG NAME 
+ARG VERSION
+ARG JAVA_VERSION=17
+
 # Build Container
-FROM maven:3.8.5-openjdk-17 AS build
+FROM maven:3.8.5-openjdk-${JAVA_VERSION} AS build
+ARG NAME 
+ARG VERSION
+
 WORKDIR /app
 COPY . .
-RUN mvn clean package -Dmaven.test.skip
+RUN mvn clean package \
+	-DartifactId=${NAME} \
+	-Dversion=${VERSION} \
+	-Dmaven.test.skip
 
 # Run image
-FROM openjdk:17-slim
-
-# TODO: This should be updated for whichever service is using it
-ARG NAME="ipsl-rest-wrapper"
-ARG VERSION="0.0.1-SNAPSHOT"
+FROM openjdk:${JAVA_VERSION}-slim
+ARG NAME 
+ARG VERSION
 
 WORKDIR /app
 COPY --from=build /app/target/${NAME}-${VERSION}.jar app.jar

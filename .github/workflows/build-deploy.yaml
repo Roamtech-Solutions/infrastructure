@@ -120,6 +120,9 @@ jobs:
           file: ${{ github.event.repository.name }}/${{ matrix.dockerfile }}
           push: true
           tags: "${{ env.GAR_REGION }}-docker.pkg.dev/${{ env.MANAGEMENT_PROJECT_ID }}/${{ inputs.service_group }}/${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
+          build-args:
+            - NAME=${{ inputs.service_name }}
+            - VERSION=${{ inputs.ref }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
