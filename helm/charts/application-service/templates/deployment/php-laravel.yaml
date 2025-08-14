@@ -1,4 +1,4 @@
-{{- if (eq "php" .Values.type) }} 
+{{- if (eq "php-laravel" .Values.type) }} 
 ---
 apiVersion: apps/v1
 kind: Deployment

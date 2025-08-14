@@ -1,0 +1,17 @@
+{
+	"include": [
+		{
+			"name": "nginx",	
+			"dockerfile": "docker/php-laravel-nginx/Dockerfile"
+		},
+		{
+			"name": "fpm",
+			"dockerfile": "docker/php-laravel-fpm/Dockerfile"
+		},
+		{
+			"name": "cli",
+			"dockerfile": "docker/php-laravel-cli/Dockerfile"
+		}
+	]
+}
+
