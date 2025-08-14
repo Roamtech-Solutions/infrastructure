@@ -22,6 +22,8 @@ spec:
         # --- FPM container accepting CGI requests from NGINX --- #
         - name: {{ .Release.Name }}-fpm
           image: {{ .Values.image }}-fpm:{{ .Values.tag }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: APP_NAME
               value: {{ .Release.Name }}
@@ -157,6 +159,15 @@ spec:
           image: {{ .Values.image }}-nginx:{{ .Values.tag }}
           command: [sh, -c]
           args: ["cp -r /var/www/public/* /data"]
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
           volumeMounts:
             - name: public-assets
               mountPath: /data
