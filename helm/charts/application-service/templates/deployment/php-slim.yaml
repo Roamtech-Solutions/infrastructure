@@ -108,6 +108,12 @@ spec:
                   key: pass
             {{- end }}
 
+            # --- User Managed Environment Variables --- #
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
+
             # --- User Managed Secrets --- #
             {{- range $s := .Values.secrets }}
             - name: {{ $s }}

@@ -5,7 +5,7 @@ health_check_path: "/"
 security_policy: default
 
 # === Deployment === #
-replicas: 1
+replicas: 2
 port: 8080
 env: []
 strategy:
