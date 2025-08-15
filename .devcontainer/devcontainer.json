@@ -6,11 +6,14 @@
         "ghcr.io/devcontainers/features/terraform:1": {
             "version": "1.12.1"
         },
-        "ghcr.io/dhoeric/features/google-cloud-cli:1": {
+        "./gcloud-cli": {
             "version": "526.0.0",
             "installGkeGcloudAuthPlugin": true
         },
-        "ghcr.io/devcontainers/features/python:1": {}
+        "ghcr.io/devcontainers/features/python:1": {},
+        "./apt": {
+		"packages": ["make", "vim"]
+	}
     },
     "customizations": {
         "vscode": {
