@@ -116,5 +116,15 @@ module "jump_box" {
     #!/bin/bash
     apt update
     apt install -y telnet default-mysql-client vim
+    curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.18.1/cloud-sql-proxy.linux.amd64
+    chmod +x cloud-sql-proxy
+    mv cloud-sql-proxy /usr/bin/cloud-sql-proxy
   EOT
+}
+
+resource "google_project_iam_member" "jump_box_sql_client" {
+  count   = (var.jump_box_enabled ? 1 : 0)
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+  member  = module.jump_box[0].service_account_member
 }

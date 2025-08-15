@@ -12,7 +12,7 @@
         },
         "ghcr.io/devcontainers/features/python:1": {},
         "./apt": {
-		    "packages": "make,vim,nano"
+		    "packages": "make,vim,nano,google-cloud-cli-gke-gcloud-auth-plugin"
 	    },
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },

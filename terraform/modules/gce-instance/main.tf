@@ -1,4 +1,4 @@
-resource "google_service_account" "instance_sa" {
+resource "google_service_account" "default" {
   project      = var.project_id
   account_id   = var.name
   display_name = "${var.name} service account"
@@ -30,7 +30,7 @@ resource "google_compute_instance" "default" {
   metadata = var.metadata
 
   service_account {
-    email  = google_service_account.instance_sa.email
+    email  = google_service_account.default.email
     scopes = ["cloud-platform"]
   }
   metadata_startup_script = var.startup_script
