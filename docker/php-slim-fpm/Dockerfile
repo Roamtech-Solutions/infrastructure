@@ -70,6 +70,10 @@ RUN curl -o /usr/local/bin/php-fpm-healthcheck \
     https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master/php-fpm-healthcheck \
     && chmod +x /usr/local/bin/php-fpm-healthcheck
 
+# Copy the initialization script
+COPY ./docker/php-laravel-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Copy the initial storage structure
 COPY ./storage /var/www/storage-init
 
@@ -107,7 +111,9 @@ RUN chown -R www-data:www-data /var/www
 # Switch to the non-privileged user to run the application
 USER www-data
 
+# Change the default command to run the entrypoint script
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
-
