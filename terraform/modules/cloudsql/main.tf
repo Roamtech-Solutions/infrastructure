@@ -50,30 +50,30 @@ module "cloudsql" {
   db_charset   = "utf8mb4"
   db_collation = "utf8mb4_general_ci"
 
-	user_name = "root"
-	user_password = random_password.default["root"].result
+  user_name     = "root"
+  user_password = random_password.default["root"].result
 
   additional_users = [
     for k, v in random_password.default : {
       name            = k
       password        = v.result
       random_password = false
-			# TODO: Try restricting SQL user access to pod network
-      host            = "%"
-      type            = "BUILT_IN"
+      # TODO: Try restricting SQL user access to pod network
+      host = "%"
+      type = "BUILT_IN"
     } if k != "root"
   ]
 }
 
 /* === Generated root user password secret manager === */
 resource "random_password" "default" {
-	for_each = toset(local.users)
-  length           = 16
-  special          = false
+  for_each = toset(local.users)
+  length   = 16
+  special  = false
 }
 
 resource "google_secret_manager_secret" "default" {
-	for_each = random_password.default
+  for_each  = random_password.default
   project   = var.project_id
   secret_id = "${var.name}-cloudsql-${each.key}"
   replication {
@@ -82,8 +82,8 @@ resource "google_secret_manager_secret" "default" {
 }
 
 resource "google_secret_manager_secret_version" "default" {
-	for_each = google_secret_manager_secret.default
-  secret = each.value.id
+  for_each = google_secret_manager_secret.default
+  secret   = each.value.id
   secret_data = jsonencode({
     host = module.cloudsql.private_ip_address
     port = 3306
@@ -103,7 +103,7 @@ resource "google_secret_manager_secret" "cert" {
 resource "google_secret_manager_secret_version" "cert" {
   secret = google_secret_manager_secret.cert.id
   secret_data = jsonencode({
-		data = module.cloudsql.instance_server_ca_cert.0.cert
-		})
+    data = module.cloudsql.instance_server_ca_cert.0.cert
+  })
 }
 

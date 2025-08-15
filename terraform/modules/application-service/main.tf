@@ -5,8 +5,8 @@ resource "helm_release" "application_service" {
   create_namespace = true
   values = [
     yamlencode({
-      image        = "${var.gar}/${var.name}"
-      host         = var.host
+      image         = "${var.gar}/${var.name}"
+      host          = var.host
       service_group = var.service_group
     }),
     var.values,
@@ -15,9 +15,9 @@ resource "helm_release" "application_service" {
 
 /* === Secrets === */
 resource "google_secret_manager_secret" "default" {
-	for_each = toset(local.secrets)
-	project = var.project_id
-	secret_id = "${var.service_group}-${lower(replace(each.key, "_", "-"))}"
+  for_each  = toset(local.secrets)
+  project   = var.project_id
+  secret_id = "${var.service_group}-${lower(replace(each.key, "_", "-"))}"
   replication {
     auto {}
   }

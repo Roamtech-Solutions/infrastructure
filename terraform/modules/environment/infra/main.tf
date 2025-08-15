@@ -23,5 +23,5 @@ module "gke" {
     (var.ci_runner_ip != "") ? {
       ci_runner = "${var.ci_runner_ip}/32"
   } : {})
+  jump_box_enabled = true
 }
-

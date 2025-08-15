@@ -1,5 +1,5 @@
 locals {
-	/* Secrets to setup */
+  /* Secrets to setup */
   secrets = lookup(yamldecode(var.values), "secrets", [])
 }
 

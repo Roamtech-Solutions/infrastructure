@@ -3,11 +3,11 @@ variable "project_id" {
 }
 
 variable "prefix" {
-	type = string
+  type = string
 }
 
 variable "namespace" {
-	type = string
+  type = string
 }
 
 variable "users" {

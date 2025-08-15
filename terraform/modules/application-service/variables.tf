@@ -19,7 +19,7 @@ variable "gar" {
 }
 
 variable "host" {
-	type = string 
+  type = string
 }
 
 variable "ingress" {

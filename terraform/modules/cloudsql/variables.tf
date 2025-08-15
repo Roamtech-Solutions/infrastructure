@@ -41,7 +41,7 @@ variable "deletion_protection" {
 }
 
 variable "users" {
-	type = list(string)
-	default = []
+  type    = list(string)
+  default = []
 }
 

@@ -9,20 +9,20 @@ variable "service_group" {
 }
 
 variable "management_project_id" {
-	type = string
+  type = string
 }
 
 variable "region" {
-	type = string
+  type = string
 }
 
 variable "host" {
-	type = string
+  type = string
 }
 
 variable "sub_host" {
-	type = string
-	default = ""
+  type    = string
+  default = ""
 }
 
 

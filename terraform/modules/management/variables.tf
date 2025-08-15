@@ -19,7 +19,7 @@ variable "billing_account" {
 }
 
 variable "github_organisation" {
-	type = string
+  type = string
 }
 
 variable "services" {

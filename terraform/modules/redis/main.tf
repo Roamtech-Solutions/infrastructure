@@ -6,7 +6,7 @@ resource "random_password" "users" {
 }
 
 resource "google_secret_manager_secret" "users" {
-	for_each = toset(var.users)
+  for_each  = toset(var.users)
   project   = var.project_id
   secret_id = "${var.prefix}-${each.key}-redis"
   replication {
@@ -15,14 +15,14 @@ resource "google_secret_manager_secret" "users" {
 }
 
 resource "google_secret_manager_secret_version" "users" {
-	for_each = google_secret_manager_secret.users
-	secret = each.value.id
+  for_each = google_secret_manager_secret.users
+  secret   = each.value.id
   secret_data = jsonencode({
-		user = each.key
-		pass = random_password.users[each.key].result
-		host = "redis"
-		port = var.port
-	})
+    user = each.key
+    pass = random_password.users[each.key].result
+    host = "redis"
+    port = var.port
+  })
 }
 
 # === Redis Configuration === #
@@ -52,15 +52,15 @@ resource "google_secret_manager_secret_version" "default" {
 
 # === Helm Deployment === #
 resource "helm_release" "redis" {
-  name  = "redis"
-  chart = "${path.module}/../../../helm/charts/redis"
-	namespace = var.namespace
-	create_namespace = true
-  timeout = 600
-	values = [
-		yamlencode({
-			config_secret = google_secret_manager_secret.default.secret_id
-		})
-	]
+  name             = "redis"
+  chart            = "${path.module}/../../../helm/charts/redis"
+  namespace        = var.namespace
+  create_namespace = true
+  timeout          = 600
+  values = [
+    yamlencode({
+      config_secret = google_secret_manager_secret.default.secret_id
+    })
+  ]
 }
 

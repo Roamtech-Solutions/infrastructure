@@ -26,3 +26,8 @@ variable "allowed_networks" {
   default     = {}
 }
 
+variable "jump_box_enabled" {
+  description = "Enable or disable the jump box instance"
+  type        = bool
+  default     = false
+}

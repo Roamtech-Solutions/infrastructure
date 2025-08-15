@@ -19,15 +19,15 @@ module "project" {
 }
 
 module "vpn" {
-	source = "../vpn"
-	project_id = module.project.project_id
-	region = var.region
-	host = "vpn.roamtech.whitemire-technologies.com"
-	dns_managed_zone = {
-		project_id = module.project.project_id
-		name = "roamtech-whitemire-technologies-com"
-	}
-	allowed_networks = var.allowed_networks
+  source     = "../vpn"
+  project_id = module.project.project_id
+  region     = var.region
+  host       = "vpn.roamtech.whitemire-technologies.com"
+  dns_managed_zone = {
+    project_id = module.project.project_id
+    name       = "roamtech-whitemire-technologies-com"
+  }
+  allowed_networks = var.allowed_networks
 }
 
 resource "google_storage_bucket" "tfstate" {
@@ -44,8 +44,8 @@ resource "google_storage_bucket" "tfstate" {
 
 /* === GitHub CI === */
 module "github_oidc" {
-  source     = "../github-oidc"
-  project_id = module.project.project_id
+  source              = "../github-oidc"
+  project_id          = module.project.project_id
   github_organisation = var.github_organisation
 }
 
@@ -120,8 +120,8 @@ resource "google_storage_bucket" "values" {
 
 /* GitHub Actions Set up */
 module "github_actions" {
-	source = "../github-actions"
-	project_id = module.project.project_id
-	github_organisation = var.github_organisation
+  source              = "../github-actions"
+  project_id          = module.project.project_id
+  github_organisation = var.github_organisation
 }
 

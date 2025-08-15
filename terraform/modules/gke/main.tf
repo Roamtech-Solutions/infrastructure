@@ -104,3 +104,17 @@ module "private_service_access" {
   vpc_network = module.network.network_name
 }
 
+module "jump_box" {
+  count          = (var.jump_box_enabled ? 1 : 0)
+  source         = "../gce-instance"
+  project_id     = var.project_id
+  name           = "gke-${var.name}-jump-box"
+  zone           = data.google_compute_zones.available.names[0]
+  network        = module.network.network_id
+  subnetwork     = "gke-${var.name}-private"
+  startup_script = <<-EOT
+    #!/bin/bash
+    apt update
+    apt install -y telnet default-mysql-client vim
+  EOT
+}

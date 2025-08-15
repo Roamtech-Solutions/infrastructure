@@ -1,4 +1,4 @@
 locals {
-	users = concat(["root"], var.users)
+  users = concat(["root"], var.users)
 }
 
