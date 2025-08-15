@@ -6,10 +6,6 @@ Please see the [setup guide](./docs/setup.md) for getting setup on the project.
 
 ## Quick Start
 
-- Login to Google Cloud:
-  ```shell
-  gcloud auth application-default login
-  ```
 - Deploy infrastructure changes with makefile wrapper for Terraform,
   in this case, for the development environment:
   ```shell
