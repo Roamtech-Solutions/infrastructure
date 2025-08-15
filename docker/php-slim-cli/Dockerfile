@@ -66,6 +66,9 @@ WORKDIR /var/www
 # Ensure correct permissions
 RUN chown -R www-data:www-data /var/www
 
+# Make sure PHP can acces variables
+RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
+
 # Switch to the non-privileged user to run the application
 USER www-data
 

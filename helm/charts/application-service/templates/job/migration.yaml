@@ -60,6 +60,11 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
+            # --- User Managed Environment Variables --- #
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
         # --- Laravel Migration --- # 
         {{- else if (eq "php-laravel" .Values.type) }}
         command: ["php", "artisan", "migrate", "--force"]
@@ -88,6 +93,11 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
+            # --- User Managed Environment Variables --- #
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
         {{- end }}
       restartPolicy: Never
     backoffLimit: 2
