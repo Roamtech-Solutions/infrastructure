@@ -29,12 +29,13 @@ endif
 
 # === Service Group === #
 
-ifeq ($(MOD),service-group)
-  ifndef SG
-    $(error SG (service group) not provided)
+ifneq ($(ENV),management)
+  ifeq ($(MOD),service-group)
+    ifndef SG
+      $(error SG (service group) not provided)
+    endif
   endif
 endif
-
 
 # === Terraform arguments === #
  
