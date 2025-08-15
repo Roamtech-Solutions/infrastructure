@@ -7,7 +7,10 @@
 		{
 			"name": "fpm",
 			"dockerfile": "docker/php-slim-fpm/Dockerfile"
+		},
+		{
+			"name": "cli",
+			"dockerfile": "docker/php-slim-cli/Dockerfile"
 		}
 	]
 }
-

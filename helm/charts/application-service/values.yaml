@@ -28,6 +28,7 @@ secrets: {}
 secret_refs: {}
 
 # === Other === #
+migrations: false
 mysql: false
 rabbitmq: false
 

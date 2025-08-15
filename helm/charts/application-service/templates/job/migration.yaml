@@ -1,0 +1,94 @@
+{{- if .Values.migrations }}
+---
+# Role with Job read permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-job-reader
+rules:
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch"]
+---
+# RoleBinding to link ServiceAccount to Role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-job-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name }}
+roleRef:
+  kind: Role
+  name: {{ .Release.Name }}-job-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# Migration Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-migration-{{ .Values.tag }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: migration
+        image: {{ .Values.image }}-cli:{{ .Values.tag }}
+        # --- PHP Slim (phinx) Migration --- #
+        {{- if (eq "php-slim" .Values.type) }} 
+        command: ["./vendor/bin/phinx", "migrate"]
+        env:
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+        # --- Laravel Migration --- # 
+        {{- else if (eq "php-laravel" .Values.type) }}
+        command: ["php", "artisan", "migrate", "--force"]
+        env:
+            - name: DB_CONNECTION
+              value: mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+        {{- end }}
+      restartPolicy: Never
+    backoffLimit: 2
+{{- end }}
