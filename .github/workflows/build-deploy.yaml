@@ -58,7 +58,10 @@ jobs:
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
+          echo java_version=$(grep -oP '(?<=<java.version>).*?(?=</java.version>)' ${{ github.even.repository.name }}/pom.xml) >> $GITHUB_OUTPUT \
+            || echo java_version=17 >> $GITHUB_OUTPUT
     outputs:
+      java_version: ${{ steps.setup.outputs.java_version }}
       matrix: ${{ steps.setup.outputs.matrix }}
 
 
@@ -123,6 +126,7 @@ jobs:
           build-args: |
             NAME=${{ inputs.service_name }}
             VERSION=${{ inputs.ref }}
+            JAVA_VERSION=${{ needs.matrix.outputs.java_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
