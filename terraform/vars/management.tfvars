@@ -21,7 +21,7 @@ allowed_networks = {
 service_groups = [
   "test",
   "adenzo",
-  "afrisend",
+  "imt",
   "emalify",
 ]
 
