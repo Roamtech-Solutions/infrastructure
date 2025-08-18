@@ -3,9 +3,11 @@ ARG VERSION
 ARG JAVA_VERSION=17
 
 # Build Container
-FROM maven:3.8.5-openjdk-${JAVA_VERSION} AS build
+FROM openjdk:${JAVA_VERSION}-slim AS build
 ARG NAME 
 ARG VERSION
+
+RUN apt update && apt install -y maven
 
 WORKDIR /app
 COPY . .
