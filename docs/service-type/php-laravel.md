@@ -6,12 +6,10 @@ framework.
 
 ## PHP Version
 
-Currently the only PHP version supported is `8.4`.
-If possible, please update you application and dependencies to work with this.
+The PHP version is determined by what is set in the `require` property in the
+`composer.json` file.
 
-The plan is to change this, so that the version will be automatically determined
-by the framework.
-
+This will default to PHP version `8.4`, if it can't be determined from there.
 
 
 ## Required Service Configurations

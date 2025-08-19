@@ -65,8 +65,14 @@ jobs:
           echo java_version=$(grep -oP '(?<=<java.version>).*?(?=</java.version>)' ${{ github.event.repository.name }}/pom.xml) >> $GITHUB_OUTPUT \
             || echo java_version=17 >> $GITHUB_OUTPUT
 
+          # --- PHP Version --- #
+          test -f composer.json \
+            && echo php_version=$(jq -r '.require.php' composer.json | grep -o '[0-9.]\+') >> $GITHUB_OUTPUT \
+            || echo php_version=8.4 >> $GITHUB_OUTPUT
+
     outputs:
       java_version: ${{ steps.setup.outputs.java_version }}
+      php_version: ${{ steps.setup.outputs.php_version }}
       matrix: ${{ steps.setup.outputs.matrix }}
 
 
@@ -132,6 +138,7 @@ jobs:
             NAME=${{ inputs.service_name }}
             VERSION=${{ inputs.ref }}
             JAVA_VERSION=${{ needs.matrix.outputs.java_version }}
+            PHP_VERSION=${{ needs.matrix.outputs.php_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,5 +1,7 @@
+ARG PHP_VERSION=8.4
+
 # Stage 1: Build environment and Composer dependencies
-FROM php:8.4-cli AS builder
+FROM php:${PHP_VERSION}-cli AS builder
 
 # Install system dependencies and PHP extensions required for Laravel + MySQL/PostgreSQL support
 # Some dependencies are required for PHP extensions only in the build stage
@@ -40,7 +42,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 # Stage 2: Production environment
-FROM php:8.4-cli
+FROM php:${PHP_VERSION}-cli
 
 # Install client libraries required for php extensions in runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
