@@ -21,6 +21,10 @@ If this isn't found, the Java version will default to `17`.
 When adding an application to the `requires` property, the corresponding
 environment variables are made available to the service.
 
+These environment variables can be referenced in the
+`application.properties` file of the service.
+
+
 ### MySQL (`mysql`)
 
 | Name			| Description 					|
