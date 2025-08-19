@@ -43,6 +43,12 @@ requires:
 
 ```
 
+## Environments
+
+The only available environment at the moment is `development`.
+This will change soon.
+
+
 ## Properties
 
 
@@ -119,5 +125,5 @@ The available services to require currently are:
 <!-- Links -->
 [google-secret-manager]: https://cloud.google.com/security/products/secret-manager
 [infra-team]: /docs/infra-team.md
-[service-types]: /docs/service-types
+[service-types]: /docs/service-type
 
