@@ -64,8 +64,8 @@ env:
     value: my-app
 ```
 
-> <b style="colour: red">NOTE: DO NOT STORE SECRETS IN PLAIN TEXT HERE, EVEN IF IT ISN'T A</b>.
-> <b style="colour: red">PRODUCTION ENVIRONMENT!</b>
+> 🔴**WARNING: DO NOT STORE SECRETS IN PLAIN TEXT HERE, EVEN IF IT ISN'T A**.
+> **PRODUCTION ENVIRONMENT!**
 
 
 ## `secrets`
