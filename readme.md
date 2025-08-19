@@ -1,8 +1,9 @@
 # Roamtech Infrastructure
 Repository housing all of Roamtechs Google Cloud infrastructure.
 
-## Setup
-Please see the [setup guide](./docs/setup.md) for getting setup on the project.
+## Links
+- [Setup Guide](./docs/setup.md)
+- [Service Configuration](./docs/service-configuration.md)
 
 ## Quick Start
 
