@@ -36,6 +36,11 @@ secrets:
   # value in it.
   - APP_KEY
 
+# Supporting applications can have access enabled by including them in the
+# requires property:
+requires:
+  - mysql
+
 ```
 
 ## Properties
@@ -54,7 +59,7 @@ Currently, the available types are:
   - `php-slim`
 
 
-## `env`
+### `env`
 
 Environment variables are set with the `env` property:
 
@@ -64,11 +69,11 @@ env:
     value: my-app
 ```
 
-> 🔴**WARNING: DO NOT STORE SECRETS IN PLAIN TEXT HERE, EVEN IF IT ISN'T A**.
+> 🔴 **WARNING: DO NOT STORE SECRETS IN PLAIN TEXT HERE, EVEN IF IT ISN'T A**.
 > **PRODUCTION ENVIRONMENT!**
 
 
-## `secrets`
+### `secrets`
 
 Secret values can be safely stored and acessed in the `secrets` by the service
 by using the `secrets` property:
@@ -82,7 +87,37 @@ The above example will create a secret and store the value in the `APP_KEY`
 environment variable, the value of the secret must be configured manually in
 [Google Cloud Secret Manager][google-secret-manager].
 
-Please ask for assistance from a member of the infrastructure team if you
-would like to configure a secret value.
+Please ask for assistance from a member of the [Infrastructure Team][infra-team]
+if you would like to configure a secret value.
 
+
+### `requires`
+Applications _required_ by the service can be included in the `requires`
+property:
+
+```yaml
+requires:
+  - mysql
+```
+
+The environment variables for connecting to the applications will be configured
+based on the service type provided.
+Please see more information of the respective service type [here][service-types].
+
+
+The available services to require currently are:
+- `mysql`
+- `rabbitmq`
+- `redis`
+
+> If there is an application you service requires that isn't listed here,
+> please contact a member of the [Infrastructure Team][infra-team] to get it
+> set up for you.
+
+
+
+<!-- Links -->
 [google-secret-manager]: https://cloud.google.com/security/products/secret-manager
+[infra-team]: /docs/infra-team.md
+[service-types]: /docs/service-types
+
