@@ -24,8 +24,7 @@ resources:
     memory: 64Mi
 
 # === Secrets === #
-secrets: {}
-secret_refs: {}
+secrets: []
 
 # === Other === #
 migration_type: none
