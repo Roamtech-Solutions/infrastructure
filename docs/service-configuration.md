@@ -60,9 +60,9 @@ type: SERVICE_TYPE
 ```
 
 Currently, the available types are:
-  - `java-spring-boot`
-  - `php-laravel`
-  - `php-slim`
+  - [`java-spring-boot`](/docs/service-type/java-spring-boot.md)
+  - [`php-laravel`](/docs/service-type/php-laravel.md)
+  - [`php-slim`](/docs/service-type/php-slim.md)
 
 
 ### `env`
