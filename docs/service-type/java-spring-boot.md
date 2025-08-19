@@ -3,7 +3,9 @@
 Java Spring Boot services are supported by the infrastructure build
 and deployment framework.
 
+
 ## Java Version
+
 The Java version of the Spring Boot service is determined by the
 `java.version` property in the `pom.xml` file:
 
@@ -14,6 +16,20 @@ The Java version of the Spring Boot service is determined by the
 ```
 
 If this isn't found, the Java version will default to `17`.
+
+
+## Artifact ID and Version
+
+A generic Dockerfile is used when building the Spring Boot application, to
+accomodate for this, the `artifactId` and `version` properties are provided
+as variables to Maven when compiling the project.
+
+Because of this, the service _must_ have these properties configured to use
+variables, under the `<project>` property:
+```xml
+	<artifactId>${artifactId}</artifactId>
+	<version>${version}</version>
+```
 
 
 ## Required Service Environment Variables

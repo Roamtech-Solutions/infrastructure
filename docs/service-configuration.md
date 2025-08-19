@@ -59,10 +59,11 @@ The service type is set with the `type` property:
 type: SERVICE_TYPE
 ```
 
-Currently, the available types are:
-  - [`java-spring-boot`](/docs/service-type/java-spring-boot.md)
-  - [`php-laravel`](/docs/service-type/php-laravel.md)
-  - [`php-slim`](/docs/service-type/php-slim.md)
+Select an avaiable service type and read the documentation to make sure
+your service has been configured correctly:
+- [`java-spring-boot`](/docs/service-type/java-spring-boot.md)
+- [`php-laravel`](/docs/service-type/php-laravel.md)
+- [`php-slim`](/docs/service-type/php-slim.md)
 
 
 ### `env`
@@ -119,7 +120,6 @@ The available services to require currently are:
 > If there is an application you service requires that isn't listed here,
 > please contact a member of the [Infrastructure Team][infra-team] to get it
 > set up for you.
-
 
 
 <!-- Links -->
