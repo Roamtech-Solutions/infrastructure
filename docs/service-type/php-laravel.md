@@ -44,20 +44,20 @@ The following variables are set for you automatically:
 |-----------------------|-------------------------------|---------------------------------------------------------------|
 | `DB_CONNECTION`	| `mysql`			| Tell Laravel to use the MySQL database configurations.	|
 | `MYSQL_ATTR_SSL_CA`	| `/etc/ssl/certs/mysql-ca.pem`	| Configure the SSL certificate used for connections.		|
-| `DB_HOST`		| Dynmically set		| IP address/hostname of the MySQL instance.			|
-| `DB_PORT`		| Dynmically set		| Port the instance is listening on.				|
-| `DB_USERNAME`		| Dynmically set		| Username for the service to use.				|
-| `DB_PASSWORD`		| Dynmically set		| Password for the service to use.				|
+| `DB_HOST`		| Dynamically set		| IP address/hostname of the MySQL instance.			|
+| `DB_PORT`		| Dynamically set		| Port the instance is listening on.				|
+| `DB_USERNAME`		| Dynamically set		| Username for the service to use.				|
+| `DB_PASSWORD`		| Dynamically set		| Password for the service to use.				|
 
 
 ### RabbitMQ (`rabbitmq`)
 
 | Name			| Value				| Description 							|
 |-----------------------|-------------------------------|---------------------------------------------------------------|
-| `RABBITMQ_HOST`	| Dynmically set		| IP address/hostname of the MQ instance.			|
-| `RABBITMQ_PORT`	| Dynmically set		| Port the instance is listening on.				|
-| `RABBITMQ_USER`	| Dynmically set		| Username for the service to use.				|
-| `RABBITMQ_PASS`	| Dynmically set		| Password for the service to use.				|
+| `RABBITMQ_HOST`	| Dynamically set		| IP address/hostname of the MQ instance.			|
+| `RABBITMQ_PORT`	| Dynamically set		| Port the instance is listening on.				|
+| `RABBITMQ_USER`	| Dynamically set		| Username for the service to use.				|
+| `RABBITMQ_PASS`	| Dynamically set		| Password for the service to use.				|
 
 
 ### Redis (`redis`)
@@ -66,8 +66,8 @@ The following variables are set for you automatically:
 |-----------------------|-------------------------------|---------------------------------------------------------------|
 | `REDIS_CLIENT`	| `phpredis`			| Configure Laravel to use the `phpredis` driver.		|
 | `SESSION_DRIVER`	| `redis`			| Configure Laravel to use Redis as the session driver.		|
-| `REDIS_HOST`		| Dynmically set		| IP address/hostname of the Redis instance.			|
-| `REDIS_PORT`		| Dynmically set		| Port the instance is listening on.				|
-| `REDIS_USERNAME`	| Dynmically set		| Username for the service to use.				|
-| `REDIS_PASSWORD`	| Dynmically set		| Password for the service to use.				|
+| `REDIS_HOST`		| Dynamically set		| IP address/hostname of the Redis instance.			|
+| `REDIS_PORT`		| Dynamically set		| Port the instance is listening on.				|
+| `REDIS_USERNAME`	| Dynamically set		| Username for the service to use.				|
+| `REDIS_PASSWORD`	| Dynamically set		| Password for the service to use.				|
 
