@@ -1,4 +1,4 @@
-{{- if .Values.migrations }}
+{{- if ne "none" .Values.migration_type }}
 ---
 # Role with Job read permissions
 apiVersion: rbac.authorization.k8s.io/v1
@@ -34,8 +34,9 @@ spec:
       containers:
       - name: migration
         image: {{ .Values.image }}-cli:{{ .Values.tag }}
-        # --- PHP Slim (phinx) Migration --- #
-        {{- if (eq "php-slim" .Values.type) }} 
+
+        # --- Phinx Migration --- #
+        {{- if (eq "phinx" .Values.migration_type) }} 
         command: ["./vendor/bin/phinx", "migrate"]
         env:
             - name: MYSQL_ATTR_SSL_CA
@@ -60,13 +61,15 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
+
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
             {{- end }}
-        # --- Laravel Migration --- # 
-        {{- else if (eq "php-laravel" .Values.type) }}
+
+        # --- Artisan Migration --- #
+        {{- else if (eq "artisan" .Values.migration_type) }}
         command: ["php", "artisan", "migrate", "--force"]
         env:
             - name: DB_CONNECTION
@@ -93,12 +96,15 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
+
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
             {{- end }}
+
         {{- end }}
       restartPolicy: Never
     backoffLimit: 2
 {{- end }}
+

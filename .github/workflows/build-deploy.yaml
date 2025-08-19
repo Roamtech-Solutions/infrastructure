@@ -57,9 +57,14 @@ jobs:
         run: |
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
+
+          # --- Docker images to build --- #
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
+
+          # --- Java version --- #
           echo java_version=$(grep -oP '(?<=<java.version>).*?(?=</java.version>)' ${{ github.event.repository.name }}/pom.xml) >> $GITHUB_OUTPUT \
             || echo java_version=17 >> $GITHUB_OUTPUT
+
     outputs:
       java_version: ${{ steps.setup.outputs.java_version }}
       matrix: ${{ steps.setup.outputs.matrix }}
@@ -168,10 +173,23 @@ jobs:
       - name: Update values
         run: |
           export SERVICE_NAME=${{ inputs.service_name }}
+          export ENVIRONMENT=${{ inputs.environment }}
+
+          # --- Image Tag --- #
           echo tag: ${{ inputs.ref }} > /tmp/values.yaml
+
+          # --- Migration Type --- #
+          test -f artisan && test -d database/migrations \
+            && echo "migration_type: artisan" >> /tmp/values.yaml
+          test -f phinx.php && test -d db/migrations \
+            && echo "migration_type: phinx" >> /tmp/values.yaml
+
+          # --- Configured Values --- #
           envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
-          cat /tmp/values.yaml
-          gcloud storage cp /tmp/values.yaml gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
+
+          # --- Upload --- #
+          gcloud storage cp /tmp/values.yaml \
+            gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
 
       # --- Apply Terraform --- #
 #      - name: Checkout infrastructure repository
