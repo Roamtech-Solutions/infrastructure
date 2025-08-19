@@ -82,8 +82,8 @@ env:
 
 ### `secrets`
 
-Secret values can be safely stored and acessed in the `secrets` by the service
-by using the `secrets` property:
+Secret values can be safely stored and acessed in environment variables by
+the service by using the `secrets` property:
 
 ```yaml
 secrets:
