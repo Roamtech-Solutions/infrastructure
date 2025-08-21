@@ -13,7 +13,12 @@ services = [
   "sqladmin.googleapis.com",
   "cloudbuild.googleapis.com",
 ]
+
 github_organisation = "Roamtech-Solutions"
+github_app = {
+	id = "1819150"
+	installation_id = "82073011"
+}
 
 allowed_networks = {
   bob = "81.151.140.163/32",

@@ -21,3 +21,13 @@ output "vpn_address" {
   value = module.vpn.address
 }
 
+output "gh_actions_cluster" {
+  value = {
+    name   = module.gke_gh_actions.name
+    region = var.region
+  }
+}
+
+output "gh_org" {
+	value = var.github_organisation
+}

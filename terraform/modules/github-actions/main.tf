@@ -13,15 +13,15 @@ resource "google_secret_manager_secret_version" "infra_pat" {
 }
 
 resource "github_actions_secret" "infra-pat" {
-  for_each        = toset(local.repositories)
-  repository      = each.key
+  for_each        = local.repositories
+  repository      = each.value.name
   secret_name     = "INFRA_PAT"
   plaintext_value = data.google_secret_manager_secret_version.infra_pat.secret_data
 }
 
 /* === Variables === */
 resource "github_actions_variable" "service_name" {
-  for_each      = data.github_repository.default
+  for_each      = local.repositories
   repository    = each.value.name
   variable_name = "SERVICE_NAME"
   value = join(
@@ -37,7 +37,7 @@ resource "github_actions_variable" "service_name" {
 }
 
 resource "github_actions_variable" "service_group" {
-  for_each      = data.github_repository.default
+  for_each      = local.repositories
   repository    = each.value.name
   variable_name = "SERVICE_GROUP"
   value         = split("-", each.value.name)[0]
@@ -45,7 +45,7 @@ resource "github_actions_variable" "service_group" {
 
 /* === Workflows === */
 resource "github_repository_file" "workflow_development" {
-  for_each   = data.github_repository.default
+  for_each   = local.repositories
   repository = each.value.name
   branch     = each.value.default_branch
   file       = ".github/workflows/development.yaml"

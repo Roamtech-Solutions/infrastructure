@@ -20,7 +20,7 @@ endif
 # === Module === #
 
 ifeq ($(ENV),management)
-  ALLOWED_MODS := core github-actions-runner
+  ALLOWED_MODS := $(shell ls -d terraform/modules/management/*/ | cut -f4 -d'/')
   MOD ?= core
 else
   ALLOWED_MODS := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
@@ -46,12 +46,14 @@ endif
 # State prefix and directory depends on environment, module and service group
 ifeq ($(ENV),management)
   CHDIR := terraform/modules/$(ENV)/$(MOD)
-  PREFIX := $(ENV)
-  VARS := 
+  PREFIX := $(ENV)/$(MOD)
   VARS_DIR := ../../../vars/$(ENV)
   VARS := \
 	-var-file=$(VARS_DIR)/common.tfvars \
 	-var-file=$(VARS_DIR)/$(MOD).tfvars
+  ifneq ($(MOD),core)
+    VARS := -var="project_id=$(MANAGEMENT_PROJECT_ID)"
+  endif
 else
   CHDIR := terraform/modules/environment/$(MOD)
   PREFIX := $(ENV)/$(MOD)

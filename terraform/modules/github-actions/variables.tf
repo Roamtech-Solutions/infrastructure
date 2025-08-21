@@ -8,3 +8,8 @@ variable "github_organisation" {
   description = "GitHub Organisation Name"
 }
 
+variable "prefixes" {
+	type = list(string)
+	description = "Setup onlt the projects that start with these prefixes"
+}
+

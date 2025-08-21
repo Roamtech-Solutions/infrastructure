@@ -22,6 +22,13 @@ variable "github_organisation" {
   type = string
 }
 
+variable "github_app" {
+	type = object({
+		id = string
+		installation_id = string
+	})
+}
+
 variable "services" {
   type        = list(string)
   description = "List of services to be enabled on the project"

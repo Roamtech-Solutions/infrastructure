@@ -11,7 +11,7 @@ resource "google_service_account_iam_member" "external_secrets" {
   member             = "serviceAccount:${local.project_id}.svc.id.goog[${var.service_group}/external-secrets]"
 }
 
-/*TODO: Restrict secret manager access to just the service group */
+/* TODO: Restrict secret manager access to just the service group */
 resource "google_project_iam_member" "external_secrets" {
   project = local.project_id
   role    = "roles/secretmanager.admin"

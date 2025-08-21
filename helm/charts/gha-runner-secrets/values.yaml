@@ -1,0 +1,8 @@
+# cluster_name: gh-actions
+# project_id: development-1234
+# external_secrets_sa: es-github-actions@...
+# region: europe-west1
+
+gha-runner-scale-set:
+  # githubConfigUrl: https://github.com/organizations/ORG_NAME
+  githubConfigSecret: github-config-secret
