@@ -17,15 +17,19 @@ ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
 endif
 
 
-# === Module configuration === #
+# === Module === #
 
-ALLOWED_MODS := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
-
-MOD ?= service-group
-ifneq ($(filter $(MOD),$(ALLOWED_MODS)),$(MOD))
- $(error MOD must be one of: $(ALLOWED_MODS))
+ifeq ($(ENV),management)
+  ALLOWED_MODS := core github-actions-runner
+  MOD ?= core
+else
+  ALLOWED_MODS := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
+  MOD ?= service-group
 endif
 
+ifneq ($(filter $(MOD),$(ALLOWED_MODS)),$(MOD))
+  $(error For the $(ENV) environment, MOD is '$(MOD)', but must be one of: $(ALLOWED_MODS))
+endif
 
 # === Service Group === #
 
@@ -41,15 +45,14 @@ endif
  
 # State prefix and directory depends on environment, module and service group
 ifeq ($(ENV),management)
-  CHDIR := terraform/modules/management
+  CHDIR := terraform/modules/$(ENV)/$(MOD)
   PREFIX := $(ENV)
   VARS := 
-  VARS_DIR := ../../vars
+  VARS_DIR := ../../../vars/$(ENV)
   VARS := \
 	-var-file=$(VARS_DIR)/common.tfvars \
-	-var-file=$(VARS_DIR)/$(ENV).tfvars
+	-var-file=$(VARS_DIR)/$(MOD).tfvars
 else
-
   CHDIR := terraform/modules/environment/$(MOD)
   PREFIX := $(ENV)/$(MOD)
   VARS_DIR := ../../../vars/$(ENV)

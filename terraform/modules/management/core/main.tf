@@ -19,7 +19,7 @@ module "project" {
 }
 
 module "vpn" {
-  source     = "../vpn"
+  source     = "../../vpn"
   project_id = module.project.project_id
   region     = var.region
   host       = "vpn.roamtech.whitemire-technologies.com"
@@ -44,7 +44,7 @@ resource "google_storage_bucket" "tfstate" {
 
 /* === GitHub CI === */
 module "github_oidc" {
-  source              = "../github-oidc"
+  source              = "../../github-oidc"
   project_id          = module.project.project_id
   github_organisation = var.github_organisation
 }
@@ -120,8 +120,24 @@ resource "google_storage_bucket" "values" {
 
 /* GitHub Actions Set up */
 module "github_actions" {
-  source              = "../github-actions"
+  source              = "../../github-actions"
   project_id          = module.project.project_id
   github_organisation = var.github_organisation
+}
+
+/* === GKE Cluster for GitHub Actions === */
+module "gke" {
+  source               = "../../gke"
+  name                 = "gh-actions"
+  project_id           = module.project.project_id
+  registry_project_ids = [module.project.project_id]
+  region               = var.region
+  allowed_networks = merge(
+    var.allowed_networks,
+    {
+      "vpn" = "${module.vpn.address}/32"
+    }
+	)
+  jump_box_enabled = false
 }
 

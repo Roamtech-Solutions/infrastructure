@@ -11,6 +11,7 @@ services = [
   "servicenetworking.googleapis.com",
   "cloudresourcemanager.googleapis.com",
   "sqladmin.googleapis.com",
+  "cloudbuild.googleapis.com",
 ]
 github_organisation = "Roamtech-Solutions"
 
