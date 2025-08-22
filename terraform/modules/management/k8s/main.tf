@@ -9,6 +9,20 @@ resource "helm_release" "arc" {
   chart            = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller"
   namespace        = "arc-systems"
   create_namespace = true
+  values = [yamlencode({
+    resources = {
+      limits = {
+        cpu               = "100m"
+        ephemeral-storage = "10Gi"
+        memory            = "128Mi"
+      }
+      requests = {
+        cpu               = "100m"
+        ephemeral-storage = "10Gi"
+        memory            = "128Mi"
+      }
+    }
+  })]
 }
 
 /* --- External secrets service account --- */
@@ -40,9 +54,9 @@ resource "helm_release" "gha_runner_secrets" {
   create_namespace = true
 
   values = [yamlencode({
-    project_id    = var.project_id
-    region        = data.terraform_remote_state.core.outputs.gh_actions_cluster.region
-		cluster_name = data.terraform_remote_state.core.outputs.gh_actions_cluster.name
+    project_id          = var.project_id
+    region              = data.terraform_remote_state.core.outputs.gh_actions_cluster.region
+    cluster_name        = data.terraform_remote_state.core.outputs.gh_actions_cluster.name
     external_secrets_sa = google_service_account.gh_actions_external_secrets.email
   })]
 }
@@ -53,9 +67,31 @@ resource "helm_release" "gha_arc_runner_set" {
   namespace        = local.gh_actions_runner_namespace
   create_namespace = true
   values = [yamlencode({
-    project_id    = var.project_id
-    githubConfigUrl = "https://github.com/${data.terraform_remote_state.core.outputs.gh_org}"
-		githubConfigSecret = "github-config-secret"
+    project_id         = var.project_id
+    githubConfigUrl    = "https://github.com/${data.terraform_remote_state.core.outputs.gh_org}"
+    githubConfigSecret = "github-config-secret"
+    /* --- Listener Configuration --- */
+    listenerTemplate = {
+      spec = {
+        containers = [
+          {
+            name = "listener"
+            resources = {
+              limits = {
+                cpu               = "100m"
+                ephemeral-storage = "10Gi"
+                memory            = "128Mi"
+              }
+              requests = {
+                cpu               = "100m"
+                ephemeral-storage = "10Gi"
+                memory            = "128Mi"
+              }
+            }
+          }
+        ]
+      }
+    }
   })]
   depends_on = [module.external-secrets, helm_release.arc, helm_release.gha_runner_secrets]
 }

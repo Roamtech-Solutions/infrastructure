@@ -98,12 +98,12 @@ resource "google_project_iam_member" "logging_viewer" {
 
 /* Allow for private network access to CloudSQL */
 module "private_service_access" {
-	count = (var.enable_psa) ? 1 : 0
+  count       = (var.enable_psa) ? 1 : 0
   source      = "terraform-google-modules/sql-db/google//modules/private_service_access"
   version     = "26.1.1"
   project_id  = var.project_id
   vpc_network = module.network.network_name
-	depends_on = [module.network]
+  depends_on  = [module.network]
 }
 
 module "jump_box" {

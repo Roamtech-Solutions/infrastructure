@@ -4,7 +4,7 @@ data "github_repositories" "default" {
 }
 
 data "github_repository" "default" {
-  for_each = toset(data.github_repositories.default.full_names)
+  for_each  = toset(data.github_repositories.default.full_names)
   full_name = each.key
 }
 

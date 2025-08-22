@@ -20,12 +20,12 @@ module "gke" {
     {
       "vpn" = "${data.terraform_remote_state.management.outputs.vpn_address}/32"
     },
-		{
-			for idx, ip in data.terraform_remote_state.management.outputs.gha_cluster_nat_ips : "gha-cluster-${idx}" => "${ip}/32"
-		},
+    {
+      for idx, ip in data.terraform_remote_state.management.outputs.gha_cluster_nat_ips : "gha-cluster-${idx}" => "${ip}/32"
+    },
     (var.ci_runner_ip != "") ? {
       ci_runner = "${var.ci_runner_ip}/32"
   } : {})
   jump_box_enabled = true
-	enable_psa = true
+  enable_psa       = true
 }

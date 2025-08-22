@@ -9,7 +9,7 @@ variable "github_organisation" {
 }
 
 variable "prefixes" {
-	type = list(string)
-	description = "Setup onlt the projects that start with these prefixes"
+  type        = list(string)
+  description = "Setup onlt the projects that start with these prefixes"
 }
 

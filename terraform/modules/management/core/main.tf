@@ -123,26 +123,26 @@ module "github_actions" {
   source              = "../../github-actions"
   project_id          = module.project.project_id
   github_organisation = var.github_organisation
-	prefixes = var.service_groups
+  prefixes            = var.service_groups
 }
 
 /* === GitHub Actions === */
 resource "google_secret_manager_secret" "gh_app" {
-	for_each = toset(["id", "installation_id", "private_key"])
-	project = module.project.project_id
-	secret_id = "gh-app-${replace(each.key, "_", "-")}"
-	replication {
-		auto {}
-	}
+  for_each  = toset(["id", "installation_id", "private_key"])
+  project   = module.project.project_id
+  secret_id = "gh-app-${replace(each.key, "_", "-")}"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret_version" "gh_app" {
-	for_each = {
-		for k, v in google_secret_manager_secret.gh_app : k => v
-			if k != "private_key"
-	}
-	secret = each.value.id
-	secret_data = var.github_app[each.key]
+  for_each = {
+    for k, v in google_secret_manager_secret.gh_app : k => v
+    if k != "private_key"
+  }
+  secret      = each.value.id
+  secret_data = var.github_app[each.key]
 }
 
 module "gke_gh_actions" {
@@ -156,7 +156,7 @@ module "gke_gh_actions" {
     {
       "vpn" = "${module.vpn.address}/32"
     }
-	)
+  )
   jump_box_enabled = false
 }
 

@@ -23,10 +23,10 @@ variable "github_organisation" {
 }
 
 variable "github_app" {
-	type = object({
-		id = string
-		installation_id = string
-	})
+  type = object({
+    id              = string
+    installation_id = string
+  })
 }
 
 variable "services" {

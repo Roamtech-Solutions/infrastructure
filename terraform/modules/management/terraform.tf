@@ -15,10 +15,10 @@ terraform {
       source  = "integrations/github"
       version = "6.6.0"
     }
-		helm = {
-			source = "hashicorp/helm"
+    helm = {
+      source  = "hashicorp/helm"
       version = "3.0.2"
-		}
+    }
   }
 }
 

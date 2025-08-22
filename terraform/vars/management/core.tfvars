@@ -16,8 +16,8 @@ services = [
 
 github_organisation = "Roamtech-Solutions"
 github_app = {
-	id = "1819150"
-	installation_id = "82073011"
+  id              = "1819150"
+  installation_id = "82073011"
 }
 
 allowed_networks = {

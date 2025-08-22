@@ -33,7 +33,7 @@ variable "jump_box_enabled" {
 }
 
 variable "enable_psa" {
-	type = bool
-	default = false
+  type    = bool
+  default = false
 }
 
