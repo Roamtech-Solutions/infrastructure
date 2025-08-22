@@ -54,7 +54,7 @@ resource "helm_release" "gha_arc_runner_set" {
   create_namespace = true
   values = [yamlencode({
     project_id    = var.project_id
-    githubConfigUrl = "https://github.com/organizations/${data.terraform_remote_state.core.outputs.gh_org}"
+    githubConfigUrl = "https://github.com/${data.terraform_remote_state.core.outputs.gh_org}"
 		githubConfigSecret = "github-config-secret"
   })]
   depends_on = [module.external-secrets, helm_release.arc, helm_release.gha_runner_secrets]
