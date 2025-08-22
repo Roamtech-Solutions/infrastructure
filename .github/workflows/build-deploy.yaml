@@ -199,36 +199,36 @@ jobs:
             gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
 
       # --- Apply Terraform --- #
-#      - name: Checkout infrastructure repository
-#        uses: actions/checkout@v4
-#        with:
-#          repository: Roamtech-Solutions/infrastructure
-#          ref: master
-#          token: ${{ secrets.INFRA_PAT }}
-#      # Authenticate again because the checkout deletes the credentials file
-#      - name: Google Cloud Authentication
-#        uses: 'google-github-actions/auth@v2'
-#        with:
-#          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
-#          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
-#          create_credentials_file: true
-#      - name: Terraform
-#        run: |
-#          sudo apt update
-#          sudo apt install -y make curl
-#
-#          # Add GitLab Runner IP to allow for deployments to the GKE cluster.
-#          export TF_VAR_ci_runner_ip=$(curl --ipv4 ifconfig.me)
-#          make apply ENV=${{ inputs.environment }} MOD=infra
-#
-#          # Apply the Helm charts and related infrastructure for the service
-#          # group.
-#          make apply ENV=${{ inputs.environment }} \
-#            MOD=service-group \
-#            SG=${{ inputs.service_group }}
-#
-#          # Remove the GitLab runner IP from being allowed to connect to the
-#          # cluster.
-#          export TF_VAR_ci_runner_ip=""
-#          make apply ENV=${{ inputs.environment }} MOD=infra
-#
+      - name: Checkout infrastructure repository
+        uses: actions/checkout@v4
+        with:
+          repository: Roamtech-Solutions/infrastructure
+          ref: master
+          token: ${{ secrets.INFRA_PAT }}
+      # Authenticate again because the checkout deletes the credentials file
+      - name: Google Cloud Authentication
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
+      - name: Terraform
+        run: |
+          sudo apt update
+          sudo apt install -y make curl
+
+          # Add GitLab Runner IP to allow for deployments to the GKE cluster.
+          export TF_VAR_ci_runner_ip=$(curl --ipv4 ifconfig.me)
+          make apply ENV=${{ inputs.environment }} MOD=infra
+
+          # Apply the Helm charts and related infrastructure for the service
+          # group.
+          make apply ENV=${{ inputs.environment }} \
+            MOD=service-group \
+            SG=${{ inputs.service_group }}
+
+          # Remove the GitLab runner IP from being allowed to connect to the
+          # cluster.
+          export TF_VAR_ci_runner_ip=""
+          make apply ENV=${{ inputs.environment }} MOD=infra
+
