@@ -29,6 +29,6 @@ service_groups = [
   "adenzo",
   "imt",
   "emalify",
-  "payments"
+  "payments",
 ]
 
