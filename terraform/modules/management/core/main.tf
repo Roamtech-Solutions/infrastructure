@@ -126,23 +126,13 @@ module "github_actions" {
 	prefixes = var.service_groups
 }
 
-/* === GitHub Actions === */
-resource "google_secret_manager_secret" "gh_app" {
-	for_each = toset(["id", "installation_id", "private_key"])
+/* === GitHub Actions Runner === */
+resource "google_secret_manager_secret" "gha_pat" {
 	project = module.project.project_id
-	secret_id = "gh-app-${replace(each.key, "_", "-")}"
+	secret_id = "gha-runner-pat"
 	replication {
 		auto {}
 	}
-}
-
-resource "google_secret_manager_secret_version" "gh_app" {
-	for_each = {
-		for k, v in google_secret_manager_secret.gh_app : k => v
-			if k != "private_key"
-	}
-	secret = each.value.id
-	secret_data = var.github_app[each.key]
 }
 
 module "gke_gh_actions" {
