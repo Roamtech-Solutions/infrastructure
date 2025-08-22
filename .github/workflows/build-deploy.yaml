@@ -182,7 +182,7 @@ jobs:
           create_credentials_file: true
       - name: Setup Google Cloud SDK
         run: |
-          sudo apt update && sudo apt install -y wget
+          sudo apt update && sudo apt install -y wget gettext
           wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
           tar -xzf google-cloud-cli-linux-x86_64.tar.gz
           ./google-cloud-sdk/install.sh --quiet
