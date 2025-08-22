@@ -31,3 +31,8 @@ output "gh_actions_cluster" {
 output "gh_org" {
 	value = var.github_organisation
 }
+
+output "gha_cluster_nat_ips" {
+	value = module.gke_gh_actions.nat_ips
+}
+

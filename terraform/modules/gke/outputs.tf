@@ -10,6 +10,10 @@ output "network" {
   }
 }
 
+output "nat_ips" {
+	value = google_compute_address.nat[*].address
+}
+
 output "pod_cidr" {
   value = local.pod_cidr
 }
