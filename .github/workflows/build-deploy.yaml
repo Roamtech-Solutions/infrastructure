@@ -86,7 +86,9 @@ jobs:
     
   build:
     name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
-    runs-on: arc-runner-set
+    # Using managed runners for builds, because GKE autopilot doesn't support 
+    # Docker in Docker.
+    runs-on: ubuntu-latest
     needs: matrix
     strategy:
       matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
