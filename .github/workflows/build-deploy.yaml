@@ -123,11 +123,11 @@ jobs:
           create_credentials_file: true
       - name: Setup Google Cloud SDK
         run: |
-          sudo apt update
-          sudo apt install -y apt-transport-https ca-certificates gnupg curl
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo apt update && sudo apt install -y google-cloud-cli
+          wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
+          tar -xzf google-cloud-cli-linux-x86_64.tar.gz
+          ./google-cloud-sdk/install.sh --quiet
+          ./google-cloud-sdk/bin/gcloud --version
+
       - name: GCR Login
         uses: docker/login-action@v3
         with:
@@ -179,11 +179,10 @@ jobs:
           create_credentials_file: true
       - name: Setup Google Cloud SDK
         run: |
-          sudo apt update
-          sudo apt install -y apt-transport-https ca-certificates gnupg curl
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo apt update && sudo apt install -y google-cloud-cli
+          wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
+          tar -xzf google-cloud-cli-linux-x86_64.tar.gz
+          ./google-cloud-sdk/install.sh --quiet
+          ./google-cloud-sdk/bin/gcloud --version
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -208,7 +207,7 @@ jobs:
           envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
 
           # --- Upload --- #
-          gcloud storage cp /tmp/values.yaml \
+          ./google-cloud-sdk/bin/gcloud storage cp /tmp/values.yaml \
             gs://${{ env.MANAGEMENT_PROJECT_ID }}-values/${{ inputs.environment }}/${{ inputs.service_group }}/${{ inputs.service_name }}.yaml
 
       # --- Apply Terraform --- #
