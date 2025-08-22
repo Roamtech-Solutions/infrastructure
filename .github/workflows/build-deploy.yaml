@@ -30,7 +30,7 @@ jobs:
 
   matrix:
     name: "🔧 Prepare Build Matrix"
-    runs-on: ubuntu-latest
+    runs-on: arc-runner-set
     env:
       # NOTE: Values hardcoded here because you need GitHub enterprise to set
       #       these at the org level.
@@ -80,7 +80,7 @@ jobs:
     
   build:
     name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
-    runs-on: ubuntu-latest
+    runs-on: arc-runner-set
     needs: matrix
     strategy:
       matrix: ${{ fromJSON(needs.matrix.outputs.matrix) }}
@@ -147,7 +147,7 @@ jobs:
 
   deploy:
     name: "Deploy ${{ inputs.service_name }}:${{ inputs.ref }}"
-    runs-on: ubuntu-latest
+    runs-on: arc-runner-set
     needs:
       - build
       - matrix
