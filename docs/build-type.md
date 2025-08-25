@@ -30,11 +30,12 @@ the name of the build is and where the Dockerfile is to build it.
 This can be used by GitHub actions to dynamically build different Docker images,
 depending on what has been set.
 
-Here is the `php-laravel` as an example:
+Here is the `java-spring-boot` build matrix as an example:
 https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-java-spring-boot.json#L1-L8
 
 > Here we can see that a Docker image called `app` will be built from the
-> `docker/java-spring-boot/Dockerfile` file.
+> [`docker/java-spring-boot/Dockerfile`](/docker/java-spring-boot/Dockerfile)
+> file.
 
 You can  have multiple images, for example see PHP Laravel:
 https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-php-laravel.json#L1-L16
