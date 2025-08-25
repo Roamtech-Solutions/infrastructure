@@ -175,6 +175,10 @@ jobs:
       - name: APT Dependencies
         run: |
           sudo apt update && sudo apt install -y wget gettext make
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
       - name: Checkout caller repository
         uses: actions/checkout@v4
         with:
