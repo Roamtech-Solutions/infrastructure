@@ -18,6 +18,7 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}
       containers:
         # --- FPM container accepting CGI requests from NGINX --- #
         - name: {{ .Release.Name }}-fpm
