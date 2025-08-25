@@ -7,15 +7,16 @@ what Docker images are going to be built.
 ## Overview
 
 Dockerfiles and files associated with those builds are configured in the
-[docker](/docker) folder.
+[`docker`](/docker) folder.
 
 These Docker builds can then be referenced by the docker build matrix
-configurations, which are located in the [.github/matrix/](/.github/matrix/)
+configurations, which are located in the [`.github/matrix/`](/.github/matrix/)
 folder.
 
 The _service type_ correlates directly with the names of the build matrix
 configurations. For example, the `java-spring-boot` service type will use the
-`./.github/matrix/docker-java-spring-boot.json` file.
+[`.github/matrix/docker-java-spring-boot.json`](/.github/matrix/docker-java-spring-boot.json)
+file.
 
 So based on the _service type_ there are 1 or more different Docker builds
 that are made, depending on what has been set in the corresponding Docker
