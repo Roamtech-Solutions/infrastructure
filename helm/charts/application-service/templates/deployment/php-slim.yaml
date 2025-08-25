@@ -173,7 +173,7 @@ spec:
             - name: public-assets
               mountPath: /data
         # --- Wait for Migration Job to complete --- #
-        {{- if .Values.migrations }}
+        {{- if ne "none" .Values.migration_type }}
         - name: wait-for-migration
           image: bitnami/kubectl
           command:

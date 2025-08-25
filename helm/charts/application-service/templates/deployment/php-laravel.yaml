@@ -178,6 +178,30 @@ spec:
             - name: public-assets
               mountPath: /data
 
+        # --- Wait for Migration Job to complete --- #
+        {{- if ne "none" .Values.migration_type }}
+        - name: wait-for-migration
+          image: bitnami/kubectl
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag }} \
+                -o jsonpath='{.status.succeeded}' | grep 1; do
+                echo "Waiting for migration job to complete..."
+                sleep 5
+              done
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+        {{- end }}
+
       volumes:
         # --- Public assets are shared across the NGINX and FPM container --- #
         - name: public-assets

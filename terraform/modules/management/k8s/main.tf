@@ -70,6 +70,7 @@ resource "helm_release" "gha_arc_runner_set" {
     project_id         = var.project_id
     githubConfigUrl    = "https://github.com/${data.terraform_remote_state.core.outputs.gh_org}"
     githubConfigSecret = "github-config-secret"
+
     /* --- Listener Configuration --- */
     listenerTemplate = {
       spec = {
@@ -92,6 +93,32 @@ resource "helm_release" "gha_arc_runner_set" {
         ]
       }
     }
+
+    /* --- Runner Pod Spec --- */
+    template = {
+      spec = {
+        containers = [
+          {
+            name    = "runner"
+            image   = "ghcr.io/actions/actions-runner:latest"
+            command = ["/home/runner/run.sh"]
+            resources = {
+              limits = {
+                cpu               = "2000m"
+                ephemeral-storage = "10Gi"
+                memory            = "4Gi"
+              }
+              requests = {
+                cpu               = "1000m"
+                ephemeral-storage = "10Gi"
+                memory            = "2Gi"
+              }
+            }
+          }
+        ]
+      }
+    }
+
   })]
   depends_on = [module.external-secrets, helm_release.arc, helm_release.gha_runner_secrets]
 }
