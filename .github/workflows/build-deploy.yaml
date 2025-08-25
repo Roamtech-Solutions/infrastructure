@@ -235,6 +235,7 @@ jobs:
         run: |
           # Apply the Helm charts and related infrastructure for the service
           # group.
+          cd infrastructure
           make apply ENV=${{ inputs.environment }} \
             MOD=service-group \
             SG=${{ inputs.service_group }}
