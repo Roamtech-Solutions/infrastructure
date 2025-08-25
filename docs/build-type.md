@@ -30,47 +30,18 @@ This can be used by GitHub actions to dynamically build different Docker images,
 depending on what has been set.
 
 Here is the `php-laravel` as an example:
-https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-custom.json#L1
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-java-spring-boot.json#L1-8
 
-```json
-{
-	"include": [
-		{
-			"name": "app",	
-			"dockerfile": "docker/java-spring-boot/Dockerfile"
-		}
-	]
-}
-```
-
-Here we can see that a Docker image called `app` will be built from the
-`docker/java-spring-boot/Dockerfile` file.
+> Here we can see that a Docker image called `app` will be built from the
+> `docker/java-spring-boot/Dockerfile` file.
 
 You can  have multiple images, for example see PHP Laravel:
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-php-laravel.json#L1-16
 
-```JSON
-{
-	"include": [
-		{
-			"name": "nginx",	
-			"dockerfile": "docker/php-laravel-nginx/Dockerfile"
-		},
-		{
-			"name": "fpm",
-			"dockerfile": "docker/php-laravel-fpm/Dockerfile"
-		},
-		{
-			"name": "cli",
-			"dockerfile": "docker/php-laravel-cli/Dockerfile"
-		}
-	]
-}
-```
-
-This builds 3 images, which the service requires:
-- `nginx` for ingress to the application
-- `fpm` for listing for CGI requests from the `nginx` container
-- `cli` for performing migrations and other tasks
+> This builds 3 images, which the service requires:
+> - `nginx` for ingress to the application
+> - `fpm` for listing for CGI requests from the `nginx` container
+> - `cli` for performing migrations and other tasks
 
 
 ## GitHub Actions Implementation
