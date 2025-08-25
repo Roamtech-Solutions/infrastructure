@@ -37,7 +37,7 @@ https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba
 > [`docker/java-spring-boot/Dockerfile`](/docker/java-spring-boot/Dockerfile)
 > file.
 
-You can  have multiple images, for example see PHP Laravel:
+You can  have multiple images, for example see PHP Laravel (`php-laravel`):
 https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/matrix/docker-php-laravel.json#L1-L16
 
 > This builds 3 images, which the service requires:
