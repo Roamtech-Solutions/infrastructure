@@ -43,12 +43,33 @@ https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba
 > - `fpm` for listing for CGI requests from the `nginx` container
 > - `cli` for performing migrations and other tasks
 
+This is all that is needed to create new build types in the infrastructure
+framework.
 
-## GitHub Actions Implementation
+## More Information on the GitHub Actions Implementation
 
 GitHub Actions allows for job variations with
 [Matrix Strategies][gha-matrix-strats].
 
+There is a generic solution in place in the build and deploy workflow, which
+means that all that is needed to get a service type building, is the Dockerfile
+and respective build matrix.
+
+Here is where the build type is identified in the main build and deploy
+workflow:
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/workflows/build-deploy.yaml#L64-L68
+
+We can see here that it is detecting the service type configured in the 
+service project and then loading the respective build matrix and saving it
+as an output in the workflow step. The job then uses that step output and
+makes it available as a job output, so that the next job can access it:
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/workflows/build-deploy.yaml#L79-L82
+
+In the `build` job, which runs after the `matrix` job, the matrix strategy
+is configured using the output made in the `matrix` job:
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/workflows/build-deploy.yaml#L87-L94
 
 
+<!-- Links -->
 [gha-matrix-strats]: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
+
