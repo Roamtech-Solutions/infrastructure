@@ -7,10 +7,10 @@ what Docker images are going to be built.
 ## Overview
 
 Dockerfiles and files associated with those builds are configured in the
-[docker](./docker) folder.
+[docker](/docker) folder.
 
 These Docker builds can then be referenced by the docker build matrix
-configurations, which are located in the [.github/matrix/](.github/matrix/)
+configurations, which are located in the [.github/matrix/](/.github/matrix/)
 folder.
 
 The _service type_ correlates directly with the names of the build matrix
