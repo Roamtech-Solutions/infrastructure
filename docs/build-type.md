@@ -71,6 +71,13 @@ In the `build` job, which runs after the `matrix` job, the matrix strategy
 is configured using the output made in the `matrix` job:
 https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/workflows/build-deploy.yaml#L87-L94
 
+Then when it comes to actually building the images, the image name is suffixed
+with the `name` (`matrix.name`) property and the `dockerfile`
+(`matrix.dockerfile`) property is used to reference which Docerfile to
+build with:
+
+https://github.com/Roamtech-Solutions/infrastructure/blob/4e1ed2682d5d668a867dba4c00181eec38d52049/.github/workflows/build-deploy.yaml#L142-L155
+
 
 <!-- Links -->
 [gha-matrix-strats]: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
