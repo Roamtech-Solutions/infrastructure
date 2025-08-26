@@ -100,6 +100,9 @@ COPY --from=builder /var/www /var/www
 # Make sure PHP can acces variables
 RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
 
+# Stop errors about max children being exceeded
+RUN sed -i '/^pm.max_children/c\pm.max_children = 32' /usr/local/etc/php-fpm.d/www.conf
+
 # Set working directory
 WORKDIR /var/www
 
