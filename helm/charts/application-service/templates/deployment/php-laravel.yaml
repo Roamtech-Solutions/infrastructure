@@ -32,6 +32,8 @@ spec:
               value: {{ .Release.Name }}
             - name: APP_URL
               value: https://{{ .Values.host }}
+            - name: LOG_CHANNEL
+              value: stdout
 
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}
