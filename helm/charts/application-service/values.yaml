@@ -1,7 +1,7 @@
 # === Ingress & Service === #
 ingress: false
 host: ""
-health_check_path: "/"
+health_check_path: "/health"
 security_policy: default
 
 # === Deployment === #
