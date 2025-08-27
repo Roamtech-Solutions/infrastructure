@@ -115,3 +115,63 @@ module "application_service" {
   ]
 }
 
+/* === IAM Access === */
+
+# IAM Permissions for connecting and deploying to the cluster
+resource "google_project_iam_member" "container_developer" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/container.developer"
+  member   = each.key
+}
+
+# Log viewing permissions
+resource "google_project_iam_member" "logging_viewer" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/logging.viewer"
+  member   = each.key
+}
+
+
+/* --- Instance Login --- */
+# SSH via IAP
+resource "google_project_iam_member" "ssh_iap" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/iap.tunnelResourceAccessor"
+  member   = each.key
+}
+
+# OS Login
+resource "google_project_iam_member" "compute_instance_admin" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/compute.instanceAdmin"
+  member   = each.key
+}
+
+# Service Account User
+resource "google_project_iam_member" "sa_user" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/iam.serviceAccountUser"
+  member   = each.key
+}
+
+# Secrets Viewer
+resource "google_project_iam_member" "secrets_viewer" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/secretmanager.viewer"
+  member   = each.key
+}
+
+# Secrets Version Accessor
+resource "google_project_iam_member" "secrets_version_accessor" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/secretmanager.secretAccessor"
+  member   = each.key
+}
+

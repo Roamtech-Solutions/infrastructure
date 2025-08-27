@@ -25,4 +25,8 @@ variable "sub_host" {
   default = ""
 }
 
+variable "developers" {
+	type = list(string)
+	default = []
+}
 
