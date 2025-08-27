@@ -1,14 +1,13 @@
 # Service Group - MySQL
 
 Service groups can have a MySQL instance deployed.
-
-
-## Overview
+This is a guide on how to securely connect to one of these.
 
 
 ## Connecting
+
 MySQL databases deployed in service groups do not have public IP addresses, so
-a connect must be made from a machine on the same network.
+a connection must be made from a machine on the same network.
 
 
 ### Cluster Jump Box
@@ -21,7 +20,7 @@ done [here][jump-box].
 
 Acquire the instance connection name from the [SQL Instances][sql-instances]
 page in the project for your environment.
-The instane name will be the name of the service group you are working in with
+The instance name will be the name of the service group you are working in with
 a random suffix.
 There is a column for the _Instance connection name_, copy this value for the
 instance that you want to connect to.
@@ -38,7 +37,7 @@ cloud-sql-proxy --private-ip INSTANCE_CONNECTION_NAME
 This will open a local port to connect through to the MySQL instance.
 
 
-### Datbase Credentials
+### Database Credentials
 
 Credentials for the database are generated and stored in Google Secrets 
 manager.
