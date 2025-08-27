@@ -15,9 +15,9 @@ strategy:
     maxSurge: 1
 resources:
   limits:
-    cpu: 50m
+    cpu: 100m
     ephemeral-storage: 1Gi
-    memory: 64Mi
+    memory: 128Mi
   requests:
     cpu: 50m
     ephemeral-storage: 1Gi
