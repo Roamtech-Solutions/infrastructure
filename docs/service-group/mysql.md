@@ -52,6 +52,11 @@ user credentials.
 
 ### `mysql` Client Connection
 
+You will need another SSH connection to the jump box, because the SQL
+proxy will be running in the first connection.
+Open another SSH connection to be able to connect to the database through
+the proxy.
+
 The `mysql` CLI client is installed on the cluster jump box and can be
 used to make the connection via the CloudSQL proxy, provide the `root`
 user password when prompted:
