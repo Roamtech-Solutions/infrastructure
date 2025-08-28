@@ -12,6 +12,31 @@ The PHP version is determined by what is set in the `require` property in the
 This will default to PHP version `8.4`, if it can't be determined from there.
 
 
+## Stdout Logging
+
+PHP Laravel applications by default are going to log to files in the `storage`
+folder and there is no channel option for `stdout`.
+This isn't very helpful when deploying in Kubernetes with multiple instances
+because it makes checking the logs very difficult, causing you to log on to
+every instance to view each file.
+Writing the logs to `stdout` will make the logs easily visible in the Google
+Cloud console, since `stdout` logs are collected automatically.
+
+To do this, add a `stdout` logging channel to `config/logging.php`:
+```php
+	'stdout' => [
+            'driver' => 'monolog',
+            'handler' => StreamHandler::class,
+            'with' => [
+                'stream' => 'php://stdout',
+            ],
+        ]
+```
+
+Setting up this logging channel is required because the `LOG_CHANNEL`
+environment variables gets set to `stdout` in the Kubernetes deployment.
+
+
 ## Required Service Configurations
 
 When adding an application to the `requires` property, the corresponding
