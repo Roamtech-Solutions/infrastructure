@@ -117,7 +117,7 @@ module "jump_box" {
   startup_script = <<-EOT
     #!/bin/bash
     apt update
-    apt install -y telnet default-mysql-client vim
+    apt install -y telnet default-mysql-client vim redis-tools
     curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.18.1/cloud-sql-proxy.linux.amd64
     chmod +x cloud-sql-proxy
     mv cloud-sql-proxy /usr/bin/cloud-sql-proxy
