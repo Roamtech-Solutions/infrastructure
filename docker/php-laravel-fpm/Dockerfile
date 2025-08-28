@@ -6,6 +6,9 @@ FROM php:${PHP_VERSION}-fpm AS builder
 # Install system dependencies and PHP extensions for Laravel with MySQL/PostgreSQL support.
 # Dependencies in this stage are only required for building the final image.
 # Node.js and asset building are handled in the Nginx stage, not here.
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions http
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
