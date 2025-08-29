@@ -20,7 +20,7 @@ If this isn't found, the Go version will default to `1.23.0`.
 When adding an application to the `requires` property, the corresponding
 environment variables are made available to the service.
 
-These environment variables can be accessed with the `os.getenv` function
+These environment variables can be accessed with the `os.Getenv` function
 in your source code, see more [here][go-env-vars].
 
 
