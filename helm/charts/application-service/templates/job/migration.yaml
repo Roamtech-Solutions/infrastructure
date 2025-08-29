@@ -27,7 +27,7 @@ roleRef:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-migration-{{ .Values.tag }}
+  name: {{ .Release.Name }}-migration-{{ .Values.tag_short }}
 spec:
   template:
     spec:

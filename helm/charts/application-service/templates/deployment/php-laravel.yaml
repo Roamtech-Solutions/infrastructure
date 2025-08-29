@@ -189,7 +189,7 @@ spec:
             - /bin/sh
             - -c
             - |
-              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag }} \
+              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag_short }} \
                 -o jsonpath='{.status.succeeded}' | grep 1; do
                 echo "Waiting for migration job to complete..."
                 sleep 5
