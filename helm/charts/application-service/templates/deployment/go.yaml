@@ -1,0 +1,111 @@
+{{- if eq "go" .Values.type }} 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image }}-app:{{ .Values.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+
+            # --- MySQL --- #
+            {{- if (.Values.mysql) }}
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }} key: port
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- RabbitMQ --- #
+            {{- if (.Values.rabbitmq) }}
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: port
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            {{- end }}
+
+            # --- Redis --- #
+            {{- if (.Values.redis) }}
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: port
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: user
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
+{{- end }}
+
