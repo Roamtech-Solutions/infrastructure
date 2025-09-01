@@ -6,7 +6,8 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o app ./cmd
+RUN ls *.go > /dev/null 2>&1 && src_dir=. || src_dir=./cmd; \
+    CGO_ENABLED=0 GOOS=linux go build -o app $src_dir
 
 # === Run Image === #
 FROM alpine:latest
