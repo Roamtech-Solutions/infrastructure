@@ -102,8 +102,19 @@ spec:
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
             {{- end }}
-
         {{- end }}
+        volumeMounts:
+          - name: mysql-cert
+            mountPath: /etc/ssl/certs
+            readOnly: true
+      volumes:
+        # --- MySQL Certificate --- #
+        - name: mysql-cert
+          secret:
+            secretName: cloudsql-cert
+            items:
+              - key: data
+                path: mysql-ca.pem
       restartPolicy: Never
     backoffLimit: 1
 {{- end }}
