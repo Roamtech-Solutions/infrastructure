@@ -63,22 +63,21 @@ spec:
             - name: 'KC_DB_URL_DATABASE'
               value: 'keycloak'
             - name: 'KC_DB_URL_HOST'
-              value: 'postgres'
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: host
             - name: 'KC_DB'
               value: 'postgres'
             - name: 'KC_DB_PASSWORD'
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: pass
             - name: 'KC_DB_USERNAME'
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: user
           ports:
             - name: http

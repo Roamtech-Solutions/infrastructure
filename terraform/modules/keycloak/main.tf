@@ -36,8 +36,11 @@ resource "helm_release" "keycloak" {
   values = [yamlencode({
     host = var.host
 		port = 9000
+		service_group = var.service_group
   })]
 
   create_namespace = true
+
+	timeout = 900
 }
 

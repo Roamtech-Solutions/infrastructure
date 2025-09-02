@@ -62,7 +62,7 @@ locals {
 			}
 			if lookup(v, "ingress", false)
 		],
-		(local.keycloak_enabled) ? [{ name = "keycloak", port = 9000 }] : []
+		(local.keycloak_enabled) ? [{ name = "keycloak", port = 8080 }] : []
 	))
 
   certificates = [

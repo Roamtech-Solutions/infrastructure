@@ -35,7 +35,7 @@ module "cloudsql" {
 /* === PostgreSQL Database === */
 module "postgresql" {
   count            = length(local.postgresql_services) > 0 ? 1 : 0
-  source           = "../../cloudsql"
+  source           = "../../cloudsql-pg"
   project_id       = local.project_id
   name             = var.service_group
   database_version = "POSTGRES_16"
@@ -85,6 +85,7 @@ resource "helm_release" "service_group" {
       enabled = (length(local.rabbitmq_services) > 0)
     }
     mysql_services      = local.mysql_services
+    postgresql_services      = local.postgresql_services
     ingress_services    = local.ingress_services
     certificates        = local.certificates
     host                = local.host
@@ -135,6 +136,8 @@ module "application_service" {
   values = each.value.content
   depends_on = [
     resource.helm_release.service_group,
+    module.redis,
+    module.keycloak,
   ]
 }
 
