@@ -19,11 +19,27 @@ locals {
     )
   }
 
+  /* --- Keycloak Services --- */
+	keycloak_services = [
+		for k, v in local.application_service_values : k
+		if contains(lookup(v, "requires", []), "keycloak")
+	]
+	keycloak_enabled = length(local.keycloak_services) > 0
+
   /* --- MySQL Services --- */
   mysql_services = [
     for k, v in local.application_service_values : k
     if contains(lookup(v, "requires", []), "mysql")
   ]
+
+  /* --- PostgreSQL Services --- */
+  postgresql_services = distinct(concat(
+		[
+			for k, v in local.application_service_values : k
+			if contains(lookup(v, "requires", []), "postgresql")
+		],
+		(local.keycloak_enabled) ? ["keycloak"] : []
+	))
 
   /* --- RabbitMQ Services --- */
   rabbitmq_services = [
@@ -38,13 +54,19 @@ locals {
   ]
 
   /* --- Ingress Services --- */
-  ingress_services = [
-    for k, v in local.application_service_values : k
-    if lookup(v, "ingress", false)
-  ]
+  ingress_services = distinct(concat(
+		/* Service port defaulted to 8080 */
+		[
+			for k, v in local.application_service_values : {
+				name = k, port = lookup(v, "port", 8080)
+			}
+			if lookup(v, "ingress", false)
+		],
+		(local.keycloak_enabled) ? [{ name = "keycloak", port = 9000 }] : []
+	))
 
   certificates = [
-    for service in local.ingress_services : "${var.service_group}-${service}"
+    for s in local.ingress_services : "${var.service_group}-${s.name}"
   ]
 }
 

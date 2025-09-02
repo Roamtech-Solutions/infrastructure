@@ -2,19 +2,11 @@ variable "project_id" {
   type = string
 }
 
-variable "name" {
+variable "service_group" {
   type = string
 }
 
 variable "host" {
-  type = string
-}
-
-variable "dns_managed_zone_project_id" {
-  type = string
-}
-
-variable "dns_managed_zone_name" {
   type = string
 }
 

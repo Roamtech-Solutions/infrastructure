@@ -32,6 +32,19 @@ module "cloudsql" {
   users            = local.mysql_services
 }
 
+/* === PostgreSQL Database === */
+module "postgresql" {
+  count            = length(local.postgresql_services) > 0 ? 1 : 0
+  source           = "../../cloudsql"
+  project_id       = local.project_id
+  name             = var.service_group
+  database_version = "POSTGRES_16"
+  region           = var.region
+  zone             = data.google_compute_zones.available.names[0]
+  network          = data.terraform_remote_state.infra.outputs.gke_network
+  tier_primary     = "db-f1-micro"
+  users            = local.postgresql_services
+}
 
 /* === Service Group Setup === */
 
@@ -81,7 +94,7 @@ resource "helm_release" "service_group" {
 
   dependency_update = true
 
-  depends_on = [module.cloudsql]
+  depends_on = [module.cloudsql, module.postgresql]
 }
 
 /* === Redis === */
@@ -92,6 +105,16 @@ module "redis" {
   users      = local.redis_services
   prefix     = var.service_group
   namespace  = var.service_group
+  depends_on = [helm_release.service_group]
+}
+
+/* === Keycloak === */
+module "keycloak" {
+  count      = (length(local.keycloak_services) > 0) ? 1 : 0
+  source     = "../../keycloak"
+  project_id = local.project_id
+  service_group  = var.service_group
+  host          = "keycloak.${local.host}"
   depends_on = [helm_release.service_group]
 }
 

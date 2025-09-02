@@ -14,19 +14,19 @@ metadata:
     networking.gke.io/v1beta1.FrontendConfig: {{ .Release.Name }}
 spec:
   rules:
-  {{- range $k := .Values.ingress_services }}
-  - host: {{ $k }}.{{ $.Values.host }}
+  {{- range $s := .Values.ingress_services }}
+  - host: {{ $s.name }}.{{ $.Values.host }}
     http:
       paths:
       - path: /*
         pathType: ImplementationSpecific
         backend:
           service:
-            name: {{ $k }}
+            name: {{ $s.name }}
             port:
               # NOTE: Services can always be listening on port 8080, this should
               #       this should be fine for now.
-              number: 8080
+              number: {{ $s.port }}
   {{- end }}
 ---
 apiVersion: networking.gke.io/v1beta1
@@ -39,15 +39,15 @@ spec:
     enabled: true
 
 # === Certificates === #
-{{- range $k := .Values.ingress_services }}
+{{- range $s := .Values.ingress_services }}
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: {{ $.Release.Name }}-{{ $k }}
+  name: {{ $.Release.Name }}-{{ $s.name }}
 spec:
   domains:
-    - {{ $k }}.{{ $.Values.host }}
+    - {{ $s.name }}.{{ $.Values.host }}
 {{- end }}
 
 {{ end }}

@@ -37,7 +37,8 @@ spec:
             - name: MYSQL_PORT
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }} key: port
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
