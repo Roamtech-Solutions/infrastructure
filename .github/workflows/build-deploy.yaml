@@ -80,10 +80,15 @@ jobs:
           echo go_version=$(grep -E '^go ' ${{ github.event.repository.name }}/go.mod | cut -d' ' -f 2) >> $GITHUB_OUTPUT \
             || echo go_version=1.23.0 >> $GITHUB_OUTPUT
 
+          # --- Node Version --- #
+          test -f package.json && \
+            node_version=$(jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") | last(.).string' package.json | tail -1) >> $GITHUB_OUTPUT
+
     outputs:
       go_version: ${{ steps.setup.outputs.go_version }}
       java_version: ${{ steps.setup.outputs.java_version }}
       php_version: ${{ steps.setup.outputs.php_version }}
+      node_version: ${{ steps.setup.outputs.node_version }}
       matrix: ${{ steps.setup.outputs.matrix }}
 
 
@@ -154,9 +159,11 @@ jobs:
           build-args: |
             NAME=${{ inputs.service_name }}
             VERSION=${{ inputs.ref }}
+            ENVIRONMENT=${{ inputs.environment }}
             JAVA_VERSION=${{ needs.matrix.outputs.java_version }}
             PHP_VERSION=${{ needs.matrix.outputs.php_version }}
             GO_VERSION=${{ needs.matrix.outputs.go_version }}
+            NODE_VERSION=${{ needs.matrix.outputs.node_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

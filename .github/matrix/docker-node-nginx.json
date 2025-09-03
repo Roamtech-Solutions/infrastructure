@@ -1,0 +1,9 @@
+{
+	"include": [
+		{
+			"name": "nginx",	
+			"dockerfile": "docker/node-nginx/Dockerfile"
+		}
+	]
+}
+
