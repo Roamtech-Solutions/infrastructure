@@ -64,6 +64,10 @@ jobs:
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
 
+          case "${service_type}" in
+            "node-nginx") echo 
+          esac
+
           # --- Docker images to build --- #
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
 
@@ -191,9 +195,11 @@ jobs:
     steps:
 
       # --- Setup --- #
-      - name: APT Dependencies
+      - name: Dependencies
         run: |
           sudo apt update && sudo apt install -y wget gettext make
+          wget https://github.com/mikefarah/yq/releases/download/v4.47.1/yq_linux_amd64.tar.gz -O - |\
+            tar xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -236,6 +242,14 @@ jobs:
 
           # --- Image Tag --- #
           echo tag: ${{ inputs.ref }} > /tmp/values.yaml
+          
+          # --- Service Port --- #
+          service_type=$(yq '.type' ./env/${{ inputs.environment }}.yaml)
+          test -n "${service_type}"
+          case "${service_type}" in
+            "node-nginx") echo "port: 80" >> /tmp/values.yaml;;
+            *) echo "port: 8080" >> /tmp/values.yaml;;
+          esac
 
           # --- Migration Type --- #
           test -f artisan && test -d database/migrations \
