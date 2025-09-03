@@ -85,11 +85,10 @@ jobs:
           # --- Node Version --- #
           test -f ${{ github.event.repository.name }}/package.json \
             && node_version=$( \
-              jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") \
-              | last(.).string' ${{ github.event.repository.name }}/package.json | tail -1 \
+              jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") | last(.).string' \
+              ${{ github.event.repository.name }}/package.json | tail -1 \
             ) \
-            && echo "node_version=${node_version}" >> $GITHUB_OUTPUT \
-            || echo "node_version=24" >> $GITHUB_OUTPUT 
+            && echo "node_version=${node_version}" >> $GITHUB_OUTPUT
 
     outputs:
       go_version: ${{ steps.setup.outputs.go_version }}
