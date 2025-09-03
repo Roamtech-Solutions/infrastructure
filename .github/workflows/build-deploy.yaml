@@ -68,21 +68,26 @@ jobs:
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
 
           # --- Java Version --- #
-          echo java_version=$(grep -oP '(?<=<java.version>).*?(?=</java.version>)' ${{ github.event.repository.name }}/pom.xml) >> $GITHUB_OUTPUT \
+          test -f ${{ github.event.repository.name }}/pom.xml && \
+            echo java_version=$(grep -oP '(?<=<java.version>).*?(?=</java.version>)' ${{ github.event.repository.name }}/pom.xml) >> $GITHUB_OUTPUT \
             || echo java_version=17 >> $GITHUB_OUTPUT
 
           # --- PHP Version --- #
-          test -f composer.json \
+          test -f ${{ github.event.repository.name }}/composer.json && \
             && echo php_version=$(jq -r '.require.php' composer.json | grep -o '[0-9.]\+') >> $GITHUB_OUTPUT \
             || echo php_version=8.4 >> $GITHUB_OUTPUT
 
           # --- Go Version --- #
+          test -f ${{ github.event.repository.name }}/go.mod && \
           echo go_version=$(grep -E '^go ' ${{ github.event.repository.name }}/go.mod | cut -d' ' -f 2) >> $GITHUB_OUTPUT \
             || echo go_version=1.23.0 >> $GITHUB_OUTPUT
 
           # --- Node Version --- #
-          test -f package.json && \
-            node_version=$(jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") | last(.).string' package.json | tail -1) >> $GITHUB_OUTPUT
+          test -f ${{ github.event.repository.name }}/package.json && \
+            node_version=$( \
+              jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") \
+              | last(.).string' ${{ github.event.repository.name }}/package.json | tail -1 \
+            ) >> $GITHUB_OUTPUT
 
     outputs:
       go_version: ${{ steps.setup.outputs.go_version }}
