@@ -24,8 +24,6 @@ spec:
           service:
             name: {{ $s.name }}
             port:
-              # NOTE: Services can always be listening on port 8080, this should
-              #       this should be fine for now.
               number: {{ $s.port }}
   {{- end }}
 ---
