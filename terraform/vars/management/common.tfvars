@@ -2,7 +2,8 @@ organisation    = "997922026414"
 billing_account = "00A1F6-3EAE5E-A078E6"
 region          = "europe-west1"
 hosts = [
-  "roamtech.whitemire-technologies.com"
+  "roamtech.whitemire-technologies.com",
+  "paykit.africa",
 ]
 
 allowed_networks = {

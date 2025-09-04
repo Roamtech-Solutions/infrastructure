@@ -1,5 +1,4 @@
-host          = "roamtech.whitemire-technologies.com"
-sub_host      = "pay"
+host          = "paykit.africa"
 service_group = "payments"
 region        = "europe-west1"
 

@@ -64,10 +64,6 @@ jobs:
           service_type=$(yq '.type' ./${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
 
-          case "${service_type}" in
-            "node-nginx") echo 
-          esac
-
           # --- Docker images to build --- #
           echo matrix=$(cat infrastructure/.github/matrix/docker-${service_type}.json | tr -d '\n' | tr -d '\t') >> $GITHUB_OUTPUT
 
