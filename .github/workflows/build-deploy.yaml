@@ -74,7 +74,7 @@ jobs:
 
           # --- PHP Version --- #
           test -f ${{ github.event.repository.name }}/composer.json \
-            && echo php_version=$(jq -r '.require.php' composer.json | grep -o '[0-9.]\+') >> $GITHUB_OUTPUT \
+            && echo php_version=$(jq -r '.require.php' ${{ github.event.repository.name }}/composer.json | grep -o '[0-9.]\+') >> $GITHUB_OUTPUT \
             || echo php_version=8.4 >> $GITHUB_OUTPUT
 
           # --- Go Version --- #
