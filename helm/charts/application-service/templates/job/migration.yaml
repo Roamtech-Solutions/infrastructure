@@ -103,6 +103,28 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
         {{- end }}
+        {{- if has "rabbitmq" .Values.requires }}
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: port
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+        {{- end }}
         volumeMounts:
           - name: mysql-cert
             mountPath: /etc/ssl/certs
