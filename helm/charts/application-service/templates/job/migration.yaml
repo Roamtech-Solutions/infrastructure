@@ -102,6 +102,12 @@ spec:
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
             {{- end }}
+        {{- else }}
+            # --- User Managed Environment Variables --- #
+            {{- range .Values.env }}
+            - name: {{ .name | quote }}
+              value: {{ .value | quote }}
+            {{- end }}
         {{- end }}
         {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST
