@@ -19,7 +19,7 @@ rm -rf /var/www/storage-init
 # -----------------------------------------------------------
 # Improves performance by caching config and routes.
 # -----------------------------------------------------------
-grep -i 'lumen' > /dev/null 2>&1 \
+grep -i 'lumen' composer.json > /dev/null 2>&1 \
 	&& echo "Laravel Lumen project - Skipping config and route cache" \
 	|| (php artisan config:cache  && php artisan route:cache)
 
