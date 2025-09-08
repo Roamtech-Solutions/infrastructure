@@ -21,7 +21,7 @@ github_app = {
 }
 
 allowed_networks = {
-  bob = "81.151.140.163/32",
+  bob = "109.151.130.185/32",
 }
 
 service_groups = [

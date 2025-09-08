@@ -103,6 +103,7 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
         {{- else }}
+        env:
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
             - name: {{ .name | quote }}
@@ -131,6 +132,8 @@ spec:
                   name: rabbitmq-default-user
                   key: password
         {{- end }}
+            - name: LOG_CHANNEL
+              value: stdout
         volumeMounts:
           - name: mysql-cert
             mountPath: /etc/ssl/certs
