@@ -158,7 +158,7 @@ spec:
         - name: init-shared-volume
           image: {{ .Values.image }}-nginx:{{ .Values.tag }}
           command: [sh, -c]
-          args: ["cp -r /var/www/public/* /data"]
+          args: ["cp -r /var/www/public/* /data || echo 'No data to copy'"]
           resources:
             limits:
               cpu: 50m
