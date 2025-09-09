@@ -4,6 +4,7 @@ region          = "europe-west1"
 hosts = [
   "roamtech.whitemire-technologies.com",
   "paykit.africa",
+  "afrisend.com",
 ]
 
 allowed_networks = {
