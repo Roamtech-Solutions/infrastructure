@@ -48,7 +48,7 @@ RUN sed -i '/^pm.max_children/c\pm.max_children = 32' /usr/local/etc/php-fpm.d/w
 
 WORKDIR /var/www
 
-COPY . .
+COPY . /var/www/public
 
 # Ensure correct permissions
 RUN chown -R www-data:www-data /var/www
