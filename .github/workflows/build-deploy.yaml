@@ -79,11 +79,8 @@ jobs:
 
           # --- Go Version --- #
           test -f ${{ github.event.repository.name }}/go.mod \
-            && echo go_version=$(grep -E '^go ' ${{ github.event.repository.name }}/go.mod | cut -d' ' -f 2) >> $GITHUB_OUTPUT \
-            || echo go_version=1.23.0 >> $GITHUB_OUTPUT
-
-          # Load variables that have been set
-          source $GITHUB_OUTPUT
+            && eval $(echo go_version=$(grep -E '^go ' ${{ github.event.repository.name }}/go.mod | cut -d' ' -f 2) | tee -a $GITHUB_OUTPUT) \
+            || eval $(echo go_version=1.23.0 | tee -a $GITHUB_OUTPUT)
 
           # --- Go Run Image --- #
           # Some dependencies mean that we can't build static binaries, such as v8go.
