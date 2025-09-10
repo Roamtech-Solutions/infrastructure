@@ -65,6 +65,12 @@ locals {
 		(local.keycloak_enabled) ? [{ name = "keycloak", port = 8080 }] : []
 	))
 
+  /* --- Kafka Services --- */
+  kafka_services = [
+    for k, v in local.application_service_values : k
+    if contains(lookup(v, "requires", []), "kafka")
+  ]
+
   certificates = [
     for s in local.ingress_services : "${var.service_group}-${s.name}"
   ]

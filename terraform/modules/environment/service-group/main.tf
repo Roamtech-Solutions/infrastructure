@@ -87,6 +87,7 @@ resource "helm_release" "service_group" {
     mysql_services      = local.mysql_services
     postgresql_services      = local.postgresql_services
     ingress_services    = local.ingress_services
+		kafka_services = local.kafka_services
     certificates        = local.certificates
     host                = local.host
     pod_cidr            = data.terraform_remote_state.infra.outputs.gke_pod_cidr
