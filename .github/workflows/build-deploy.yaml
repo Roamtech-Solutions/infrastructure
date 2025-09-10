@@ -82,6 +82,23 @@ jobs:
             && echo go_version=$(grep -E '^go ' ${{ github.event.repository.name }}/go.mod | cut -d' ' -f 2) >> $GITHUB_OUTPUT \
             || echo go_version=1.23.0 >> $GITHUB_OUTPUT
 
+          # Load variables that have been set
+          source $GITHUB_OUTPUT
+
+          # --- Go Run Image --- #
+          # Some dependencies mean that we can't build static binaries, such as v8go.
+          # In this case CGO_ENABLED is set to 1 and another image is used.
+          test -f ${{ github.event.repository.name }}/go.mod \
+            && grep -e 'v8go' ${{ github.event.repository.name }}/go.mod \
+            && ( \
+              echo "go_run_image=golang:${go_version}" >> $GITHUB_OUTPUT \
+              && echo "cgo_enabled=1" >> $GITHUB_OUTPUT \
+            ) || ( \
+              echo "go_run_image=alpine:latest" >> $GITHUB_OUTPUT \
+              && echo "cgo_enabled=0" >> $GITHUB_OUTPUT \
+            )
+
+
           # --- Node Version --- #
           test -f ${{ github.event.repository.name }}/package.json \
             && node_version=$( \
@@ -93,6 +110,9 @@ jobs:
 
     outputs:
       go_version: ${{ steps.setup.outputs.go_version }}
+      cgo_enabled: ${{ steps.setup.outputs.cgo_enabled }}
+      go_run_image: ${{ steps.setup.outputs.go_run_image }}
+
       java_version: ${{ steps.setup.outputs.java_version }}
       php_version: ${{ steps.setup.outputs.php_version }}
       node_version: ${{ steps.setup.outputs.node_version }}
@@ -169,8 +189,10 @@ jobs:
             ENVIRONMENT=${{ inputs.environment }}
             JAVA_VERSION=${{ needs.matrix.outputs.java_version }}
             PHP_VERSION=${{ needs.matrix.outputs.php_version }}
-            GO_VERSION=${{ needs.matrix.outputs.go_version }}
             NODE_VERSION=${{ needs.matrix.outputs.node_version }}
+            GO_VERSION=${{ needs.matrix.outputs.go_version }}
+            CGO_ENABLED=${{ needs.matrix.outputs.cgo_enabled }}
+            GO_RUN_IMAGE=${{ needs.matrix.outputs.go_run_image }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -1,4 +1,5 @@
 ARG GO_VERSION=1.19
+ARG GO_RUN_IMAGE=alpine:latest
 
 # == Build Image === #
 FROM golang:${GO_VERSION} AS build
@@ -14,8 +15,9 @@ RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | he
     CGO_ENABLED=${CGO_ENABLED} GOOS=linux go build -o app "$src_dir"
 
 # === Run Image === #
-FROM alpine:latest
+FROM ${GO_RUN_IMAGE}
 WORKDIR /app
 COPY --from=build /app/app .
 EXPOSE 8080
 ENTRYPOINT ["/app/app"]
+
