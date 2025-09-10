@@ -1,26 +1,30 @@
 {
-    "name": "infrastructure",
-    "image": "mcr.microsoft.com/vscode/devcontainers/base:1.0.9-debian-12",
-    "features": {
-        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
-        "ghcr.io/devcontainers/features/terraform:1": {
-            "version": "1.12.1"
-        },
-        "./gcloud-cli": {
-            "version": "526.0.0",
-            "installGkeGcloudAuthPlugin": true
-        },
-        "ghcr.io/devcontainers/features/python:1": {},
-        "./apt": {
-		    "packages": "make,vim,nano,google-cloud-cli-gke-gcloud-auth-plugin"
-	    },
-        "ghcr.io/devcontainers/features/github-cli:1": {}
+  "name": "infrastructure-dev",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "installHelm": true,
+      "installKubectl": true,
+      "installMinikube": false
     },
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python"
-            ]
-        }
+    "ghcr.io/devcontainers/features/google-cloud-sdk:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "eamodio.gitlens"
+      ]
     }
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "remoteUser": "vscode",
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y make jq curl && terraform -help > /dev/null || true"
 }
