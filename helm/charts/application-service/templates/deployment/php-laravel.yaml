@@ -65,6 +65,8 @@ spec:
 
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
+            - name: QUEUE_CONNECTION
+              value: rabbitmq
             - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
@@ -93,6 +95,8 @@ spec:
             - name: REDIS_CLIENT
               value: phpredis
             - name: SESSION_DRIVER
+              value: redis
+            - name: CACHE_DRIVER
               value: redis
             # Provide redis connection information
             - name: REDIS_HOST
