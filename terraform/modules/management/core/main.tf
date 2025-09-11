@@ -101,7 +101,7 @@ resource "google_artifact_registry_repository" "service_groups" {
     immutable_tags = true
   }
   vulnerability_scanning_config {
-    enablement_config = "INHERITED"
+    enablement_config = "DISABLED"
   }
 }
 
