@@ -37,7 +37,8 @@ spec:
             - name: MYSQL_PORT
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-{{ .Release.Name }} key: port
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
@@ -52,7 +53,6 @@ spec:
 
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
-            - name: MYSQL_HOST
             - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
@@ -97,6 +97,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: pass
+            {{- end }}
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
             {{- end }}
 
             # --- User Managed Secrets --- #
