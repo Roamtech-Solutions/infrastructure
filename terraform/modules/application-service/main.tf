@@ -18,7 +18,7 @@ resource "helm_release" "application_service" {
 resource "google_secret_manager_secret" "default" {
   for_each  = toset(local.secrets)
   project   = var.project_id
-  secret_id = "${var.service_group}-${lower(replace(each.key, "_", "-"))}"
+  secret_id = "${var.service_group}-${var.name}-${lower(replace(each.key, "_", "-"))}"
   replication {
     auto {}
   }
