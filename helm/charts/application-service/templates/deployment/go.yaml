@@ -28,7 +28,7 @@ spec:
           env:
 
             # --- MySQL --- #
-            {{- if (.Values.mysql) }}
+            {{- if has "mysql" .Values.requires }}
             - name: MYSQL_HOST
               valueFrom:
                 secretKeyRef:
@@ -51,7 +51,8 @@ spec:
             {{- end }}
 
             # --- RabbitMQ --- #
-            {{- if (.Values.rabbitmq) }}
+            {{- if has "rabbitmq" .Values.requires }}
+            - name: MYSQL_HOST
             - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
@@ -75,7 +76,7 @@ spec:
             {{- end }}
 
             # --- Redis --- #
-            {{- if (.Values.redis) }}
+            {{- if has "redis" .Values.requires }}
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
