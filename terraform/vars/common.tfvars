@@ -9,6 +9,7 @@ hosts = [
 
 allowed_networks = {
   bob             = "109.151.130.185/32"
+  hosea_nganga = "179.61.146.210/32"
   roamtech-office = "41.139.128.197/32"
 }
 
