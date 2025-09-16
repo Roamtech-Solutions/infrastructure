@@ -202,3 +202,11 @@ resource "google_project_iam_member" "secrets_version_accessor" {
   member   = each.key
 }
 
+# Secrets Version Adder
+resource "google_project_iam_member" "secrets_version_adder" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/secretmanager.secretVersionAdder"
+  member   = each.key
+}
+
