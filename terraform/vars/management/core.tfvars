@@ -21,6 +21,7 @@ github_app = {
 }
 
 allowed_networks = {
+  roamtech-office = "41.139.128.197/32"
   bob = "109.151.130.185/32",
 }
 
