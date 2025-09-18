@@ -199,7 +199,8 @@ spec:
       volumes:
         # --- Public assets are shared across the NGINX and FPM container --- #
         - name: public-assets
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         {{- if has "mysql" .Values.requires }}
         # --- MySQL Certificate --- #
         - name: mysql-cert
