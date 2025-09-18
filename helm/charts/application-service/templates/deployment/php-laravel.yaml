@@ -188,7 +188,7 @@ spec:
         # --- Wait for Migration Job to complete --- #
         {{- if ne "none" .Values.migration_type }}
         - name: wait-for-migration
-          image: bitnami/kubectl
+          image: {{ .Values.image }}-cli:{{ .Values.tag }}
           command:
             - /bin/sh
             - -c
