@@ -12,6 +12,7 @@ resource "helm_release" "application_service" {
     }),
     var.values,
   ]
+	timeout = "600"
 }
 
 /* === Secrets === */
