@@ -121,3 +121,7 @@ destroy: init
 output: init
 	terraform -chdir=$(CHDIR) output
 
+.PHONY: import
+import:
+	terraform -chdir=$(CHDIR) import $(VARS) $(IMPORT_TO) $(IMPORT_FROM)
+
