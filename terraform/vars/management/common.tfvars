@@ -5,6 +5,7 @@ hosts = [
   "roamtech.whitemire-technologies.com",
   "paykit.africa",
   "afrisend.com",
+  "emalify.com",
 ]
 
 allowed_networks = {
