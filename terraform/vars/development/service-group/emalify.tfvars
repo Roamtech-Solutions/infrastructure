@@ -1,7 +1,6 @@
 service_group = "emalify"
 region        = "europe-west1"
-host          = "roamtech.whitemire-technologies.com"
-sub_host      = "emalify"
+host          = "emalify.com"
 
 # TODO: This should just be a group, not individuals
 developers = [
