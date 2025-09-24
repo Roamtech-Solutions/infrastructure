@@ -30,3 +30,7 @@ variable "developers" {
 	default = []
 }
 
+variable "allowed_networks" {
+  type = map(string)
+}
+
