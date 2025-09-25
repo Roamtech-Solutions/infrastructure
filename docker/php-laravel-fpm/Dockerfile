@@ -7,7 +7,13 @@ FROM php:${PHP_VERSION}-fpm AS builder
 # Dependencies in this stage are only required for building the final image.
 # Node.js and asset building are handled in the Nginx stage, not here.
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions http opentelemetry
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+# Only install opentelemetry when PHP version >= 8.0
+RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "8.0" || test "${phpv}" != "8.0") \
+	&& install-php-extensions http opentelemetry \
+	|| install-php-extensions http 
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -30,10 +36,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bcmath \
     soap \
     sockets \
-    gd \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    gd
+
+# Only install redis via pecl when PHP version >= 7.4
+RUN phpv=$(printf "${PHP_VERSION}\n7.4" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "7.4" || test "${phpv}" != "7.4") \
+	&& (pecl install redis && docker-php-ext-enable redis) \
+	|| echo "PHP version too low to install pecl redis"
+
+RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set the working directory inside the container
 WORKDIR /var/www
