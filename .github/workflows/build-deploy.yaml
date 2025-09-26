@@ -193,7 +193,7 @@ jobs:
             CGO_ENABLED=${{ needs.matrix.outputs.cgo_enabled }}
             GO_RUN_IMAGE=${{ needs.matrix.outputs.go_run_image }}
           cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-to: type=gha,mode=max
 
 
   # === Deployment === #
