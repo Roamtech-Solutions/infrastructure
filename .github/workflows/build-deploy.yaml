@@ -29,6 +29,7 @@ permissions:
 jobs:
 
   matrix:
+    timeout-minutes: 15
     name: "🔧 Prepare Build Matrix"
     runs-on: arc-runner-set
     env:
@@ -119,6 +120,7 @@ jobs:
   # === Build === #
     
   build:
+    timeout-minutes: 15
     name: "🐳📦 ${{ inputs.service_name }}-${{ matrix.name }}:${{ inputs.ref }}"
     # Using managed runners for builds, because GKE autopilot doesn't support 
     # Docker in Docker.
@@ -197,6 +199,7 @@ jobs:
   # === Deployment === #
 
   deploy:
+    timeout-minutes: 15
     name: "Deploy ${{ inputs.service_name }}:${{ inputs.ref }}"
     runs-on: arc-runner-set
     needs:
