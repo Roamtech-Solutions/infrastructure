@@ -7,12 +7,11 @@
             "version": "1.12.1"
         },
         "./gcloud-cli": {
-            "version": "526.0.0",
-            "installGkeGcloudAuthPlugin": true
+            "version": "526.0.0"
         },
         "ghcr.io/devcontainers/features/python:1": {},
         "./apt": {
-		    "packages": "make,vim,nano,google-cloud-cli-gke-gcloud-auth-plugin"
+		    "packages": "make,vim"
 	    },
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },
