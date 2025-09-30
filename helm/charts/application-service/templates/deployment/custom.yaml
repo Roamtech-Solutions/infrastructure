@@ -111,22 +111,22 @@ spec:
             - name: MB_DB_PORT
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-pg-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: port
             - name: MB_DB_HOST
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-pg-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: host
             - name: MB_DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-pg-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: user
             - name: MB_DB_PASS
               valueFrom:
                 secretKeyRef:
-                  name: postgresql-pg-{{ .Release.Name }}
+                  name: cloudsql-pg-{{ .Release.Name }}
                   key: pass
 
             # --- All Other Services ---#
