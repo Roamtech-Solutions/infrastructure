@@ -1,7 +1,7 @@
-service_group = "test"
+service_group = "data"
 region        = "europe-west1"
 host          = "roamtech.whitemire-technologies.com"
-sub_host      = "test"
+sub_host      = "data"
 
 allowed_networks = {
   roamtech-office = "41.139.128.197/32"

@@ -27,7 +27,7 @@ allowed_networks = {
 }
 
 service_groups = [
-  "test",
+  "data",
   "ecommerce",
   "imt",
   "emalify",
