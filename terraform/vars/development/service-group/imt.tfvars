@@ -1,7 +1,6 @@
 service_group = "imt"
 region        = "europe-west1"
-host          = "roamtech.whitemire-technologies.com"
-sub_host      = "imt"
+host          = "afrisend.com"
 
 # TODO: This should just be a group, not individuals
 developers = [
