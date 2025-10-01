@@ -268,7 +268,7 @@ jobs:
           case "${service_type}" in
             "node-nginx") echo "port: 80" >> /tmp/values.yaml;;
             "node-next") echo "port: 3000" >> /tmp/values.yaml;;
-            *) echo "port: 8080" >> /tmp/values.yaml;;
+            *) grep -E '^port:' ./env/${{ input.environment }}.yaml || echo "port: 8080" >> /tmp/values.yaml;;
           esac
 
           # --- Migration Type --- #
