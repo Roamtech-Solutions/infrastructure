@@ -84,7 +84,7 @@ resource "google_secret_manager_secret_version" "default" {
   secret   = each.value.id
   secret_data = jsonencode({
     host = module.cloudsql.private_ip_address
-    port = 3306
+    port = 5432
     user = each.key
     pass = random_password.default[each.key].result
   })

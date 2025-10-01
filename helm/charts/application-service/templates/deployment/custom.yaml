@@ -101,36 +101,6 @@ spec:
 
             # --- PostgreSQL --- #
             {{- if has "postgresql" .Values.requires }}
-
-            # --- Metabase --- #
-            {{- if eq .Release.Name "metabase" }}
-            - name: MB_DB_TYPE
-              value: postgres
-            - name: MB_DB_DBNAME
-              value: metabase
-            - name: MB_DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: cloudsql-pg-{{ .Release.Name }}
-                  key: port
-            - name: MB_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: cloudsql-pg-{{ .Release.Name }}
-                  key: host
-            - name: MB_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: cloudsql-pg-{{ .Release.Name }}
-                  key: user
-            - name: MB_DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: cloudsql-pg-{{ .Release.Name }}
-                  key: pass
-
-            # --- All Other Services ---#
-            {{- else }}
             - name: POSTGRESQL_HOST
               valueFrom:
                 secretKeyRef:
@@ -152,13 +122,9 @@ spec:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
             {{- end }}
-            {{- end }}
 
             # --- User Managed Environment Variables --- #
-            {{- range $k := .Values.env }}
-            - name: {{ $k.name | quote }}
-              value: {{ $k.value | quote }}
-            {{- end }}
+            {{- toYaml .Values.env | nindent 12 }}
 
             # --- User Managed Secrets --- #
             {{- range $s := .Values.secrets }}
