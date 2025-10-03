@@ -6,8 +6,7 @@ module "external-secrets" {
 /* === RabbitMQ Operater === */
 resource "helm_release" "rabbitmq_cluster_operator" {
   name       = "rabbitmq-cluster-operator"
-  chart      = "rabbitmq-cluster-operator"
-  repository = "https://charts.bitnami.com/bitnami"
+  chart = "${path.module}/../../../../helm/charts/rabbitmq-cluster-operator"
   namespace  = "rabbitmq"
 
   create_namespace = true
