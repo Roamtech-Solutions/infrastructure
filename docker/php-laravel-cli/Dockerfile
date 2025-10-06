@@ -6,7 +6,14 @@ FROM php:${PHP_VERSION}-cli AS builder
 # Install system dependencies and PHP extensions required for Laravel + MySQL/PostgreSQL support
 # Some dependencies are required for PHP extensions only in the build stage
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && sync && install-php-extensions http opentelemetry
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+# Only install opentelemetry when PHP version >= 8.0
+RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "8.0" || test "${phpv}" != "8.0") \
+	&& install-php-extensions http opentelemetry \
+ 	|| install-php-extensions http 
+
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -87,4 +94,3 @@ USER www-data
 
 # Default command: Provide a bash shell to allow running any command
 CMD ["bash"]
-
