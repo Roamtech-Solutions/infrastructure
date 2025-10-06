@@ -32,5 +32,6 @@ service_groups = [
   "imt",
   "emalify",
   "payments",
+  "tumatuma",
 ]
 
