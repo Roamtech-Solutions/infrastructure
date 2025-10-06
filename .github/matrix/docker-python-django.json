@@ -1,0 +1,12 @@
+{
+  "include": [
+    {
+      "name": "app",
+      "dockerfile": "docker/python-django-app/Dockerfile"
+    },
+    {
+      "name": "cli",
+      "dockerfile": "docker/python-django-cli/Dockerfile"
+    }
+  ]
+}
