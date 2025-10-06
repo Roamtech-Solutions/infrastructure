@@ -29,10 +29,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bcmath \
     soap \
     sockets \
-    gd \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    gd 
+# Only install redis via pecl when PHP version >= 7.4
+RUN phpv=$(printf "${PHP_VERSION}\n7.4" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "7.4" || test "${phpv}" != "7.4") \
+	&& (pecl install redis && docker-php-ext-enable redis) \
+	|| echo "PHP version too low to install pecl redis"
+RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Set the working directory inside the container
 WORKDIR /var/www
