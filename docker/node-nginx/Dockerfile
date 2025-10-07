@@ -11,6 +11,7 @@ ENV NODE_ENV=${ENVIRONMENT}
 RUN npm run build
 
 FROM nginx:stable-alpine as production
+ARG NODE_BUILD_DIR
 COPY --from=build /app/${NODE_BUILD_DIR} /usr/share/nginx/html
 COPY ./docker/node-nginx/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
