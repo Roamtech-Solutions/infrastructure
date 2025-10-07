@@ -108,7 +108,7 @@ jobs:
           # --- Node Build Directory --- #
           # We have VueJS or React applications. If 'react' is in the package.json, assume that it is a React Application.
           test -f ${{ github.event.repository.name }}/package.json \
-            && grep 'react' package.json > 2&1 /dev/null \
+            && grep 'react' ${{ github.event.repository.name }}/package.json > 2&1 /dev/null \
             && echo "node_build_dir=build/client" >> $GITHUB_OUTPUT \
             || echo "node_build_dir=dist" >> $GITHUB_OUTPUT
 
