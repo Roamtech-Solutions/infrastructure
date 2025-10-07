@@ -109,6 +109,8 @@ spec:
         env:
             - name: PYTHONUNBUFFERED
               value: "1"
+            - name: DJANGO_SETTINGS_MODULE
+              value: "config.settings.{{ .Values.environment }}"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:

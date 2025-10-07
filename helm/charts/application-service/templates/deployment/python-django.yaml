@@ -31,6 +31,8 @@ spec:
           env:
             - name: APP_NAME
               value: {{ .Release.Name }}
+            - name: DJANGO_SETTINGS_MODULE
+              value: "config.settings.{{ .Values.environment }}"
             - name: PYTHONUNBUFFERED
               value: "1"
             - name: PYTHONDONTWRITEBYTECODE
@@ -140,6 +142,30 @@ spec:
                   key: pass
             - name: CACHE_URL
               value: redis://$(REDIS_USERNAME):$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)/0
+            {{- end }}
+
+            # --- PostgreSQL --- #
+            {{- if has "postgresql" .Values.requires }}
+            - name: POSTGRESQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: host
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: port
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: user
+            - name: POSTGRESQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: pass
             {{- end }}
 
             # --- User Managed Environment Variables --- #

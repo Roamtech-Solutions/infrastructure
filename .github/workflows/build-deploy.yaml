@@ -268,7 +268,10 @@ jobs:
 
           # --- Image Tag --- #
           echo tag: ${{ inputs.ref }} > /tmp/values.yaml
-          
+
+          # --- Environment --- #
+          echo environment: ${{ inputs.environment }} > /tmp/values.yaml
+
           # --- Service Port --- #
           service_type=$(yq '.type' ./env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
@@ -279,10 +282,15 @@ jobs:
           esac
 
           # --- Migration Type --- #
+          # PHP Laravel
           test -f artisan && test -d database/migrations \
             && echo "migration_type: artisan" >> /tmp/values.yaml
+          # PHP Phinx
           test -f phinx.php && test -d db/migrations \
             && echo "migration_type: phinx" >> /tmp/values.yaml
+          # Python Django
+          test -f manage.py \
+            && echo "migration_type: django" >> /tmp/values.yaml
 
           # --- Configured Values --- #
           envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
