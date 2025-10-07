@@ -49,3 +49,8 @@ variable "ci_runner_ip" {
   default = ""
 }
 
+variable "log_retention_days" {
+	type = number
+	default = 30
+}
+
