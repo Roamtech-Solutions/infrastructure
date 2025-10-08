@@ -184,8 +184,15 @@ spec:
             {{- end }}
 
           volumeMounts:
+            # --- MySQL Certificate --- #
             {{- if has "mysql" .Values.requires }}
             - name: mysql-cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            {{- end }}
+            # -- PostgreSQL Certificate --- #
+            {{- if has "postgresql" .Values.requires }}
+            - name: postgresql-cert
               mountPath: /etc/ssl/certs
               readOnly: true
             {{- end }}
@@ -243,4 +250,14 @@ spec:
               - key: data
                 path: mysql-ca.pem
         {{- end }}
+        # -- PostgreSQL Certificate --- #
+        {{- if has "postgresql" .Values.requires }}
+        - name: postgresql-cert
+          secret:
+            secretName: cloudsql-pg-cert
+            items:
+              - key: data
+                path: postgresql-ca.pem
+        {{- end }}
 {{- end }}
+
