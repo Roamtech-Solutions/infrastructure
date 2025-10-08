@@ -1,5 +1,8 @@
+ARG ENVIRONMENT=development
+
 # Stage 1: Base build stage
 FROM python:3.13-slim AS builder
+ARG ENVIRONMENT
 
 # -- Create the app directory
 RUN mkdir /app
@@ -15,10 +18,10 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install --upgrade pip
 
 # -- Copy the requirements file first (better caching) 
-COPY requirements.txt /app/
+COPY requirements /app/requirements
 
 # -- Install Python dependencies 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements/${ENVIRONMENT}.txt
 
 # -- Stage 2: Production stage
 FROM python:3.13-slim
@@ -47,3 +50,4 @@ USER appuser
 # -- Default command for CLI operations (can be overridden)
 ENTRYPOINT ["python", "manage.py"]
 CMD ["--help"]
+

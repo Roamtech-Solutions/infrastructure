@@ -1,5 +1,9 @@
+ARG ENVIRONMENT=development
+ARG PYTHON_VERSION=3.13
+
 # -- Stage 1: Base build stage
-FROM python:3.13-slim AS builder
+FROM python:${PYTHON_VERSION}-slim AS builder
+ARG ENVIRONMENT
 
 # -- Create the app directory
 RUN mkdir /app
@@ -15,13 +19,13 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install --upgrade pip
 
 # -- Copy the requirements file first (better caching)
-COPY requirements.txt /app/
+COPY requirements /app/requirements
 
 # -- Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements/${ENVIRONMENT}.txt
 
 # -- Stage 2: Production stage
-FROM python:3.13-slim
+FROM python:${PYTHON_VERSION}-slim
 
 RUN useradd -m -r appuser && \
    mkdir /app && \
@@ -49,3 +53,4 @@ EXPOSE 8080
 
 # -- Start the application using Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "config.wsgi:application"]
+
