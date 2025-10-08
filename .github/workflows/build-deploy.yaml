@@ -270,7 +270,7 @@ jobs:
           echo tag: ${{ inputs.ref }} > /tmp/values.yaml
 
           # --- Environment --- #
-          echo environment: ${{ inputs.environment }} > /tmp/values.yaml
+          echo environment: ${{ inputs.environment }} >> /tmp/values.yaml
 
           # --- Service Port --- #
           service_type=$(yq '.type' ./env/${{ inputs.environment }}.yaml)
