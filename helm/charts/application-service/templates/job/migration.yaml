@@ -113,11 +113,60 @@ spec:
               value: "1"
             - name: DJANGO_SETTINGS_MODULE
               value: "config.settings.{{ .Values.environment }}"
-            - name: DATABASE_URL
+
+            # --- MySQL --- #
+            {{- if has "mysql" .Values.requires }}
+            - name: DB_ENGINE
+              value: django.db.backends.mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
-                  key: database_url
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- PostgreSQL --- #
+            {{- if has "postgresql" .Values.requires }}
+            - name: DB_ENGINE
+              value: django.db.backends.postgresql
+            - name: POSTGRESQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: host
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: port
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: user
+            - name: POSTGRESQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
 
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
