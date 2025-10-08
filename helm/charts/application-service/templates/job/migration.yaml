@@ -182,9 +182,7 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
         {{- end }}
-        # TODO: Remove RabbitMQ configuraitons for migratoin jobs
-        # Some PHP services require RabbitMQ during the migration as well.
-        # We should move away from this though.
+        # --- RabbitMQ -- #
         {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST
               valueFrom:
@@ -207,6 +205,31 @@ spec:
                   name: rabbitmq-default-user
                   key: password
         {{- end }}
+
+        # --- Redis --- #
+        {{- if has "redis" .Values.requires }}
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-redis
+              key: host
+        - name: REDIS_PORT
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-redis
+              key: port
+        - name: REDIS_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-redis
+              key: user
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-redis
+              key: pass
+        {{- end }}
+
             - name: LOG_CHANNEL
               value: stdout
         volumeMounts:
