@@ -206,29 +206,29 @@ spec:
                   key: password
         {{- end }}
 
-        # --- Redis --- #
-        {{- if has "redis" .Values.requires }}
-        - name: REDIS_HOST
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-redis
-              key: host
-        - name: REDIS_PORT
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-redis
-              key: port
-        - name: REDIS_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-redis
-              key: user
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-redis
-              key: pass
-        {{- end }}
+            # --- Redis --- #
+            {{- if has "redis" .Values.requires }}
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: port
+            - name: REDIS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: user
+            - name: REDIS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: pass
+            {{- end }}
 
             - name: LOG_CHANNEL
               value: stdout
