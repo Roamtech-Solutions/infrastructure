@@ -102,12 +102,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: port
-            - name: REDIS_USERNAME
+            - name: REDIS_USER
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
                   key: user
-            - name: REDIS_PASSWORD
+            - name: REDIS_PASS
               valueFrom:
                 secretKeyRef:
                   name: {{ .Release.Name }}-redis
