@@ -26,20 +26,6 @@ jobs:
           project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
           workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
           create_credentials_file: true
-      - name: Checkout caller repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.repository.full_name }}
-          ref: ${{ inputs.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: ${{ github.event.repository.name }}
-      - name: Google Cloud Authentication
-        id: auth
-        uses: 'google-github-actions/auth@v2'
-        with:
-          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
-          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
-          create_credentials_file: true
       - name: Dependencies
         run: |
           sudo apt update && sudo apt install -y wget
