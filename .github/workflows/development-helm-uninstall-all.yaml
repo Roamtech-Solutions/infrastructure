@@ -1,4 +1,4 @@
-name: Uninstall Staging Environment
+name: Uninstall All Development Environment Services
 on:
   workflow_dispatch:
   schedule:
