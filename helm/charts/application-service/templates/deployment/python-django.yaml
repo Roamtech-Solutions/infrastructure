@@ -167,6 +167,7 @@ spec:
               readOnly: true
             {{- end }}
 
+          {{- if .Values.enable_probes }}
           livenessProbe:
             httpGet:
               path: {{ .Values.healthcheck_path | default "/health/" }}
@@ -184,6 +185,7 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+          {{- end }}
 
       initContainers:
         # --- Wait for Migration Job to complete --- #

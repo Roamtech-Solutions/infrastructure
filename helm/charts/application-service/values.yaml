@@ -30,4 +30,5 @@ secrets: []
 migration_type: none
 mysql: false
 rabbitmq: false
+enable_probes: true
 
