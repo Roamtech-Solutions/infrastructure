@@ -34,6 +34,7 @@ jobs:
           ./google-cloud-sdk/install.sh --quiet
           ./google-cloud-sdk/bin/gcloud --version
           ./scripts/helm-install.sh
+          echo $PATH
       - name: Uninstall Services
         run: |
           # Authenticate with the cluster
