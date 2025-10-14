@@ -33,8 +33,8 @@ jobs:
           tar -xzf google-cloud-cli-linux-x86_64.tar.gz
           ./google-cloud-sdk/install.sh --quiet
           ./google-cloud-sdk/bin/gcloud --version
+          sudo ln -s ${PWD}/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud
           ./scripts/helm-install.sh
-          echo $PATH
       - name: Uninstall Services
         run: |
           # Authenticate with the cluster
