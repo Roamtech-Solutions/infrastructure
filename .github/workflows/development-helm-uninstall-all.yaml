@@ -29,12 +29,18 @@ jobs:
       - name: Dependencies
         run: |
           sudo apt update && sudo apt install -y wget
+
+          # Google Cloud SDK
           wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
           tar -xzf google-cloud-cli-linux-x86_64.tar.gz
           ./google-cloud-sdk/install.sh --quiet
           ./google-cloud-sdk/bin/gcloud --version
           sudo ln -s ${PWD}/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud
+          gcloud components install gke-gcloud-auth-plugin
+
+          # Helm
           ./scripts/helm-install.sh
+            
       - name: Uninstall Services
         run: |
           # Authenticate with the cluster
