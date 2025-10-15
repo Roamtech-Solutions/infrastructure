@@ -4,21 +4,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ $.Release.Name }}-${k}-{{ $.Values.tag_short }}
+  name: {{ $.Release.Name }}-{{ $k }}-{{ $.Values.tag_short }}
 spec:
   template:
     spec:
       containers:
-      - name: ${k}
+      - name: {{ $k }}
         image: {{ $.Values.image }}-cli:{{ $.Values.tag }}
-        command: ${v.command}
+        command:
+          {{- toYaml $v.command | nindent 10 }}
         resources:
           {{- toYaml $.Values.resources | nindent 10 }}
         env:
           - name: APP_NAME
-            value: {{ .Release.Name }}
+            value: {{ $.Release.Name }}
           - name: VITE_APP_NAME
-            value: {{ .Release.Name }}
+            value: {{ $.Release.Name }}
           - name: APP_URL
             value: https://{{ $.Values.host }}
           - name: LOG_CHANNEL

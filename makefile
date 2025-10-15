@@ -122,6 +122,10 @@ output: init
 	terraform -chdir=$(CHDIR) output
 
 .PHONY: import
-import:
+import: init
 	terraform -chdir=$(CHDIR) import $(VARS) $(IMPORT_TO) $(IMPORT_FROM)
+
+.PHONY: state-list
+state-list: init
+	terraform -chdir=$(CHDIR) state list
 
