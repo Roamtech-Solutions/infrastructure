@@ -5,6 +5,7 @@ if [ -z "${sg}" ]; then
 	echo "Service group not provided."
 	echo "Provide a service group to uninstall failed services from."
 	echo "Otherwise, use 'all', to remove all of the failed services in the environment."
+	exit 1
 fi
 
 test "${sg}" = "all" && ns_args="" || ns_args="-n ${sg}"

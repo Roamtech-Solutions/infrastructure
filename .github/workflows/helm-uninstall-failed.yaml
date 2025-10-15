@@ -65,5 +65,5 @@ jobs:
           gcloud container clusters get-credentials europe-west1 --region europe-west1 --project development-30af
 
           # Uninstall all of the failed services in the provided service group
-          ./scripts/helm-uninstall-failed.sh ${{ inputs.service_name }}
+          ./scripts/helm-uninstall-failed.sh ${{ inputs.service_group }}
 
