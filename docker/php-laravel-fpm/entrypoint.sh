@@ -7,9 +7,10 @@ set -e
 # and set the correct permissions.
 # -----------------------------------------------------------
 if [ ! "$(ls -A /var/www/storage)" ]; then
-  echo "Initializing storage directory..."
-  cp -R /var/www/storage-init/. /var/www/storage
-  chown -R www-data:www-data /var/www/storage
+	echo "Initializing storage directory..."
+	cp -R /var/www/storage-init/. /var/www/storage
+	mkdir -p storage/framework/views
+	chown -R www-data:www-data /var/www/storage
 fi
 
 # Remove storage-init directory
