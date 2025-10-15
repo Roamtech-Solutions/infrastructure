@@ -8,6 +8,12 @@ if [ -z "${sg}" ]; then
 	exit 1
 fi
 
+# List failed services
 test "${sg}" = "all" && ns_args="" || ns_args="-n ${sg}"
-helm list ${ns_args} | grep failed | cut -f 1 | xargs helm uninstall ${ns_args}
+failed_services=$(helm list ${ns_args} | grep failed | cut -f 1)
+
+# Uninstall failed services
+test -n "${failed_services}" \
+	&& echo ${failed_services} | xargs helm uninstall ${ns_args} \
+	|| echo "No failed services in the '${sg}' service group to uninstall"
 
