@@ -47,7 +47,7 @@ jobs:
           terraform_version: "1.12.1"
       - name: Dependencies
         run: |
-          sudo apt update && sudo apt install -y make
+          sudo apt update && sudo apt install -y make nodejs
       - name: Install Service Group
         run: |
           make ENV=${{ inputs.environment }} MOD=service-group SG=${{ inputs.service_group }}
