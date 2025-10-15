@@ -21,6 +21,7 @@ on:
         required: true
 jobs:
   install:
+    name: Deploy - ${{ inputs.environment }} - ${{ inputs.service_group }}
     timeout-minutes: 15
     permissions:
       contents: read
