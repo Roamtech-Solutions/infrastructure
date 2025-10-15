@@ -4,13 +4,13 @@ on:
     inputs:
       environment:
         type: choice
-        description: Environment
+        description: Environment name
         options: 
           - development
         required: true
       service_group:
         type: choice
-        description: Service Group to deploy
+        description: Service Group to uninstall failed services from
         options: 
           - all
           - adenzo
@@ -20,13 +20,6 @@ on:
           - payments
           - tumatuma
         required: true
-      service_name:
-        type: string
-        required: true
-        description: >-
-          Comma-separated list of service names to uninstall.
-          Use 'all' (default) to uninstall all services in the group.
-        default: all
 jobs:
   uninstall:
     timeout-minutes: 15
