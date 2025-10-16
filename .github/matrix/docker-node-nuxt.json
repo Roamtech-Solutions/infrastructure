@@ -1,0 +1,9 @@
+{
+	"include": [
+		{
+			"name": "app",	
+			"dockerfile": "docker/node-nuxt/Dockerfile"
+		}
+	]
+}
+
