@@ -8,3 +8,8 @@ allowed_networks = {
   roamtech-office-ethernet = "197.232.33.60/32"
 }
 
+# TODO: This should just be a group, not individuals
+developers = [
+	"user:joshua.moracha@roamtech.com",
+]
+
