@@ -1,6 +1,6 @@
-# Build Stage 1
+ARG NODE_VERSION=22
 
-FROM node:22-alpine AS build
+FROM node:${NODE_VERSION}-alpine AS build
 WORKDIR /app
 
 RUN corepack enable
@@ -19,7 +19,7 @@ RUN npm run build
 
 # Build Stage 2
 
-FROM node:22-alpine
+FROM node:${NODE_VERSION}-alpine
 WORKDIR /app
 
 # Only `.output` folder is needed from the build stage
