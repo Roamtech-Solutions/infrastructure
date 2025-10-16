@@ -18,7 +18,7 @@ RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | he
 # === Run Image === #
 FROM ${GO_RUN_IMAGE}
 WORKDIR /app
-COPY --from=build /app/resources .
+COPY --from=build /app/resources ./resources
 COPY --from=build /app/app .
 EXPOSE 8080
 ENTRYPOINT ["/app/app"]
