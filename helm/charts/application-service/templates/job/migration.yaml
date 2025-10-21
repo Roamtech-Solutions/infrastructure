@@ -33,7 +33,9 @@ spec:
     spec:
       containers:
       - name: migration
+        {{- if (ne "custom" .Values.migration_type) }} 
         image: {{ .Values.image }}-cli:{{ .Values.tag }}
+        {{- end }}
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
 
@@ -203,6 +205,7 @@ spec:
 
         # --- Custom Migration Type --- 
         {{- else if (eq "custom" .Values.migration_type) }}
+        image: {{ $.Values.image }}-{{ $.Values.migration_image_suffix }}:{{ $.Values.tag }}
         command:
           {{- toYaml $.Values.migration | nindent 10 }}
         env:
