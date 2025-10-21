@@ -70,6 +70,15 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
 
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
         # --- Artisan Migration --- #
         {{- else if (eq "artisan" .Values.migration_type) }}
         command: ["php", "artisan", "migrate", "--force"]
@@ -103,6 +112,15 @@ spec:
             {{- range .Values.env }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
             {{- end }}
 
         # --- Django Migration --- #
@@ -174,12 +192,30 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
 
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
         {{- else }}
         env:
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
             {{- end }}
         {{- end }}
         # --- RabbitMQ -- #

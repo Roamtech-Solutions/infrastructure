@@ -6,6 +6,8 @@ hosts = [
   "paykit.africa",
   "afrisend.com",
   "emalify.com",
+  "mistari.co",
+  "tumatuma.com",
 ]
 
 allowed_networks = {
