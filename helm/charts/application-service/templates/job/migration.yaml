@@ -201,8 +201,35 @@ spec:
                   key:  {{ $s }}
             {{- end }}
 
-        {{- else }}
+        # --- Custom Migration Type --- 
+        {{- else if (eq "custom" .Values.migration_type) }}
+        command:
+          {{- toYaml $.Values.migration | nindent 10 }}
         env:
+            # --- MySQL --- #
+            {{- if has "mysql" .Values.requires }}
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
             # --- User Managed Environment Variables --- #
             {{- range .Values.env }}
             - name: {{ .name | quote }}
@@ -218,6 +245,7 @@ spec:
                   key:  {{ $s }}
             {{- end }}
         {{- end }}
+
         # --- RabbitMQ -- #
         {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST
