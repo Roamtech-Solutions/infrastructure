@@ -113,6 +113,30 @@ spec:
                   name: {{ $.Release.Name }}
                   key:  {{ $s }}
             {{- end }}
+      initContainers:
+        # --- Wait for Migration Job to complete --- #
+        {{- if ne "none" .Values.migration_type }}
+        - name: wait-for-migration
+          image: {{ .Values.image }}-cli:{{ .Values.tag }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag_short }} \
+                -o jsonpath='{.status.succeeded}' | grep 1; do
+                echo "Waiting for migration job to complete..."
+                sleep 5
+              done
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+        {{- end }}
 
 {{- end }}
 
