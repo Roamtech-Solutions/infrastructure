@@ -9,7 +9,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN mkdir -p resources
+RUN mkdir -p resources migrations
 
 RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | head -n1) && \
     echo "Building from $src_dir" && \
@@ -19,6 +19,7 @@ RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | he
 FROM ${GO_RUN_IMAGE}
 WORKDIR /app
 COPY --from=build /app/resources ./resources
+COPY --from=build /app/migrations ./migrations
 COPY --from=build /app/app .
 EXPOSE 8080
 ENTRYPOINT ["/app/app"]

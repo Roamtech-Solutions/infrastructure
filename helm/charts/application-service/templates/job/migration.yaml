@@ -207,7 +207,7 @@ spec:
         {{- else if (eq "custom" .Values.migration_type) }}
         image: {{ $.Values.image }}-{{ $.Values.migration_image_suffix }}:{{ $.Values.tag }}
         command:
-          {{- toYaml $.Values.migration | nindent 10 }}
+          {{- toYaml $.Values.migration_command | nindent 10 }}
         env:
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}
