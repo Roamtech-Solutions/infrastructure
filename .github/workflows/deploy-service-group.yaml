@@ -18,6 +18,7 @@ on:
           - imt
           - payments
           - tumatuma
+          - ecommerce
         required: true
 jobs:
   install:
