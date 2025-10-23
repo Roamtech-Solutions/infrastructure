@@ -127,7 +127,12 @@ spec:
 
         # --- Django Migration --- #
         {{- else if (eq "django" .Values.migration_type) }}
+        {{- if $.Values.migration_command }}
+        command:
+          {{- toYaml $.Values.migration_command | nindent 10 }}
+        {{- else }}
         command: ["python", "manage.py", "migrate", "--noinput"]
+        {{- end }}
         env:
             - name: PYTHONUNBUFFERED
               value: "1"
