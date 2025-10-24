@@ -245,3 +245,11 @@ resource "google_project_iam_member" "secrets_version_adder" {
   member   = each.key
 }
 
+# CloudSQL Viewer
+resource "google_project_iam_member" "cloudsql_viewer" {
+  for_each = toset(var.developers)
+  project  = local.project_id
+  role     = "roles/cloudsql.viewer"
+  member   = each.key
+}
+
