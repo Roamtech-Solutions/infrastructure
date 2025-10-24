@@ -145,6 +145,137 @@ spec:
               readOnly: true
             {{- end }}
 
+        # --- Sidecar Services --- #
+        {{- range $svc_name, $svc := .Values.sidecar_services }}
+        - name: {{ $.Release.Name }}-{{ $svc_name }}
+          # NOTE: For now we are assuming the side car services are just going
+          #       to be using the CLI image.
+          image: {{ $.Values.image }}-cli:{{ $.Values.tag }}
+          command:
+            {{- toYaml $svc.command | nindent 12 }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          env:
+            - name: APP_NAME
+              value: {{ $.Release.Name }}
+            - name: VITE_APP_NAME
+              value: {{ $.Release.Name }}
+            - name: APP_URL
+              value: https://{{ $.Values.host }}
+            - name: LOG_CHANNEL
+              value: stdout
+
+            # --- MySQL --- #
+            {{- if has "mysql" $.Values.requires }}
+            - name: DB_CONNECTION
+              value: mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: port
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- RabbitMQ --- #
+            {{- if has "rabbitmq" $.Values.requires }}
+            - name: QUEUE_CONNECTION
+              value: rabbitmq
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: port
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            {{- end }}
+
+            # --- Redis --- #
+            {{- if has "redis" $.Values.requires }}
+            # Set Laravel to use redis
+            - name: REDIS_CLIENT
+              value: phpredis
+            - name: SESSION_DRIVER
+              value: redis
+            - name: CACHE_DRIVER
+              value: redis
+            # Provide redis connection information
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: port
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: user
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := $.Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := $.Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
+          volumeMounts:
+            - name: public-assets
+              mountPath: /var/www/public
+            {{- if has "mysql" $.Values.requires }}
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            {{- end }}
+        {{- end }}
+
         # --- NGINX container for ingress --- #
         - name: {{ .Release.Name }}-nginx
           image: {{ .Values.image }}-nginx:{{ .Values.tag }}
