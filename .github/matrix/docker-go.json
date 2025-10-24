@@ -1,8 +1,12 @@
 {
 	"include": [
 		{
-			"name": "app",	
+			"name": "app",
 			"dockerfile": "docker/go-app/Dockerfile"
+		},
+		{
+			"name": "cli",
+			"dockerfile": "docker/go-cli/Dockerfile"
 		}
 	]
 }

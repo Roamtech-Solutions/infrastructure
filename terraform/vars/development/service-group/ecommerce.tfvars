@@ -9,3 +9,8 @@ allowed_networks = {
   adenzo = "197.254.97.46/32"
 }
 
+# TODO: This should just be a group, not individuals
+developers = [
+	"user:timothy.kimani@roamtech.com",
+]
+
