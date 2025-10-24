@@ -5,6 +5,7 @@ host          = "afrisend.com"
 # TODO: This should just be a group, not individuals
 developers = [
 	"user:vanessa.chilumo@roamtech.com",
+	"user:jennifer.wairimu@roamtech.com",
 ]
 
 allowed_networks = {
