@@ -28,7 +28,7 @@ spec:
           env:
 
             # --- MySQL --- #
-            {{- if (.Values.mysql) }}
+            {{- if has "mysql" .Values.requires }}
             - name: MYSQL_HOST
               valueFrom:
                 secretKeyRef:
