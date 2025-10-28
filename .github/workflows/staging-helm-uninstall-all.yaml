@@ -1,0 +1,51 @@
+name: Uninstall All Staging Environment Services
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "00 17 * * *"  # Every day at 17:00 UTC (20:00 Kenya Time)
+jobs:
+  uninstall:
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: arc-runner-set
+    env:
+      # NOTE: Values hardcoded here because you need GitHub enterprise to set
+      #       these at the org level.
+      MANAGEMENT_PROJECT_ID: management-b6d6
+      GOOGLE_CLOUD_WIP: 'projects/155168468510/locations/global/workloadIdentityPools/github/providers/github-provider'
+      GAR_REGION: europe-west1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Google Cloud Authentication
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
+          create_credentials_file: true
+      - name: Dependencies
+        run: |
+          sudo apt update && sudo apt install -y wget
+
+          # Google Cloud SDK
+          wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
+          tar -xzf google-cloud-cli-linux-x86_64.tar.gz
+          ./google-cloud-sdk/install.sh --quiet
+          ./google-cloud-sdk/bin/gcloud --version
+          sudo ln -s ${PWD}/google-cloud-sdk/bin/gcloud /usr/local/bin/gcloud
+          gcloud components install gke-gcloud-auth-plugin
+
+          # Helm
+          ./scripts/helm-install.sh
+            
+      - name: Uninstall Services
+        run: |
+          # Authenticate with the cluster
+          gcloud container clusters get-credentials europe-west1 --region europe-west1 --project staging-3924
+
+          # Uninstall all of the services
+          ./scripts/helm-uninstall-all.sh
+
