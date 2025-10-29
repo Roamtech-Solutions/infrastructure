@@ -165,6 +165,7 @@ jobs:
           project_id: ${{ env.MANAGEMENT_PROJECT_ID }}
           workload_identity_provider: ${{ env.GOOGLE_CLOUD_WIP }}
           create_credentials_file: true
+          access_token_lifetime: 3600s
       - name: Setup Google Cloud SDK
         run: |
           sudo apt update && sudo apt install -y wget
