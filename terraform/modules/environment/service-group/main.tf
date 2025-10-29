@@ -24,8 +24,8 @@ module "cloudsql" {
   source           = "../../cloudsql"
   project_id       = local.project_id
   name             = var.service_group
-  database_version = "MYSQL_8_0"
-  region           = var.region
+	database_version = "MYSQL_8_0"
+	region           = var.region
   zone             = data.google_compute_zones.available.names[0]
   network          = data.terraform_remote_state.infra.outputs.gke_network
   tier_primary     = "db-f1-micro"
@@ -160,7 +160,7 @@ module "application_service" {
   for_each   = data.google_storage_bucket_object_content.application_service_values
   source     = "../../application-service"
   project_id = local.project_id
-
+	region = var.region
   name          = each.key
   tag           = yamldecode(each.value.content).tag
   service_group = var.service_group
@@ -175,6 +175,7 @@ module "application_service" {
     module.redis,
     module.keycloak,
   ]
+	developers = var.developers
 }
 
 /* === IAM Access === */

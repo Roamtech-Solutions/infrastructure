@@ -6,6 +6,10 @@ variable "name" {
   type = string
 }
 
+variable "region" {
+	type = string
+}
+
 variable "service_group" {
   type = string
 }
@@ -36,5 +40,10 @@ variable "ingress" {
 variable "values" {
   type    = string
   default = ""
+}
+
+variable "developers" {
+	type = list(string)
+	default = []
 }
 
