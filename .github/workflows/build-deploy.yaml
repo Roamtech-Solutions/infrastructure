@@ -112,6 +112,14 @@ jobs:
             && echo "node_build_dir=build/client" >> $GITHUB_OUTPUT \
             || echo "node_build_dir=dist" >> $GITHUB_OUTPUT
 
+          # --- Python Version --- #
+          python_version=$(grep -E '^python_version:' /tmp/test.yaml | sed 's/python_version: //g')
+          if [ -z "${python_version}" ]; then
+            python_version=3.10
+          fi
+          echo "python_version=${python_version}" >> $GITHUB_OUTPUT
+
+
     outputs:
       go_version: ${{ steps.setup.outputs.go_version }}
       cgo_enabled: ${{ steps.setup.outputs.cgo_enabled }}
@@ -120,6 +128,7 @@ jobs:
       php_version: ${{ steps.setup.outputs.php_version }}
       node_version: ${{ steps.setup.outputs.node_version }}
       node_build_dir: ${{ steps.setup.outputs.node_build_dir }}
+      python_version: ${{ steps.setup.outputs.python_version }}
       matrix: ${{ steps.setup.outputs.matrix }}
 
 
@@ -195,6 +204,7 @@ jobs:
             VERSION=${{ inputs.ref }}
             ENVIRONMENT=${{ inputs.environment }}
             JAVA_VERSION=${{ needs.matrix.outputs.java_version }}
+            PYTHON_VERSION=${{ needs.matrix.outputs.python_version }}
             PHP_VERSION=${{ needs.matrix.outputs.php_version }}
             NODE_VERSION=${{ needs.matrix.outputs.node_version }}
             NODE_BUILD_DIR=${{ needs.matrix.outputs.node_build_dir }}
