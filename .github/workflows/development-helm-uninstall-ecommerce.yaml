@@ -2,7 +2,7 @@ name: Uninstall All Development Environment Services
 on:
   workflow_dispatch:
   schedule:
-    - cron: "00 17 * * *"  # Every day at 17:00 UTC (20:00 Kenya Time)
+    - cron: "00 20 * * *"  # Every day at 20:00 UTC (23:00 Kenya Time)
 jobs:
   uninstall:
     timeout-minutes: 15
@@ -47,5 +47,5 @@ jobs:
           gcloud container clusters get-credentials europe-west1 --region europe-west1 --project development-30af
 
           # Uninstall all of the services
-          EXCLUDE="ecommerce" ./scripts/helm-uninstall-all.sh
+          helm uninstall -n ecommerce $(helm ls --short -n ecommerce)
 
