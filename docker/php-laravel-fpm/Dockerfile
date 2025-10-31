@@ -73,6 +73,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Stage 2: Production environment
 FROM php:${PHP_VERSION}-fpm
 
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+# Only install opentelemetry when PHP version >= 8.0
+RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "8.0" || test "${phpv}" != "8.0") \
+	&& install-php-extensions http opentelemetry \
+	|| install-php-extensions http 
+
 # Install only runtime libraries needed in production
 # libfcgi-bin and procps are required for the php-fpm-healthcheck script
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -81,6 +90,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libfcgi-bin \
     procps \
+    gd \
     && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Download and install php-fpm health check script
