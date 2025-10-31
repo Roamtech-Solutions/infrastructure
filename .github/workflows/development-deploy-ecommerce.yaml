@@ -1,0 +1,14 @@
+name: Deploy Ecommerce
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "00 08 * * *"  # Every day at 08:00 UTC (11:00 Kenya Time)
+jobs:
+  deploy:
+    name: "Deploy"
+    uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
+    with:
+      environment: development
+      service_group: ${{ vars.SERVICE_GROUP }}
+    secrets: inherit
+

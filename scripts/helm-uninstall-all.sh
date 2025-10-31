@@ -1,5 +1,8 @@
 #! /bin/sh
 # =========================================================================== #
+if [ -z "${EXCLUDE}" ]; then
+	EXCLUDE="none"
+fi
 service_groups=$( \
 	cat terraform/vars/management/core.tfvars \
 	| sed -n '/service_groups = \[/,/\]/p' \
@@ -7,7 +10,9 @@ service_groups=$( \
 	| grep -v '[]]' \
 	| tr -d '",' \
 	| tr -d ' ' \
+	| grep -vE "${EXCLUDE}"
 )
+echo "Uninstallin: ${service_groups}"
 
 for sg in ${service_groups}; do
 	echo "=== ${sg} ==="

@@ -1,5 +1,13 @@
 name: Deploy Service Group
 on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      service_group:
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       environment:
