@@ -1,10 +1,13 @@
-name: Deploy Ecommerce
+name: Development Deploy Ecommerce
 on:
   workflow_dispatch:
   schedule:
     - cron: "00 08 * * *"  # Every day at 08:00 UTC (11:00 Kenya Time)
 jobs:
   deploy:
+    permissions:
+      contents: read
+      id-token: write
     name: "Deploy"
     uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
     with:
