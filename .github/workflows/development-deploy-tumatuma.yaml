@@ -1,8 +1,8 @@
-name: Development Deploy Ecommerce
+name: Development Deploy TumaTuma
 on:
   workflow_dispatch:
   schedule:
-    - cron: "00 08 * * *"  # Every day at 08:00 UTC (11:00 Kenya Time)
+    - cron: "0 5 * * 1,2,3,4,5"  # Monday-Friday at 05:00 UTC (08:00 Kenya Time)
 jobs:
   deploy:
     permissions:
@@ -12,6 +12,6 @@ jobs:
     uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
     with:
       environment: development
-      service_group: ecommerce
+      service_group: tumatuma
     secrets: inherit
 
