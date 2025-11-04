@@ -7,7 +7,7 @@ FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine AS build
 ARG NAME 
 ARG VERSION
 
-RUN apt update && apt install -y maven
+RUN apk update && apk add --no-cache maven
 
 WORKDIR /app
 COPY . .
