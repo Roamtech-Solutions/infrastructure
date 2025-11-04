@@ -17,7 +17,7 @@ RUN mvn clean package \
 	-Dmaven.test.skip
 
 # Run image
-FROM openjdk:${JAVA_VERSION}
+FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine
 ARG NAME 
 ARG VERSION
 
