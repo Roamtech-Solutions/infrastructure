@@ -15,8 +15,7 @@ resource "helm_release" "application_service" {
   chart            = "${path.module}/../../../helm/charts/application-service"
   namespace        = var.service_group
   create_namespace = true
-  values = [
-    yamlencode({
+  values = [ yamlencode({
 			project_id = var.project_id
       image         = "${var.gar}/${var.name}"
       host          = var.host
@@ -39,6 +38,9 @@ resource "google_secret_manager_secret" "default" {
   replication {
     auto {}
   }
+	labels = {
+		environment_variable = each.key
+	}
 }
 
 /* Buckets */

@@ -17,7 +17,7 @@ RUN mvn clean package \
 	-Dmaven.test.skip
 
 # Run image
-FROM openjdk:${JAVA_VERSION}-slim
+FROM openjdk:${JAVA_VERSION}
 ARG NAME 
 ARG VERSION
 
