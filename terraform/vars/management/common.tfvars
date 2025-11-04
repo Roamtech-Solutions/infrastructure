@@ -8,6 +8,7 @@ hosts = [
   "emalify.com",
   "mistari.co",
   "tumatuma.com",
+  "adenzo.co.ke",
 ]
 
 allowed_networks = {
