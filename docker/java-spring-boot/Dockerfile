@@ -1,9 +1,9 @@
 ARG NAME 
 ARG VERSION
-ARG JAVA_VERSION=eclipse-temurin:17-jre-alpine
+ARG JAVA_VERSION=17
 
 # Build Container
-FROM openjdk:${JAVA_VERSION} AS build
+FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine AS build
 ARG NAME 
 ARG VERSION
 
