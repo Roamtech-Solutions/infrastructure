@@ -4,6 +4,15 @@ rabbitmq:
   cpu: 250m
   memory: 1Gi
 
+kafka:
+  replication_factor: 1
+  broker:
+    replicas: 1
+    volume_size: 10Gi
+  controller:
+    replicas: 1
+    volume_size: 10Gi
+
 # mysql_services: []
 # ingress_services: []
 
