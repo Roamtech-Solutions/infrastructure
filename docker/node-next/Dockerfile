@@ -1,4 +1,5 @@
 # syntax=docker.io/docker/dockerfile:1
+ARG ENVIRONMENT=development
 ARG NODE_VERSION=24
 
 FROM node:${NODE_VERSION}-alpine AS base
@@ -21,6 +22,7 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ARG ENVIRONMENT
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -31,17 +33,18 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  if [ -f yarn.lock ]; then yarn run build:${ENVIRONMENT}; \
+  elif [ -f package-lock.json ]; then npm run build:${ENVIRONMENT}; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build:${ENVIRONMENT}; \
   else echo "Lockfile not found." && exit 1; \
   fi
 
 # Production image, copy all the files and run next
 FROM base AS runner
+ARG ENVIRONMENT
 WORKDIR /app
 
-ENV NODE_ENV=production
+ENV NODE_ENV=${ENVIRONMENT}
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
