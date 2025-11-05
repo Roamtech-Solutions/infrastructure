@@ -107,7 +107,7 @@ plan: init
 
 .PHONY: apply
 apply: init
-	terraform -chdir=$(CHDIR) apply -lock-timeout=5m -auto-approve $(VARS)
+	terraform -chdir=$(CHDIR) apply -auto-approve $(VARS)
 
 .PHONY: refresh
 refresh: init
