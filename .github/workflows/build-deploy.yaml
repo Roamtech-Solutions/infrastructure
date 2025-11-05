@@ -109,11 +109,19 @@ jobs:
           # We have VueJS or React applications. If 'react' is in the package.json, assume that it is a React Application.
           test -f ${{ github.event.repository.name }}/package.json \
             && grep 'react' ${{ github.event.repository.name }}/package.json > /dev/null 2>&1 \
-            && echo "node_build_dir=build/client" >> $GITHUB_OUTPUT \
-            || echo "node_build_dir=dist" >> $GITHUB_OUTPUT
+            && node_build_dir=build/client \
+            || node_build_dir=dist
+
+          # Explicit override in the environment yaml
+          node_build_dir_override=$(grep -E '^node_build_dir:' ${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml | sed 's/node_build_dir: //g')
+          if [ -n "${node_build_dir_override}" ]; then
+            node_build_dir=${node_build_dir_override}
+          fi
+
+          echo "node_build_dir=${node_build_dir}" >> $GITHUB_OUTPUT
 
           # --- Python Version --- #
-          python_version=$(grep -E '^python_version:' /tmp/test.yaml | sed 's/python_version: //g')
+          python_version=$(grep -E '^python_version:' ${{ github.event.repository.name }}/env/${{ inputs.environment }}.yaml | sed 's/python_version: //g')
           if [ -z "${python_version}" ]; then
             python_version=3.10
           fi
