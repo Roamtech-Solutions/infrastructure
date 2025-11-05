@@ -162,6 +162,7 @@ module "application_service" {
   project_id = local.project_id
 	region = var.region
   name          = each.key
+	environment = var.environment
   tag           = yamldecode(each.value.content).tag
   service_group = var.service_group
   host          = "${each.key}.${local.host}"

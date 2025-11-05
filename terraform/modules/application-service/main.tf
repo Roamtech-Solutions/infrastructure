@@ -45,7 +45,7 @@ resource "google_secret_manager_secret" "default" {
 resource "google_storage_bucket" "default" {
 	for_each = toset(lookup(local.values, "gcs_buckets", []))
   project                     = var.project_id
-  name                        = "${var.service_group}-${var.name}-${each.key}"
+  name                        = "${var.environment}-${var.service_group}-${var.name}-${each.key}"
   force_destroy               = true
   location                    = var.region
   public_access_prevention    = "enforced"

@@ -25,6 +25,12 @@ resource "helm_release" "kafka_cluster_operator" {
   repository = "https://strimzi.io/charts/"
   namespace  = "kafka"
 
+	values = [
+		yamlencode({
+			watchAnyNamespace = true
+		})
+	]
+
   create_namespace = true
   # 15 Minute timeout, can take longer on intial cluster setup.
   timeout = 900
