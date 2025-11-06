@@ -1,5 +1,5 @@
 host          = "paykit.africa"
-service_group = "payments"
+service_group = "paykit"
 region        = "europe-west1"
 
 
@@ -13,3 +13,7 @@ allowed_networks = {
   roamtech-office = "41.139.128.197/32"
   roamtech-office-ethernet = "197.232.33.60/32"
 }
+
+mysql_tier = "db-n1-standard-1"
+postgresql_tier = "db-custom-1-3840"
+

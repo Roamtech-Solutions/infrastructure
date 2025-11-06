@@ -1,9 +1,14 @@
 locals {
   project_id = data.terraform_remote_state.core.outputs.project_id
 
+	/* --- Host Name --- */
+	base_host = (
+		var.environment == "production"
+	) ? "${var.host}" : "${var.environment}.${var.host}"
   host = (
     var.sub_host == ""
-  ) ? "${var.environment}.${var.host}" : "${var.sub_host}.${var.environment}.${var.host}"
+  ) ? local.base_host : "${var.sub_host}.${local.base_host}"
+
 
   allowed_networks = merge(
     var.allowed_networks,

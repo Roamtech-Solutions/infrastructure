@@ -34,3 +34,13 @@ variable "allowed_networks" {
   type = map(string)
 }
 
+variable "mysql_tier" {
+	type = string
+  default = "db-f1-micro"
+}
+
+variable "postgresql_tier" {
+	type = string
+  default = "db-f1-micro"
+}
+

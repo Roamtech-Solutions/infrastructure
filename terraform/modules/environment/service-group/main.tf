@@ -28,7 +28,7 @@ module "cloudsql" {
 	region           = var.region
   zone             = data.google_compute_zones.available.names[0]
   network          = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary     = "db-f1-micro"
+  tier_primary     = var.mysql_tier
   users            = local.mysql_services
 }
 
@@ -42,7 +42,7 @@ module "postgresql" {
   region           = var.region
   zone             = data.google_compute_zones.available.names[0]
   network          = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary     = "db-f1-micro"
+  tier_primary     = var.postgresql_tier
   users            = local.postgresql_services
 }
 
