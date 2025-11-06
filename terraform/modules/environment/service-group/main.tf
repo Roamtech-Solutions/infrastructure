@@ -103,7 +103,7 @@ resource "google_compute_security_policy" "default" {
 
 resource "google_compute_security_policy" "public" {
   project = local.project_id
-  name    = "${var.service_group}-puiblic"
+  name    = "${var.service_group}-public"
   type    = "CLOUD_ARMOR"
 
   /* Allow all by default */
