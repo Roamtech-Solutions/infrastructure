@@ -15,7 +15,12 @@ metadata:
 spec:
   rules:
   {{- range $s := .Values.ingress_services }}
+  # When the service name is "website" it assumes the root of the host
+  {{- if (eq "website" $s.name) }}
+  - host: {{ $.Values.host }}
+  {{- else }}
   - host: {{ $s.name }}.{{ $.Values.host }}
+  {{- end }}
     http:
       paths:
       - path: /*
@@ -45,7 +50,12 @@ metadata:
   name: {{ $.Release.Name }}-{{ $s.name }}
 spec:
   domains:
+    # When the service name is "website" it assumes the root of the host
+    {{- if (eq "website" $s.name) }}
+    - {{ $.Values.host }}
+    {{- else }}
     - {{ $s.name }}.{{ $.Values.host }}
+    {{- end }}
 {{- end }}
 
 {{ end }}

@@ -56,9 +56,10 @@ resource "google_compute_global_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
-  count        = length(google_compute_global_address.default)
+	for_each = toset([ for i in local.ingress_services : i.name ])
   project      = var.management_project_id
-  name         = "*.${local.host}."
+	/* Services called "website" assume the root of the host */
+  name         = (each.key == "website") ? "${local.host}." : "${each.key}.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
