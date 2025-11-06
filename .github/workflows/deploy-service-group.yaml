@@ -15,6 +15,7 @@ on:
         description: Environment
         options: 
           - development
+          - staging
         required: true
       service_group:
         type: choice
