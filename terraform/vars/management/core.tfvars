@@ -31,7 +31,7 @@ service_groups = [
   "ecommerce",
   "imt",
   "emalify",
-  "payments",
+  "paykit",
   "tumatuma",
   "mistari",
 ]
