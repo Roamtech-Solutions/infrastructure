@@ -22,11 +22,7 @@ metadata:
   name: {{ .Release.Name }}
 spec:
   securityPolicy:
-    {{- if .Values.public }}
-    name: {{ .Values.security_policy }}-public
-    {{- else }}
     name: {{ .Values.security_policy }}
-    {{- end }}
   healthCheck:
     checkIntervalSec: 30
     timeoutSec: 5
