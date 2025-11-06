@@ -63,3 +63,22 @@ resource "github_repository_file" "workflow_development" {
   ]
 }
 
+resource "github_repository_file" "workflow_staging" {
+  for_each   = local.repositories
+  repository = each.value.name
+  branch     = each.value.default_branch
+  file       = ".github/workflows/staging.yaml"
+  content = templatefile(
+    "${path.module}/resources/staging.yaml",
+    { github_organisation = var.github_organisation }
+  )
+  commit_message      = "Managed by Terraform"
+  commit_author       = "Terraform"
+  commit_email        = "terraform@${var.project_id}.iam.gserviceaccount.com"
+  overwrite_on_create = true
+  depends_on = [
+    github_actions_variable.service_name,
+    github_actions_variable.service_group,
+  ]
+}
+
