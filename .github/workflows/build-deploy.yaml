@@ -317,15 +317,23 @@ jobs:
           esac
 
           # --- Migration Type --- #
-          # PHP Laravel
-          test -f artisan && test -d database/migrations \
-            && echo "migration_type: artisan" >> /tmp/values.yaml
-          # PHP Phinx
-          test -f phinx.php && test -d db/migrations \
-            && echo "migration_type: phinx" >> /tmp/values.yaml
-          # Python Django
-          test -f manage.py \
-            && echo "migration_type: django" >> /tmp/values.yaml
+          
+          if grep 'migration_type: ' ./env/${{ inputs.environment }}.yaml > /dev/null 2>&1; then
+            # Migration type already set
+            migration_type=$(grep 'migration_type: ' ./env/${{ inputs.environment }}.yaml | sed 's/migration_type: //g')
+            echo "migration type: ${migration_type}"
+          else
+            # Set the migration type, if needed
+            # PHP Laravel
+            test -f artisan && test -d database/migrations \
+              && echo "migration_type: artisan" >> /tmp/values.yaml
+            # PHP Phinx
+            test -f phinx.php && test -d db/migrations \
+              && echo "migration_type: phinx" >> /tmp/values.yaml
+            # Python Django
+            test -f manage.py \
+              && echo "migration_type: django" >> /tmp/values.yaml
+          fi
 
           # --- Configured Values --- #
           envsubst < ./env/${{ inputs.environment }}.yaml >> /tmp/values.yaml
