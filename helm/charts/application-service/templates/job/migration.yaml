@@ -83,7 +83,12 @@ spec:
 
         # --- Artisan Migration --- #
         {{- else if (eq "artisan" .Values.migration_type) }}
+        {{- if $.Values.migration_command }}
+        command:
+          {{- toYaml $.Values.migration_command | nindent 10 }}
+        {{- else }}
         command: ["php", "artisan", "migrate", "--force"]
+        {{- end }}
         env:
             - name: DB_CONNECTION
               value: mysql
