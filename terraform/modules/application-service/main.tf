@@ -23,7 +23,7 @@ resource "helm_release" "application_service" {
       host          = var.host
       service_group = var.service_group
 			tag_short = substr(var.tag, 0, 7)
-			security_policy = var.service_group
+			security_policy = (lookup(local.values, "public", false)) ? "${var.service_group}-public" : var.service_group
     }),
   ]
 	timeout = "600"

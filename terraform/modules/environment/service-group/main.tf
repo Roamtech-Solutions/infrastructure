@@ -106,6 +106,19 @@ resource "google_compute_security_policy" "public" {
   name    = "${var.service_group}-puiblic"
   type    = "CLOUD_ARMOR"
 
+  /* Allow all by default */
+  rule {
+    action   = "allow"
+    priority = "2147483647"
+    match {
+      versioned_expr = "SRC_IPS_V1"
+      config {
+        src_ip_ranges = ["*"]
+      }
+    }
+    description = "Default allow rule"
+  }
+
   /* Allow specified networks */
   dynamic "rule" {
     for_each = (length(keys(local.allowed_networks)) > 0) ? ["0"] : []
