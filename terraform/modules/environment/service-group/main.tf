@@ -101,6 +101,28 @@ resource "google_compute_security_policy" "default" {
   }
 }
 
+resource "google_compute_security_policy" "public" {
+  project = local.project_id
+  name    = "${var.service_group}-puiblic"
+  type    = "CLOUD_ARMOR"
+
+  /* Allow specified networks */
+  dynamic "rule" {
+    for_each = (length(keys(local.allowed_networks)) > 0) ? ["0"] : []
+    content {
+      action   = "allow"
+      priority = "2"
+      match {
+        versioned_expr = "SRC_IPS_V1"
+        config {
+          src_ip_ranges = [for k, v in local.allowed_networks : v]
+        }
+      }
+      description = "Allow custom CIDR ranges"
+    }
+  }
+}
+
 /* --- Service Group Helm Chart --- */
 resource "helm_release" "service_group" {
   name  = var.service_group

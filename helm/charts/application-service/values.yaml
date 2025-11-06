@@ -1,5 +1,6 @@
 # === Ingress & Service === #
 ingress: false
+public: false
 host: ""
 health_check_path: "/health"
 security_policy: default
