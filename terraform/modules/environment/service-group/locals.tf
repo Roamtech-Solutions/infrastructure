@@ -31,6 +31,12 @@ locals {
     )
   }
 
+	/* --- Restricted Services --- */
+	restricted_services = [
+		for k, v in local.application_service_values : k
+		if length(lookup(v, "allowed_networks", [])) > 0
+	]
+
   /* --- Keycloak Services --- */
 	keycloak_services = [
 		for k, v in local.application_service_values : k
