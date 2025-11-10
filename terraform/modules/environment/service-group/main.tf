@@ -62,8 +62,8 @@ resource "google_dns_record_set" "default" {
   name         = (
 		each.key == "website"
 	) ? "${local.host}." : (
-		lookup(local.application_service_values[each.key], "custom_host", "") != ""
-	) ? "${local.application_service_values[each.key].custom_host}.${local.host}." : "${each.key}.${local.host}."
+		lookup(lookup(local.application_service_values, each.key, {}), "custom_host", "") != ""
+	) ? "${lookup(local.application_service_values, each.key, { custom_host = each.key }).custom_host}.${local.host}." : "${each.key}.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
