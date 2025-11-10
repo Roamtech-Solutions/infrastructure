@@ -46,7 +46,7 @@ variable "users" {
 }
 
 variable "edition" {
-	type = string
-	default = "ENTERPRISE"
+  type    = string
+  default = "ENTERPRISE"
 }
 

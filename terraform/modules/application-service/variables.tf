@@ -7,11 +7,11 @@ variable "name" {
 }
 
 variable "environment" {
-	type = string
+  type = string
 }
 
 variable "region" {
-	type = string
+  type = string
 }
 
 variable "service_group" {
@@ -47,7 +47,7 @@ variable "values" {
 }
 
 variable "developers" {
-	type = list(string)
-	default = []
+  type    = list(string)
+  default = []
 }
 

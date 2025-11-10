@@ -24,8 +24,8 @@ module "cloudsql" {
   source           = "../../cloudsql"
   project_id       = local.project_id
   name             = var.service_group
-	database_version = "MYSQL_8_0"
-	region           = var.region
+  database_version = "MYSQL_8_0"
+  region           = var.region
   zone             = data.google_compute_zones.available.names[0]
   network          = data.terraform_remote_state.infra.outputs.gke_network
   tier_primary     = var.mysql_tier
@@ -56,9 +56,9 @@ resource "google_compute_global_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
-	for_each = toset([ for i in local.ingress_services : i.name ])
-  project      = var.management_project_id
-	/* Services called "website" assume the root of the host */
+  for_each = toset([for i in local.ingress_services : i.name])
+  project  = var.management_project_id
+  /* Services called "website" assume the root of the host */
   name         = (each.key == "website") ? "${local.host}." : "${each.key}.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
@@ -102,7 +102,7 @@ resource "google_compute_security_policy" "default" {
 }
 
 resource "google_compute_security_policy" "public" {
-	count = length(local.public_services) > 0 ? 1 : 0
+  count   = length(local.public_services) > 0 ? 1 : 0
   project = local.project_id
   name    = "${var.service_group}-public"
   type    = "CLOUD_ARMOR"
@@ -138,10 +138,10 @@ resource "google_compute_security_policy" "public" {
 }
 
 resource "google_compute_security_policy" "restricted_services" {
-	for_each = toset(local.restricted_services)
-  project = local.project_id
-  name    = "${var.service_group}-${each.key}"
-  type    = "CLOUD_ARMOR"
+  for_each = toset(local.restricted_services)
+  project  = local.project_id
+  name     = "${var.service_group}-${each.key}"
+  type     = "CLOUD_ARMOR"
 
   /* Deny all by default */
   rule {
@@ -173,8 +173,8 @@ resource "google_compute_security_policy" "restricted_services" {
   }
 
   /* Allow service-specified networks */
-	dynamic "rule" {
-		for_each = local.application_service_values[each.key]["allowed_networks"]
+  dynamic "rule" {
+    for_each = local.application_service_values[each.key]["allowed_networks"]
     content {
       action   = "allow"
       priority = 3 + index(keys(local.application_service_values[each.key]["allowed_networks"]), rule.key)
@@ -186,7 +186,7 @@ resource "google_compute_security_policy" "restricted_services" {
       }
       description = "Allow ${rule.key} CIDR ranges"
     }
-	}
+  }
 }
 
 /* --- Service Group Helm Chart --- */
@@ -209,9 +209,9 @@ resource "helm_release" "service_group" {
       enabled = (length(local.rabbitmq_services) > 0)
     }
     mysql_services      = local.mysql_services
-    postgresql_services      = local.postgresql_services
+    postgresql_services = local.postgresql_services
     ingress_services    = local.ingress_services
-		kafka_services = local.kafka_services
+    kafka_services      = local.kafka_services
     certificates        = local.certificates
     host                = local.host
     pod_cidr            = data.terraform_remote_state.infra.outputs.gke_pod_cidr
@@ -236,22 +236,22 @@ module "redis" {
 
 /* === Keycloak === */
 module "keycloak" {
-  count      = (length(local.keycloak_services) > 0) ? 1 : 0
-  source     = "../../keycloak"
-  project_id = local.project_id
-  service_group  = var.service_group
+  count         = (length(local.keycloak_services) > 0) ? 1 : 0
+  source        = "../../keycloak"
+  project_id    = local.project_id
+  service_group = var.service_group
   host          = "keycloak.${local.host}"
-  depends_on = [helm_release.service_group]
+  depends_on    = [helm_release.service_group]
 }
 
 /* === Application Services === */
 module "application_service" {
-  for_each   = data.google_storage_bucket_object_content.application_service_values
-  source     = "../../application-service"
-  project_id = local.project_id
-	region = var.region
+  for_each      = data.google_storage_bucket_object_content.application_service_values
+  source        = "../../application-service"
+  project_id    = local.project_id
+  region        = var.region
   name          = each.key
-	environment = var.environment
+  environment   = var.environment
   tag           = yamldecode(each.value.content).tag
   service_group = var.service_group
   host          = "${each.key}.${local.host}"
@@ -265,7 +265,7 @@ module "application_service" {
     module.redis,
     module.keycloak,
   ]
-	developers = var.developers
+  developers = var.developers
 }
 
 /* === IAM Access === */

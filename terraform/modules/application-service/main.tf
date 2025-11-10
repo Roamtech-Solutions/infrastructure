@@ -17,18 +17,18 @@ resource "helm_release" "application_service" {
   create_namespace = true
   values = [
     var.values,
-		yamlencode({
-			project_id = var.project_id
-      image         = "${var.gar}/${var.name}"
-      host          = var.host
-      service_group = var.service_group
-			tag_short = substr(var.tag, 0, 7)
-			security_policy = local.security_policy
+    yamlencode({
+      project_id      = var.project_id
+      image           = "${var.gar}/${var.name}"
+      host            = var.host
+      service_group   = var.service_group
+      tag_short       = substr(var.tag, 0, 7)
+      security_policy = local.security_policy
     }),
   ]
-	timeout = "600"
-	atomic = true
-	cleanup_on_fail = true
+  timeout         = "600"
+  atomic          = true
+  cleanup_on_fail = true
 }
 
 /* === Secrets === */
@@ -43,7 +43,7 @@ resource "google_secret_manager_secret" "default" {
 
 /* Buckets */
 resource "google_storage_bucket" "default" {
-	for_each = toset(lookup(local.values, "gcs_buckets", []))
+  for_each                    = toset(lookup(local.values, "gcs_buckets", []))
   project                     = var.project_id
   name                        = "${var.environment}-${var.service_group}-${var.name}-${each.key}"
   force_destroy               = true
@@ -57,21 +57,21 @@ resource "google_storage_bucket" "default" {
 
 resource "google_storage_bucket_iam_member" "default" {
   for_each = google_storage_bucket.default
- 	bucket = each.value.name
-  role = "roles/storage.admin"
+  bucket   = each.value.name
+  role     = "roles/storage.admin"
   member   = google_service_account.default.member
 }
 
 resource "google_storage_bucket_iam_member" "developers" {
   for_each = merge([
-		for member in var.developers : {
-			for k, v in google_storage_bucket.default : "${k}-${member}" => {
-				name = v.name, member = member
-			}
-		}
-	]...)
- 	bucket = each.value.name
-  role = "roles/storage.admin"
-  member   = each.value.member
+    for member in var.developers : {
+      for k, v in google_storage_bucket.default : "${k}-${member}" => {
+        name = v.name, member = member
+      }
+    }
+  ]...)
+  bucket = each.value.name
+  role   = "roles/storage.admin"
+  member = each.value.member
 }
 

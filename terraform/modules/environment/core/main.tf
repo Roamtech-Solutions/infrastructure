@@ -27,9 +27,9 @@ resource "google_project_iam_member" "ci_admin" {
 
 /* Set log retention */
 resource "google_logging_project_bucket_config" "default" {
-    project    = module.project.project_id
-    location  = "global"
-    retention_days = var.log_retention_days
-    bucket_id = "_Default"
+  project        = module.project.project_id
+  location       = "global"
+  retention_days = var.log_retention_days
+  bucket_id      = "_Default"
 }
 

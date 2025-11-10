@@ -1,2 +1,2 @@
-service_group = "core"
+service_group      = "core"
 log_retention_days = 30

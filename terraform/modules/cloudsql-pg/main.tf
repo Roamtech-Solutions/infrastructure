@@ -19,7 +19,7 @@ module "cloudsql" {
 
   user_labels = {}
 
-	edition = var.edition
+  edition = var.edition
 
   insights_config = {
     query_plans_per_minute  = 5

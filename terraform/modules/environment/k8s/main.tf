@@ -5,9 +5,9 @@ module "external-secrets" {
 
 /* === RabbitMQ Operater === */
 resource "helm_release" "rabbitmq_cluster_operator" {
-  name       = "rabbitmq-cluster-operator"
-  chart = "${path.module}/../../../../helm/charts/rabbitmq-cluster-operator"
-  namespace  = "rabbitmq"
+  name      = "rabbitmq-cluster-operator"
+  chart     = "${path.module}/../../../../helm/charts/rabbitmq-cluster-operator"
+  namespace = "rabbitmq"
 
   create_namespace = true
   # 15 Minute timeout, can take longer on intial cluster setup.
@@ -25,11 +25,11 @@ resource "helm_release" "kafka_cluster_operator" {
   repository = "https://strimzi.io/charts/"
   namespace  = "kafka"
 
-	values = [
-		yamlencode({
-			watchAnyNamespace = true
-		})
-	]
+  values = [
+    yamlencode({
+      watchAnyNamespace = true
+    })
+  ]
 
   create_namespace = true
   # 15 Minute timeout, can take longer on intial cluster setup.

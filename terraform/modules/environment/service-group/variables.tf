@@ -26,8 +26,8 @@ variable "sub_host" {
 }
 
 variable "developers" {
-	type = list(string)
-	default = []
+  type    = list(string)
+  default = []
 }
 
 variable "allowed_networks" {
@@ -35,12 +35,12 @@ variable "allowed_networks" {
 }
 
 variable "mysql_tier" {
-	type = string
+  type    = string
   default = "db-f1-micro"
 }
 
 variable "postgresql_tier" {
-	type = string
+  type    = string
   default = "db-f1-micro"
 }
 

@@ -34,13 +34,13 @@ resource "helm_release" "keycloak" {
   chart     = "${path.module}/../../../helm/charts/keycloak"
   namespace = var.service_group
   values = [yamlencode({
-    host = var.host
-		port = 9000
-		service_group = var.service_group
+    host          = var.host
+    port          = 9000
+    service_group = var.service_group
   })]
 
   create_namespace = true
 
-	timeout = 900
+  timeout = 900
 }
 
