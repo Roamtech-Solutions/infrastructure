@@ -56,7 +56,7 @@ resource "google_compute_global_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
-  for_each = toset([for i in local.ingress_services : i.name])
+  for_each = toset([for i in local.ingress_services : i.name if contains(keys(local.application_service_values), i.name)])
   project  = var.management_project_id
   /* Services called "website" assume the root of the host */
   name         = (

@@ -141,7 +141,8 @@ spec:
               mountPath: /var/www/public
             {{- if has "mysql" .Values.requires }}
             - name: mysql-cert
-              mountPath: /etc/ssl/certs
+              mountPath: /etc/ssl/certs/mysql-ca.pem
+              subPath: mysql-ca.pem
               readOnly: true
             {{- end }}
 
@@ -271,7 +272,8 @@ spec:
               mountPath: /var/www/public
             {{- if has "mysql" $.Values.requires }}
             - name: mysql-cert
-              mountPath: /etc/ssl/certs
+              mountPath: /etc/ssl/certs/mysql-ca.pem
+              subPath: mysql-ca.pem
               readOnly: true
             {{- end }}
         {{- end }}
