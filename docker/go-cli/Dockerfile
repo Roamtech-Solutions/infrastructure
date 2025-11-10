@@ -17,7 +17,7 @@ RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | he
 
 # === Run Image === #
 FROM ${GO_RUN_IMAGE}
-RUN apk add curl
+RUN echo "${GO_RUN_IMAGE}" | grep alpine &&  apk add curl || (apt update && apt install -y curl)
 # Install Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
 	&& install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
