@@ -18,6 +18,9 @@ spec:
   # When the service name is "website" it assumes the root of the host
   {{- if (eq "website" $s.name) }}
   - host: {{ $.Values.host }}
+  # Using custom host
+  {{- else if $s.custom_host }}
+  - host: {{ $s.custom_host }}.{{ $.Values.host }}
   {{- else }}
   - host: {{ $s.name }}.{{ $.Values.host }}
   {{- end }}
@@ -53,6 +56,8 @@ spec:
     # When the service name is "website" it assumes the root of the host
     {{- if (eq "website" $s.name) }}
     - {{ $.Values.host }}
+    {{- else if $s.custom_host }}
+    - {{ $s.custom_host }}.{{ $.Values.host }}
     {{- else }}
     - {{ $s.name }}.{{ $.Values.host }}
     {{- end }}
