@@ -29,6 +29,7 @@ allowed_networks = {
 service_groups = [
   "data",
   "ecommerce",
+  "afrisend",
   "imt",
   "emalify",
   "paykit",
