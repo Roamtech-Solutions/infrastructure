@@ -102,6 +102,7 @@ resource "google_compute_security_policy" "default" {
 }
 
 resource "google_compute_security_policy" "public" {
+	count = length(local.public_services) > 0 ? 1 : 0
   project = local.project_id
   name    = "${var.service_group}-public"
   type    = "CLOUD_ARMOR"

@@ -37,6 +37,12 @@ locals {
 		if length(lookup(v, "allowed_networks", [])) > 0
 	]
 
+	/* --- Public Services --- */
+	public_services = [
+		for k, v in local.application_service_values : k
+		if lookup(v, "public", false)
+	]
+
   /* --- Keycloak Services --- */
 	keycloak_services = [
 		for k, v in local.application_service_values : k
