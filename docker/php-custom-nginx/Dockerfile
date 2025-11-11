@@ -24,6 +24,8 @@ COPY ./docker/php-custom-nginx/nginx.conf /etc/nginx/nginx.conf
 # Set the working directory to the public folder
 WORKDIR /var/www
 
+COPY . /var/www/public
+
 # Expose port 8080 and start Nginx
 EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
