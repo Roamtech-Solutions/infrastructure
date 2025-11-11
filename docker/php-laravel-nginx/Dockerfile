@@ -12,6 +12,8 @@ WORKDIR /var/www
 # Copy Laravel application code
 COPY . /var/www
 
+RUN mkdir -p /var/www/public
+
 # Stage 2: Nginx production image
 FROM nginx:alpine
 
@@ -22,10 +24,7 @@ FROM nginx:alpine
 # -----------------------------------------------------------
 COPY ./docker/php-laravel-nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Copy Laravel's public assets from the builder stage
-# -----------------------------------------------------------
-# We only need the 'public' directory from our Laravel app.
-# -----------------------------------------------------------
+# Copy public assets from the builder stage
 COPY --from=builder /var/www/public /var/www/public
 
 # Set the working directory to the public folder
