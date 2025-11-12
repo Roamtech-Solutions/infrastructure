@@ -1,7 +1,22 @@
 locals {
-  /* Secrets to setup */
-  secrets = lookup(yamldecode(var.values), "secrets", [])
   values  = yamldecode(var.values)
+
+  /* Secrets to setup */
+	wordpress_addtional_secrets = (local.values.type == "wordpress") ? [
+			"AUTH_KEY",
+			"SECURE_AUTH_KEY",
+			"LOGGED_IN_KEY",
+			"NONCE_KEY",
+			"AUTH_SALT",
+			"SECURE_AUTH_SALT",
+			"LOGGED_IN_SALT",
+			"NONCE_SALT",
+	] : []
+  base_secrets = lookup(yamldecode(var.values), "secrets", [])
+	secrets = distinct(concat(
+		local.base_secrets,
+		local.wordpress_addtional_secrets
+	))
 
   /* Security Policy */
   security_policy = (

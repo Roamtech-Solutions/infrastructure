@@ -53,7 +53,7 @@ locals {
   /* --- MySQL Services --- */
   mysql_services = [
     for k, v in local.application_service_values : k
-    if contains(lookup(v, "requires", []), "mysql")
+    if contains(lookup(v, "requires", []), "mysql") || v.type == "wordpress"
   ]
 
   /* --- PostgreSQL Services --- */

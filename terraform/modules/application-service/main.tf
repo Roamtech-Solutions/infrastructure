@@ -41,6 +41,21 @@ resource "google_secret_manager_secret" "default" {
   }
 }
 
+/* Generated Wordpress Secrets */
+resource "random_password" "wordpress" {
+	for_each = toset(local.wordpress_addtional_secrets)
+  length           = 64
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+resource "google_secret_manager_secret_version" "wordpress" {
+	for_each = toset(local.wordpress_addtional_secrets)
+  secret = google_secret_manager_secret.default[each.key].id
+  secret_data = random_password.wordpress[each.key].result
+	depends_on = [google_secret_manager_secret.default]
+}
+
 /* Buckets */
 resource "google_storage_bucket" "default" {
   for_each                    = toset(lookup(local.values, "gcs_buckets", []))

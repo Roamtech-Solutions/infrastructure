@@ -1,0 +1,66 @@
+{{- if (eq "wordpress" .Values.type) }} 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+        - name: {{ .Release.Name }}-app
+          image: {{ .Values.image }}-app:{{ .Values.tag }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+
+            # --- MySQL --- #
+            - name: WORDPRESS_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: WORDPRESS_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+{{- end }}
+
