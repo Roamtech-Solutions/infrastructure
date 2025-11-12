@@ -22,7 +22,7 @@ resource "helm_release" "application_service" {
       image           = "${var.gar}/${var.name}"
       host            = var.host
       service_group   = var.service_group
-      tag_short       = substr(var.tag, 0, 7)
+      tag_short       = (length(var.tag) <= 16) ? var.tag : substr(var.tag, 0, 7)
       security_policy = local.security_policy
     }),
   ]
