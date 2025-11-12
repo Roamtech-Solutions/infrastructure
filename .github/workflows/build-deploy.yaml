@@ -311,6 +311,7 @@ jobs:
           service_type=$(yq '.type' ./env/${{ inputs.environment }}.yaml)
           test -n "${service_type}"
           case "${service_type}" in
+            "wordpress") echo "port: 80" >> /tmp/values.yaml;;
             "node-nginx") echo "port: 80" >> /tmp/values.yaml;;
             "node-next") echo "port: 3000" >> /tmp/values.yaml;;
             *) grep -E '^port:' ./env/${{ inputs.environment }}.yaml || echo "port: 8080" >> /tmp/values.yaml;;
