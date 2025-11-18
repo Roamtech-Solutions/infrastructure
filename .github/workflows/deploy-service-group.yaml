@@ -28,6 +28,7 @@ on:
           - payments
           - tumatuma
           - ecommerce
+          - mistari
         required: true
 jobs:
   install:
