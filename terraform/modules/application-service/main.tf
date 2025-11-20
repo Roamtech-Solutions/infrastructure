@@ -70,8 +70,27 @@ resource "google_storage_bucket" "default" {
   }
 }
 
+resource "google_storage_bucket" "public" {
+  for_each                    = toset(lookup(local.values, "gcs_buckets_public", []))
+  project                     = var.project_id
+  name                        = "${var.environment}-${var.service_group}-public-${var.name}-${each.key}"
+  force_destroy               = true
+  location                    = var.region
+  uniform_bucket_level_access = true
+  versioning {
+    enabled = true
+  }
+}
+
+resource "google_storage_bucket_iam_member" "member" {
+	for_each = google_storage_bucket.public
+  bucket = each.value.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
+}
+
 resource "google_storage_bucket_iam_member" "default" {
-  for_each = google_storage_bucket.default
+  for_each = local.all_buckets
   bucket   = each.value.name
   role     = "roles/storage.admin"
   member   = google_service_account.default.member
@@ -80,7 +99,7 @@ resource "google_storage_bucket_iam_member" "default" {
 resource "google_storage_bucket_iam_member" "developers" {
   for_each = merge([
     for member in var.developers : {
-      for k, v in google_storage_bucket.default : "${k}-${member}" => {
+      for k, v in local.all_buckets : "${k}-${member}" => {
         name = v.name, member = member
       }
     }

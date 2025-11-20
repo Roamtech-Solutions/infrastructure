@@ -24,5 +24,10 @@ locals {
     ) ? "${var.service_group}-public" : (
     lookup(local.values, "allowed_networks", {}) != {}
   ) ? "${var.service_group}-${var.name}" : var.service_group
+
+	all_buckets = merge(
+		google_storage_bucket.default,
+		{ for k, v in google_storage_bucket.public : "public-${k}" => v }
+	)
 }
 
