@@ -1,7 +1,6 @@
 service_group = "ecommerce"
 region        = "europe-west1"
-host          = "roamtech.whitemire-technologies.com"
-sub_host      = "ecom"
+host          = "adenzo.co.ke"
 
 allowed_networks = {
   roamtech-office          = "41.139.128.197/32"
