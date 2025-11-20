@@ -9,6 +9,7 @@ hosts = [
   "mistari.co",
   "tumatuma.com",
   "adenzo.co.ke",
+  "adenzo.shop",
   "mistari.africa",
 ]
 
