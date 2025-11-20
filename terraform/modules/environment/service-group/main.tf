@@ -56,14 +56,20 @@ resource "google_compute_global_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
-  for_each = toset([for i in local.ingress_services : i.name if contains(keys(local.application_service_values), i.name)])
-  project  = var.management_project_id
+  for_each = toset(
+    flatten([
+      for i in local.ingress_services : concat(
+        [i.name], lookup(i, "additional_hosts", [])
+      ) if contains(keys(local.application_service_values), i.name)
+    ])
+  )
+  project = var.management_project_id
   /* Services called "website" assume the root of the host */
-  name         = (
-		each.key == "website"
-	) ? "${local.host}." : (
-		lookup(local.application_service_values[each.key], "custom_host", "") != ""
-	) ? "${local.application_service_values[each.key].custom_host}.${local.host}." : "${each.key}.${local.host}."
+  name = (
+    each.key == "website"
+    ) ? "${local.host}." : (
+    lookup(local.application_service_values[each.key], "custom_host", "") != ""
+  ) ? "${local.application_service_values[each.key].custom_host}.${local.host}." : "${each.key}.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
@@ -258,7 +264,7 @@ module "application_service" {
   environment   = var.environment
   tag           = yamldecode(each.value.content).tag
   service_group = var.service_group
-  host = local.host
+  host          = local.host
 
   /* TODO: Use management outputs */
   gar = "${var.region}-docker.pkg.dev/${var.management_project_id}/${var.service_group}"

@@ -33,6 +33,18 @@ spec:
             name: {{ $s.name }}
             port:
               number: {{ $s.port }}
+  {{- range $additional_host := $s.additional_hosts }}
+  - host: {{ $additional_host }}.{{ $.Values.host }}
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ $s.name }}
+            port:
+              number: {{ $s.port }}
+  {{- end }}
   {{- end }}
 ---
 apiVersion: networking.gke.io/v1beta1
@@ -60,6 +72,9 @@ spec:
     - {{ $s.custom_host }}.{{ $.Values.host }}
     {{- else }}
     - {{ $s.name }}.{{ $.Values.host }}
+    {{- end }}
+    {{- range $additional_host := $s.additional_hosts }}
+    - {{ $additional_host }}.{{ $.Values.host }}
     {{- end }}
 {{- end }}
 

@@ -82,7 +82,10 @@ locals {
     /* Service port defaulted to 8080 */
     [
       for k, v in local.application_service_values : {
-        name = k, port = lookup(v, "port", 8080), custom_host = lookup(v, "custom_host", "")
+        name             = k,
+        port             = lookup(v, "port", 8080),
+        custom_host      = lookup(v, "custom_host", ""),
+        additional_hosts = lookup(v, "additional_hosts", []),
       }
       if lookup(v, "ingress", false)
     ],

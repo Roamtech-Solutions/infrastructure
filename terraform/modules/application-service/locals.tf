@@ -1,22 +1,22 @@
 locals {
-  values  = yamldecode(var.values)
+  values = yamldecode(var.values)
 
   /* Secrets to setup */
-	wordpress_addtional_secrets = (local.values.type == "wordpress") ? [
-			"AUTH_KEY",
-			"SECURE_AUTH_KEY",
-			"LOGGED_IN_KEY",
-			"NONCE_KEY",
-			"AUTH_SALT",
-			"SECURE_AUTH_SALT",
-			"LOGGED_IN_SALT",
-			"NONCE_SALT",
-	] : []
+  wordpress_addtional_secrets = (local.values.type == "wordpress") ? [
+    "AUTH_KEY",
+    "SECURE_AUTH_KEY",
+    "LOGGED_IN_KEY",
+    "NONCE_KEY",
+    "AUTH_SALT",
+    "SECURE_AUTH_SALT",
+    "LOGGED_IN_SALT",
+    "NONCE_SALT",
+  ] : []
   base_secrets = lookup(yamldecode(var.values), "secrets", [])
-	secrets = distinct(concat(
-		local.base_secrets,
-		local.wordpress_addtional_secrets
-	))
+  secrets = distinct(concat(
+    local.base_secrets,
+    local.wordpress_addtional_secrets
+  ))
 
   /* Security Policy */
   security_policy = (
@@ -25,9 +25,9 @@ locals {
     lookup(local.values, "allowed_networks", {}) != {}
   ) ? "${var.service_group}-${var.name}" : var.service_group
 
-	all_buckets = merge(
-		google_storage_bucket.default,
-		{ for k, v in google_storage_bucket.public : "public-${k}" => v }
-	)
+  all_buckets = merge(
+    google_storage_bucket.default,
+    { for k, v in google_storage_bucket.public : "public-${k}" => v }
+  )
 }
 
