@@ -47,6 +47,8 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
+            - name: MYSQL_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
 
             # --- User Managed Environment Variables --- #
             {{- range $k := .Values.env }}
@@ -62,5 +64,19 @@ spec:
                   name: {{ $.Release.Name }}
                   key:  {{ $s }}
             {{- end }}
+
+          volumeMounts:
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs/mysql-ca.pem
+              subPath: mysql-ca.pem
+              readOnly: true
+      volumes:
+        # --- MySQL Certificate --- #
+        - name: mysql-cert
+          secret:
+            secretName: cloudsql-cert
+            items:
+              - key: data
+                path: mysql-ca.pem
 {{- end }}
 
