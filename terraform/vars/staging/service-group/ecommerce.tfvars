@@ -1,6 +1,7 @@
-service_group = "ecommerce"
-region        = "europe-west1"
-host          = "adenzo.co.ke"
+service_group           = "ecommerce"
+region                  = "europe-west1"
+host                    = "adenzo.co.ke"
+custom_environment_name = "uat"
 
 allowed_networks = {
   roamtech-office          = "41.139.128.197/32"

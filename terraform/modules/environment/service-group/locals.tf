@@ -1,10 +1,12 @@
 locals {
   project_id = data.terraform_remote_state.core.outputs.project_id
 
+  environment_name = (var.custom_environment_name == "") ? var.environment : var.custom_environment_name
+
   /* --- Host Name --- */
   base_host = (
     var.environment == "production"
-  ) ? "${var.host}" : "${var.environment}.${var.host}"
+  ) ? "${var.host}" : "${local.environment_name}.${var.host}"
   host = (
     var.sub_host == ""
   ) ? local.base_host : "${var.sub_host}.${local.base_host}"
