@@ -56,20 +56,24 @@ resource "google_compute_global_address" "default" {
 }
 
 resource "google_dns_record_set" "default" {
-  for_each = toset(
-    flatten([
-      for i in local.ingress_services : concat(
-        [i.name], lookup(i, "additional_hosts", [])
+  for_each = merge([
+      for i in local.ingress_services : merge(
+        {
+					"${i.name}" = local.application_service_values[i.name]
+				},
+				{
+					for ah in lookup(i, "additional_hosts", []) : "${ah}" => local.application_service_values[i.name]
+				}
       ) if contains(keys(local.application_service_values), i.name)
-    ])
-  )
+    ]...
+	)
   project = var.management_project_id
   /* Services called "website" assume the root of the host */
   name = (
     each.key == "website"
     ) ? "${local.host}." : (
-    lookup(local.application_service_values[each.key], "custom_host", "") != ""
-  ) ? "${local.application_service_values[each.key].custom_host}.${local.host}." : "${each.key}.${local.host}."
+    lookup(each.value, "custom_host", "") != ""
+  ) ? "${each.value.custom_host}.${local.host}." : "${each.key}.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
