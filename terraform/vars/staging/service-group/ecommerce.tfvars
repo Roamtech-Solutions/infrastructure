@@ -1,6 +1,6 @@
 service_group           = "ecommerce"
 region                  = "europe-west1"
-host                    = "adenzo.co.ke"
+host                    = "adenzo.shop"
 custom_environment_name = "uat"
 
 allowed_networks = {

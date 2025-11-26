@@ -6,6 +6,7 @@ variable "environment" {
 variable "custom_environment_name" {
   type        = string
   description = "Custom environment name for using a different URL"
+  default     = ""
 }
 
 variable "service_group" {

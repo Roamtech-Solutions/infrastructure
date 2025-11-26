@@ -1,6 +1,6 @@
 service_group = "ecommerce"
 region        = "europe-west1"
-host          = "adenzo.co.ke"
+host          = "adenzo.shop"
 
 allowed_networks = {
   roamtech-office          = "41.139.128.197/32"
