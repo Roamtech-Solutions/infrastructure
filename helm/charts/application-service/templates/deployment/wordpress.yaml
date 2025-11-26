@@ -27,7 +27,7 @@ spec:
           env:
             # --- General --- #
             - name: WP_SITEURL
-              {{- if eq (.Release.Name "website") }}
+              {{- if (eq "website" .Release.Name) }}
               value: https://{{ .Values.host }}
               {{- else }}
               value: https://{{ .Release.Name }}.{{ .Values.host }}
