@@ -25,6 +25,13 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            # --- General --- #
+            - name: WP_SITEURL
+              {{- if eq (.Release.Name "website") }}
+              value: https://{{ .Values.host }}
+              {{- else }}
+              value: https://{{ .Release.Name }}.{{ .Values.host }}
+              {{- end }}
 
             # --- MySQL --- #
             - name: WORDPRESS_DB_HOST
