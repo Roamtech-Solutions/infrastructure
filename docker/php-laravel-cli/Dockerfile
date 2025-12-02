@@ -57,13 +57,41 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Stage 2: Production environment
 FROM php:${PHP_VERSION}-cli
 
+# Install system dependencies and PHP extensions for Laravel with MySQL/PostgreSQL support.
+# Dependencies in this stage are only required for building the final image.
+# Node.js and asset building are handled in the Nginx stage, not here.
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
+# Only install opentelemetry when PHP version >= 8.0
+RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
+	(test "${PHP_VERSION}" = "8.0" || test "${phpv}" != "8.0") \
+	&& install-php-extensions http opentelemetry \
+	|| install-php-extensions http 
+
 # Install client libraries required for php extensions in runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    unzip \
     libpq-dev \
+    libonig-dev \
+    libssl-dev \
+    libxml2-dev \
+    libcurl4-openssl-dev \
     libicu-dev \
     libzip-dev \
-    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    libpng-dev \
+    && docker-php-ext-install -j$(nproc) \
+    pdo_mysql \
+    pdo_pgsql \
+    pgsql \
+    opcache \
+    intl \
+    zip \
+    bcmath \
+    soap \
+    sockets \
+    gd
 
 # Install Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
