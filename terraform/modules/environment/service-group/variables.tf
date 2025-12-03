@@ -22,6 +22,11 @@ variable "region" {
   type = string
 }
 
+variable "secondary_region" {
+  type    = string
+  default = "europe-west3"
+}
+
 variable "host" {
   type = string
 }

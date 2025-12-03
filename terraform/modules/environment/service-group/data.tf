@@ -4,6 +4,11 @@ data "google_compute_zones" "available" {
   region  = var.region
 }
 
+data "google_compute_zones" "secondary" {
+  project = local.project_id
+  region  = var.secondary_region
+}
+
 /* === Remote States === */
 data "terraform_remote_state" "core" {
   backend = "gcs"

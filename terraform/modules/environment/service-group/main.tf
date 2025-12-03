@@ -27,9 +27,13 @@ module "cloudsql" {
   database_version = "MYSQL_8_0"
   region           = var.region
   zone             = data.google_compute_zones.available.names[0]
-  network          = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary     = var.mysql_tier
-  users            = local.mysql_services
+  read_replica = (var.environment == "production") ? {
+    region = var.secondary_region
+    zone   = data.google_compute_zones.secondary.names[0]
+  } : null
+  network      = data.terraform_remote_state.infra.outputs.gke_network
+  tier_primary = var.mysql_tier
+  users        = local.mysql_services
 }
 
 /* === PostgreSQL Database === */
@@ -57,16 +61,16 @@ resource "google_compute_global_address" "default" {
 
 resource "google_dns_record_set" "default" {
   for_each = merge([
-      for i in local.ingress_services : merge(
-        {
-					"${i.name}" = local.application_service_values[i.name]
-				},
-				{
-					for ah in lookup(i, "additional_hosts", []) : "${ah}" => local.application_service_values[i.name]
-				}
-      ) if contains(keys(local.application_service_values), i.name)
+    for i in local.ingress_services : merge(
+      {
+        "${i.name}" = local.application_service_values[i.name]
+      },
+      {
+        for ah in lookup(i, "additional_hosts", []) : "${ah}" => local.application_service_values[i.name]
+      }
+    ) if contains(keys(local.application_service_values), i.name)
     ]...
-	)
+  )
   project = var.management_project_id
   /* Services called "website" assume the root of the host */
   name = (

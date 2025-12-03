@@ -10,6 +10,11 @@ variable "zone" {
   type = string
 }
 
+variable "replica_zone" {
+  type    = string
+  default = ""
+}
+
 variable "name" {
   type = string
 }
@@ -17,6 +22,15 @@ variable "name" {
 variable "tier_primary" {
   type    = string
   default = "db-n1-standard-1"
+}
+
+variable "read_replica" {
+  type = object({
+    region = string
+    zone   = string
+    tier   = optional(string, "db-n1-standard-1")
+  })
+  default = null
 }
 
 variable "network" {

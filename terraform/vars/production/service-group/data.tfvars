@@ -1,6 +1,6 @@
 service_group = "data"
 region        = "europe-west1"
-host          = "roamtech.whitemire-technologies.com"
+host          = "paykit.africa"
 sub_host      = "data"
 
 allowed_networks = {

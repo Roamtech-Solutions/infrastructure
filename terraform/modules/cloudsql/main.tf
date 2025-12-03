@@ -63,6 +63,28 @@ module "cloudsql" {
       type = "BUILT_IN"
     } if k != "root"
   ]
+
+  read_replicas = (var.read_replica != null) ? [
+    {
+      name                  = "-${var.read_replica.region}"
+      zone                  = var.read_replica.zone
+      tier                  = var.read_replica.tier
+      availability_type     = "REGIONAL"
+      disk_type             = "PD_HDD"
+      disk_autoresize       = true
+      disk_autoresize_limit = 0
+      disk_size             = var.disk_size
+      user_labels           = {}
+      database_flags        = []
+      encryption_key_name   = null
+      ip_configuration = {
+        ipv4_enabled       = false
+        ssl_mode           = "ENCRYPTED_ONLY"
+        private_network    = var.network.id
+        allocated_ip_range = null
+      }
+    }
+  ] : []
 }
 
 /* === Generated root user password secret manager === */
