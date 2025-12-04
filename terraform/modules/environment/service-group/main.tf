@@ -31,9 +31,10 @@ module "cloudsql" {
     region = var.secondary_region
     zone   = data.google_compute_zones.secondary.names[0]
   } : null
-  network      = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary = var.mysql_tier
-  users        = local.mysql_services
+  network             = data.terraform_remote_state.infra.outputs.gke_network
+  tier_primary        = var.mysql_tier
+  users               = local.mysql_services
+  deletion_protection = (var.environment == "production")
 }
 
 /* === PostgreSQL Database === */

@@ -123,7 +123,11 @@ output: init
 
 .PHONY: import
 import: init
-	terraform -chdir=$(CHDIR) import $(VARS) $(IMPORT_TO) $(IMPORT_FROM)
+	terraform -chdir=$(CHDIR) import $(VARS) -target=$(IMPORT_TO) $(IMPORT_TO) $(IMPORT_FROM)
+
+.PHONY: target
+apply-target: init
+	terraform -chdir=$(CHDIR) apply $(VARS) -target=$(TARGET)
 
 .PHONY: state-list
 state-list: init
