@@ -2,13 +2,14 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ $.Release.Name }}-{{ $k }}
+  name: {{ $.Release.Name }}-cronjob-{{ $k }}
 spec:
-  schedule: {{ $v.schedule }}
+  schedule: "{{ $v.schedule }}"
   jobTemplate:
     spec:
       template:
         spec:
+          restartPolicy: Never
           containers:
             - name: {{ $k }}
               image: {{ $.Values.image }}-cli:{{ $.Values.tag }}
