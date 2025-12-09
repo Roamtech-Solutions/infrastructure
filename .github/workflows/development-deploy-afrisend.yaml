@@ -1,0 +1,17 @@
+name: Development - Deploy Afrisend
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1-5"  # Every week day at 06:00 UTC (09:00 Kenya Time)
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      id-token: write
+    name: "Development - Deploy Afrisend"
+    uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
+    with:
+      environment: development
+      service_group: afrisend
+    secrets: inherit
+

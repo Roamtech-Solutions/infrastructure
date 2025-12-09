@@ -22,9 +22,9 @@ on:
         description: Service Group to deploy
         options: 
           - adenzo
+          - afrisend
           - emalify
           - data
-          - imt
           - payments
           - tumatuma
           - ecommerce
