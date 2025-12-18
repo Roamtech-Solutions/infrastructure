@@ -7,6 +7,7 @@ region        = "europe-west1"
 developers = [
 	"user:kevin.kariuki@roamtech.com",
 	"user:hosea@geartrain.co",
+	"user:francis.kiarie@roamtech.com",
 ]
 
 allowed_networks = {
