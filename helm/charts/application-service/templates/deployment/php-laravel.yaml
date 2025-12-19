@@ -307,13 +307,13 @@ spec:
           args: ["ls /var/www/public/* && cp -r /var/www/public/* /data || echo No files to copy"]
           resources:
             limits:
-              cpu: 50m
+              cpu: 100m
               ephemeral-storage: 1Gi
-              memory: 64Mi
+              memory: 512Mi
             requests:
-              cpu: 50m
+              cpu: 100m
               ephemeral-storage: 1Gi
-              memory: 64Mi
+              memory: 128Mi
           volumeMounts:
             - name: public-assets
               mountPath: /data
