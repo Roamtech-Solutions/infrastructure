@@ -20,3 +20,7 @@ allowed_networks = {
   al-muzaini-exchange = "3.109.39.95/32"
 }
 
+mysql_database_flags = [
+  { name = "max_connections", value = "500" }
+]
+

@@ -50,6 +50,11 @@ variable "mysql_tier" {
   default = "db-f1-micro"
 }
 
+variable "mysql_database_flags" {
+  type    = list(map(string))
+  default = []
+}
+
 variable "postgresql_tier" {
   type    = string
   default = "db-f1-micro"
