@@ -59,3 +59,8 @@ variable "users" {
   default = []
 }
 
+variable "database_flags" {
+  type    = list(map(string))
+  default = []
+}
+

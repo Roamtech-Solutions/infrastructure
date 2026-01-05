@@ -10,9 +10,12 @@ module "cloudsql" {
   deletion_protection  = var.deletion_protection
   disk_size            = var.disk_size
 
-  database_flags = [
-    { name = "audit_log", value = "ON" }
-  ]
+  database_flags = concat(
+    [
+      { name = "audit_log", value = "ON" },
+    ],
+    var.database_flags
+  )
 
   tier                            = var.tier_primary
   zone                            = var.zone

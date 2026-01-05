@@ -35,6 +35,9 @@ module "cloudsql" {
   tier_primary        = var.mysql_tier
   users               = local.mysql_services
   deletion_protection = (var.environment == "production")
+  database_flags = [
+    { name = "max_connections", value = "500" }
+  ]
 }
 
 /* === PostgreSQL Database === */
