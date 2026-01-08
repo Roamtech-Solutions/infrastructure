@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ .Title }}</title>
+	<style>
+		.dropdown .arrow {
+			font-size: 0.7em;
+			margin-left: 1em;
+			color: darkgray;
+		}
+		.dropdown .button {
+			display: flex;
+			justify-content: space-between;
+		}
+		.hidden {
+			display: none;
+		}
+		.button {
+			cursor: pointer;
+		}
+		table {
+			border-collapse: collapse;
+			margin: auto;
+		}
+
+		td {
+			border-bottom: 1px solid darkgray;
+			padding-left: 1em;
+			padding-right: 1em;
+		}
+	</style>
+  </head>
+  <body>
+		<h1>{{ .Title }} ({{ .Environment }}) Services</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Tag</th>
+					<th>Type</th>
+					<th>Ingress</th>
+					<th>Network Access</th>
+					<th>Requires</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{ range $s := .Services }}
+				<tr>
+					<td><a href="{{ $s.RepositoryLink }}">{{ $s.Name }}</a></td>
+					<td><a href="{{ $s.TagLink }}">{{ $s.Tag }}</a></td>
+					<td>{{ $s.Type }}</td>
+					<td>
+					{{ if $s.Ingress }}
+					<ul>
+					{{ range $host := $s.Hosts }}
+						<li>{{ $host }}</li>
+					{{ end }}
+					</ul>
+					{{ else }}
+					-
+					{{ end }}
+					</td>
+					<td>
+						{{ if $s.Public }}
+							PUBLIC
+						{{ else }}
+						{{ if len $s.AllowedNetworks }}	
+						{{ range $k, $v := $s.AllowedNetworks }}
+						<div class="dropdown">
+							<p class="button" onclick="toggle_dropdown(this)">{{ $k }}<span class="arrow up hidden">&#x25B2;</span><span class="arrow down">&#x25BC;</span></p>
+							<ul class="content hidden">
+								{{ range $network := $v }}
+								<li>{{ $network }}</li>
+								{{ end }}
+							</ul>
+						</div>
+						{{ end }}
+						{{ else }}
+						INTERNAL/VPN
+						{{ end }}
+						{{ end }}
+					</td>
+					<td>
+					{{ if len $s.Requires }}
+						<ul>
+						{{ range $r := $s.Requires }}
+							<li>{{ $r }}</li>	
+						{{ end }}
+						</ul>
+					{{ else }}
+					-
+					{{ end }}
+					</td>
+				</tr>
+				{{ end }}
+			</tbody>
+		</table>
+		<script>
+			function toggle_dropdown(e) {
+				console.log(e);
+
+				/* Current state */
+				let open = e.classList.contains("open");
+
+				/* Toggle state */
+				if (open) {
+					e.classList.remove("open");
+				} else {
+					e.classList.add("open");
+				}
+				open = !open;
+
+				/* Toggle dropdown arrows */
+				for (let arrow of e.getElementsByClassName("arrow")) {
+					if (open) {
+						if (arrow.classList.contains("up")) {
+							arrow.classList.remove("hidden")
+						}
+						if (arrow.classList.contains("down")) {
+							arrow.classList.add("hidden")
+						}
+					} else {
+						if (arrow.classList.contains("up")) {
+							arrow.classList.add("hidden")
+						}
+						if (arrow.classList.contains("down")) {
+							arrow.classList.remove("hidden")
+						}
+					}
+				}
+
+				/* Toggle content */
+				for (let content of e.parentElement.getElementsByClassName("content")) {
+					if (open) {
+						content.classList.remove("hidden");
+					} else {
+						content.classList.add("hidden");
+					}
+				}
+			}
+		</script>
+  </body>
+</html>
+

@@ -86,6 +86,17 @@ resource "google_dns_record_set" "default" {
   rrdatas      = [google_compute_global_address.default.0.address]
 }
 
+resource "google_dns_record_set" "keycloak" {
+	count = (local.keycloak_enabled) ? 1 : 0
+  project = var.management_project_id
+  /* Services called "website" assume the root of the host */
+  name = "keycloak.${local.host}."
+  managed_zone = replace(var.host, ".", "-")
+  type         = "A"
+  ttl          = "300"
+  rrdatas      = [google_compute_global_address.default.0.address]
+}
+
 resource "google_compute_security_policy" "default" {
   project = local.project_id
   name    = var.service_group
