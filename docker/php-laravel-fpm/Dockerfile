@@ -15,6 +15,8 @@ RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
 	&& install-php-extensions http opentelemetry \
 	|| install-php-extensions http 
 
+RUN docker-php-ext-install pcntl
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
@@ -74,6 +76,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 FROM php:${PHP_VERSION}-fpm
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN docker-php-ext-install pcntl
 
 RUN chmod +x /usr/local/bin/install-php-extensions && sync
 # Only install opentelemetry when PHP version >= 8.0
