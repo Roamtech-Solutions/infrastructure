@@ -12,8 +12,9 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync
 RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
 	(test "${PHP_VERSION}" = "8.0" || test "${phpv}" != "8.0") \
 	&& install-php-extensions http opentelemetry \
- 	|| install-php-extensions http 
+ 	|| install-php-extensions http
 
+RUN docker-php-ext-install pcntl
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -56,6 +57,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Stage 2: Production environment
 FROM php:${PHP_VERSION}-cli
+
+RUN docker-php-ext-install pcntl
 
 # Install system dependencies and PHP extensions for Laravel with MySQL/PostgreSQL support.
 # Dependencies in this stage are only required for building the final image.
