@@ -127,7 +127,7 @@ import: init
 
 .PHONY: target
 apply-target: init
-	terraform -chdir=$(CHDIR) apply $(VARS) -target=$(TARGET)
+	terraform -chdir=$(CHDIR) apply -auto-approve $(VARS) -target=$(TARGET)
 
 .PHONY: state-list
 state-list: init
