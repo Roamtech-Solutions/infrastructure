@@ -21,6 +21,6 @@ allowed_networks = {
 }
 
 mysql_database_flags = [
-  { name = "max_connections", value = "500" }
+  { name = "max_connections", value = "1000" }
 ]
 
