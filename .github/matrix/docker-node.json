@@ -2,7 +2,7 @@
 	"include": [
 		{
 			"name": "app",	
-			"dockerfile": "docker/node/Dockerfile"
+			"dockerfile": "docker/node-app/Dockerfile"
 		}
 	]
 }
