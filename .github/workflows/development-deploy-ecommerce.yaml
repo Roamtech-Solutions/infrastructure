@@ -2,7 +2,7 @@ name: Development Deploy Ecommerce
 on:
   workflow_dispatch:
   schedule:
-    - cron: "00 08 * * *"  # Every day at 08:00 UTC (11:00 Kenya Time)
+    - cron: "0 4 * * 1,2,3,4,5"  # Monday-Friday at 04:00 UTC (08:00 Kenya Time)
 jobs:
   deploy:
     permissions:
