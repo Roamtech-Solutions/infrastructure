@@ -51,7 +51,8 @@ ifeq ($(ENV),management)
   VARS := \
 	-var-file=$(VARS_DIR)/common.tfvars \
 	-var-file=$(VARS_DIR)/$(MOD).tfvars
-  ifneq ($(MOD),core)
+  # If it is not one of the following modules
+  ifneq ($(filter-out core data-analytics,$(MOD)),)
     VARS := -var="project_id=$(MANAGEMENT_PROJECT_ID)"
   endif
 else

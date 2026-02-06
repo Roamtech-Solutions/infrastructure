@@ -87,10 +87,10 @@ resource "google_dns_record_set" "default" {
 }
 
 resource "google_dns_record_set" "keycloak" {
-	count = (local.keycloak_enabled) ? 1 : 0
+  count   = (local.keycloak_enabled) ? 1 : 0
   project = var.management_project_id
   /* Services called "website" assume the root of the host */
-  name = "keycloak.${local.host}."
+  name         = "keycloak.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
