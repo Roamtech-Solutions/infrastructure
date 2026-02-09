@@ -48,15 +48,3 @@ resource "google_compute_firewall" "allow_iap_ssh" {
   target_tags   = ["iap-ssh"]
 }
 
-
-/* === Testing MariDB === */
-# module "maridb" {
-#   source          = "../../mariadb"
-#   name            = "test"
-#   project_id      = local.project_id
-#   users           = ["wallet"]
-#   region          = var.region
-#   network_name    = module.gke.network.name
-#   subnetwork_name = values(module.gke.network.subnets)[0].name
-# }
-

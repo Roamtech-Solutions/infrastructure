@@ -1,0 +1,9 @@
+{
+  "include": [
+    {
+      "name": "app",
+      "dockerfile": "docker/python-frappe-erpnext/Dockerfile"
+    }
+  ]
+}
+
