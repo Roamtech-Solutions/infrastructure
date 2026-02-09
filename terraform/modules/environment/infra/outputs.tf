@@ -12,6 +12,10 @@ output "gke_network" {
   }
 }
 
+output "gke_subnets" {
+	value = module.gke.network.subnets
+}
+
 output "gke_pod_cidr" {
   value = module.gke.pod_cidr
 }

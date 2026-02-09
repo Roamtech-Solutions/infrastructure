@@ -55,15 +55,13 @@ module "postgresql" {
 /* === MariaDB === */
 module "mariadb" {
   count            = length(local.mariadb_services) > 0 ? 1 : 0
-  source           = "../../cloudsql-pg"
+  source           = "../../mariadb"
   project_id       = local.project_id
   name             = var.service_group
-  database_version = "POSTGRES_16"
-  region           = var.region
-  zone             = data.google_compute_zones.available.names[0]
-  network          = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary     = var.postgresql_tier
-  users            = local.postgresql_services
+  region             = var.region
+  network_name     = data.terraform_remote_state.infra.outputs.gke_network.name
+  subnetwork_name  = values(data.terraform_remote_state.infra.outputs.gke_subnets)[0].name
+  users            = local.mariadb_services
 }
 
 /* === Service Group Setup === */
