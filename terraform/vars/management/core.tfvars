@@ -35,5 +35,6 @@ service_groups = [
   "paykit",
   "tumatuma",
   "mistari",
+  "roamtech",
 ]
 
