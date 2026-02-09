@@ -1,0 +1,157 @@
+{{- if (eq "python-frappe-erpnext" .Values.type) }} 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+        # --- Django application container with Gunicorn --- #
+        - name: {{ .Release.Name }}-app
+          image: {{ .Values.image }}-app:{{ .Values.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: APP_NAME
+              value: {{ .Release.Name }}
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+
+            # --- MariaDB --- #
+            {{- if has "mariadb" .Values.requires }}
+            - name: MARIADB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-{{ .Release.Name }}
+                  key: host
+            - name: MARIADB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-{{ .Release.Name }}
+                  key: port
+            - name: MARIADB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-{{ .Release.Name }}
+                  key: user
+            - name: MARIADB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
+          volumeMounts:
+            # --- MySQL Certificate --- #
+            {{- if has "mysql" .Values.requires }}
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            {{- end }}
+            # -- PostgreSQL Certificate --- #
+            {{- if has "postgresql" .Values.requires }}
+            - name: postgresql-cert
+              mountPath: /etc/ssl/certs
+              readOnly: true
+            {{- end }}
+
+          {{- if .Values.enable_probes }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.health_check_path | default "/health/" }}
+              port: {{ .Values.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.health_check_path | default "/health/" }}
+              port: {{ .Values.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          {{- end }}
+
+      initContainers:
+        # --- Wait for Migration Job to complete --- #
+        {{- if ne "none" .Values.migration_type }}
+        - name: wait-for-migration
+          image: {{ .Values.image }}-cli:{{ .Values.tag }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag_short }} \
+                -o jsonpath='{.status.succeeded}' | grep 1; do
+                echo "Waiting for migration job to complete..."
+                sleep 5
+              done
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+        {{- end }}
+
+      volumes:
+        {{- if has "mysql" .Values.requires }}
+        # --- MySQL Certificate --- #
+        - name: mysql-cert
+          secret:
+            secretName: cloudsql-cert
+            items:
+              - key: data
+                path: mysql-ca.pem
+        {{- end }}
+        # -- PostgreSQL Certificate --- #
+        {{- if has "postgresql" .Values.requires }}
+        - name: postgresql-cert
+          secret:
+            secretName: cloudsql-pg-cert
+            items:
+              - key: data
+                path: postgresql-ca.pem
+        {{- end }}
+{{- end }}
+

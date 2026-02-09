@@ -1,0 +1,92 @@
+{{- if (len .Values.mariadb_services) }}
+# === Configure Secrets for Each Service === #
+{{- range $k := .Values.mariadb_services }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mariadb-{{ $k }}
+spec:
+  refreshInterval: 60s
+  secretStoreRef:
+    name: default
+    kind: SecretStore
+  target:
+    name: mariadb-{{ $k }}
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: {{ $.Release.Name }}-mariadb-{{ $k }}
+{{- end }}
+
+{{/* Disabled for now, need to get this working still */}}
+{{/* For some reason is breaks access for the root user */}}
+{{- if false }}
+# === Setup SQL User Accounts on the Server === #
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $.Release.Name }}-mariadb-init
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: mariadb-init
+        image: mariadb:8.0
+        # TODO: Don't give all permissions to every user.
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mariadb -h $MYSQL_HOST -u $MYSQL_USER -p$MYSQL_PASS -e "
+            {{- range $k := .Values.mariadb_services }}
+            CREATE USER IF NOT EXISTS '{{ $k }}'@'%' IDENTIFIED BY '${SVC_PASS_{{ $k }}}';
+            GRANT ALL PRIVILEGES ON *.* TO '{{ $k }}'@'%';
+            {{- end }}
+            GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+            FLUSH PRIVILEGES;
+            "
+        env:
+        # --- Connection info & root credentials --- #
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: host
+        - name: MYSQL_PORT
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: port
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: user
+        - name: MYSQL_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-root
+              key: pass
+        # --- User credentials for each service --- #
+        {{- range $k := .Values.mariadb_services }}
+        - name: SVC_PASS_{{ $k }}
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-{{ $k }}
+              key: pass
+        {{- end }}
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+
+{{- end }}
+{{- end }}
+
