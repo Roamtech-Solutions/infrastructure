@@ -2,10 +2,10 @@ locals {
   airflow_roles = [
     "roles/bigquery.jobUser",
     "roles/logging.logWriter",
-		"roles/monitoring.metricWriter",
+    "roles/monitoring.metricWriter",
     "roles/storage.objectViewer",
     "roles/storage.objectCreator",
-		"roles/stackdriver.resourceMetadata.writer",
+    "roles/stackdriver.resourceMetadata.writer",
   ]
   analytics_buckets = {
     standard = {

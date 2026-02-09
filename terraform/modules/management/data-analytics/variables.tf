@@ -33,7 +33,7 @@ variable "hosts" {
 }
 
 variable "developers" {
-	type = list(string)
-	description = "List of members to give IAM access to the project"
+  type        = list(string)
+  description = "List of members to give IAM access to the project"
 }
 

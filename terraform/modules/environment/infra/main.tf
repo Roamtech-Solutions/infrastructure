@@ -29,3 +29,16 @@ module "gke" {
   jump_box_enabled = true
   enable_psa       = true
 }
+
+
+/* === Testing MariDB === */
+# module "maridb" {
+#   source          = "../../mariadb"
+#   name            = "test"
+#   project_id      = local.project_id
+#   users           = ["wallet"]
+#   region          = var.region
+#   network_name    = module.gke.network.name
+#   subnetwork_name = values(module.gke.network.subnets)[0].name
+# }
+

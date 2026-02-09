@@ -64,16 +64,16 @@ module "private_service_access" {
 
 /* --- Airflow --- */
 resource "google_service_account" "data_pipelines_airflow_prod" {
-	account_id   = "data-pipelines-airflow-prod"
-	display_name = "Data Pipelines Airflow Prod"
-	project      = module.project.project_id
+  account_id   = "data-pipelines-airflow-prod"
+  display_name = "Data Pipelines Airflow Prod"
+  project      = module.project.project_id
 }
 
 resource "google_project_iam_member" "airflow_roles" {
   for_each = toset(local.airflow_roles)
-  project = module.project.project_id
-  role    = each.value
-  member  = "serviceAccount:${google_service_account.data_pipelines_airflow_prod.email}"
+  project  = module.project.project_id
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.data_pipelines_airflow_prod.email}"
 }
 
 resource "google_secret_manager_secret_iam_member" "airflow_admin_secret_accessor" {
@@ -126,10 +126,10 @@ resource "google_storage_bucket" "analytics" {
 resource "google_compute_instance" "airflow" {
   name         = "airflow"
   project      = module.project.project_id
-  zone             = data.google_compute_zones.available.names[0]
+  zone         = data.google_compute_zones.available.names[0]
   machine_type = "e2-medium"
 
-	tags = ["iap-ssh"]
+  tags = ["iap-ssh"]
 
   boot_disk {
     initialize_params {
@@ -140,10 +140,10 @@ resource "google_compute_instance" "airflow" {
   }
 
   network_interface {
-    network = module.network.network_name
-  	subnetwork = "${var.region}-${var.name}"
-  	subnetwork_project = module.project.project_id
-		access_config {
+    network            = module.network.network_name
+    subnetwork         = "${var.region}-${var.name}"
+    subnetwork_project = module.project.project_id
+    access_config {
       /* Ephemeral public IP */
     }
   }
@@ -158,7 +158,7 @@ resource "google_compute_instance" "airflow" {
 
 /* === Firewall Rules === */
 resource "google_compute_firewall" "allow_iap_ssh" {
-	project = module.project.project_id
+  project = module.project.project_id
   name    = "allow-iap-ssh"
   network = module.network.network_name
 
@@ -175,6 +175,24 @@ resource "google_compute_firewall" "allow_iap_ssh" {
 }
 
 /* === User IAM === */
+
+resource "google_project_iam_custom_role" "set_instance_metadata" {
+  project     = module.project.project_id
+  role_id     = "DataSetInstanceMetadata"
+  title       = "Set Compute Instance Metadata"
+  description = "Allows updating metadata on Compute Engine instances"
+  permissions = [
+    "compute.instances.get",
+    "compute.instances.setMetadata",
+  ]
+}
+
+resource "google_project_iam_member" "set_instance_metadata" {
+  for_each = toset(var.developers)
+  project  = module.project.project_id
+  role     = google_project_iam_custom_role.set_instance_metadata.name
+  member   = each.value
+}
 
 resource "google_project_iam_member" "bigquery_admin" {
   for_each = toset(var.developers)
@@ -194,6 +212,13 @@ resource "google_project_iam_member" "os_admin_login" {
   for_each = toset(var.developers)
   project  = module.project.project_id
   role     = "roles/compute.osAdminLogin"
+  member   = each.value
+}
+
+resource "google_project_iam_member" "iam_service_account_user" {
+  for_each = toset(var.developers)
+  project  = module.project.project_id
+  role     = "roles/iam.serviceAccountUser"
   member   = each.value
 }
 

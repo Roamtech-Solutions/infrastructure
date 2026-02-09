@@ -108,7 +108,7 @@ plan: init
 
 .PHONY: apply
 apply: init
-	terraform -chdir=$(CHDIR) apply -auto-approve $(VARS)
+	terraform -chdir=$(CHDIR) apply -auto-approve $(VARS) $(TF_ARGS)
 
 .PHONY: refresh
 refresh: init
