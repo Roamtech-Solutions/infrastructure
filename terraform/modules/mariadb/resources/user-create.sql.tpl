@@ -1,9 +1,9 @@
-{{- range $user := .users }}
+%{ for user in users ~}
 
-CREATE USER IF NOT EXISTS '{{ user.name }}'@'{{ user.host }}'
-IDENTIFIED BY '{{ user.password }}';
+CREATE USER IF NOT EXISTS '${user.name}'@'%'
+IDENTIFIED BY '${user.password}';
 
-{{- end }}
+%{ endfor ~}
 
 FLUSH PRIVILEGES;
 

@@ -222,3 +222,10 @@ resource "google_project_iam_member" "iam_service_account_user" {
   member   = each.value
 }
 
+resource "google_project_iam_member" "iap_tunnel_user" {
+  for_each = toset(var.developers)
+  project = module.project.project_id
+  role    = "roles/iap.tunnelResourceAccessor"
+  member  = each.value
+}
+

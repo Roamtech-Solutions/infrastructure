@@ -6,6 +6,7 @@ services = [
   "logging.googleapis.com",
   "servicenetworking.googleapis.com",
   "sqladmin.googleapis.com",
+  "bigquery.googleapis.com",
 ]
 
 developers = [

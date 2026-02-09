@@ -21,3 +21,4 @@ resource "google_storage_bucket_object" "assets" {
   bucket   = google_storage_bucket.assets.name
   metadata = {}
 }
+

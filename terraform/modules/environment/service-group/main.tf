@@ -52,6 +52,20 @@ module "postgresql" {
   users            = local.postgresql_services
 }
 
+/* === MariaDB === */
+module "mariadb" {
+  count            = length(local.mariadb_services) > 0 ? 1 : 0
+  source           = "../../cloudsql-pg"
+  project_id       = local.project_id
+  name             = var.service_group
+  database_version = "POSTGRES_16"
+  region           = var.region
+  zone             = data.google_compute_zones.available.names[0]
+  network          = data.terraform_remote_state.infra.outputs.gke_network
+  tier_primary     = var.postgresql_tier
+  users            = local.postgresql_services
+}
+
 /* === Service Group Setup === */
 
 /* --- Ingress --- */

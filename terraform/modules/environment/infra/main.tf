@@ -30,15 +30,33 @@ module "gke" {
   enable_psa       = true
 }
 
+/* === Firewall Rules === */
+resource "google_compute_firewall" "allow_iap_ssh" {
+  project = local.project_id
+  name    = "allow-iap-ssh"
+  network = module.gke.network.name
+
+  direction = "INGRESS"
+  priority  = 1000
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["35.235.240.0/20"]
+  target_tags   = ["iap-ssh"]
+}
+
 
 /* === Testing MariDB === */
-# module "maridb" {
-#   source          = "../../mariadb"
-#   name            = "test"
-#   project_id      = local.project_id
-#   users           = ["wallet"]
-#   region          = var.region
-#   network_name    = module.gke.network.name
-#   subnetwork_name = values(module.gke.network.subnets)[0].name
-# }
+module "maridb" {
+  source          = "../../mariadb"
+  name            = "test"
+  project_id      = local.project_id
+  users           = ["wallet"]
+  region          = var.region
+  network_name    = module.gke.network.name
+  subnetwork_name = values(module.gke.network.subnets)[0].name
+}
 

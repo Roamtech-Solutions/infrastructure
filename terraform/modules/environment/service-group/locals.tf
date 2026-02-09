@@ -67,6 +67,12 @@ locals {
     (local.keycloak_enabled) ? ["keycloak"] : []
   ))
 
+  /* --- MariaDB Services --- */
+  mariadb_services = concat([
+    for k, v in local.application_service_values : k
+    if contains(lookup(v, "requires", []), "mariadb") 
+  ])
+
   /* --- RabbitMQ Services --- */
   rabbitmq_services = [
     for k, v in local.application_service_values : k
