@@ -33,3 +33,5 @@ mysql: false
 rabbitmq: false
 enable_probes: true
 
+host_aliases: []
+

@@ -16,6 +16,8 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
+      hostAliases:
+        {{- toYaml .Values.host_aliases | nindent 8 }}
       containers:
         - name: {{ .Release.Name }}
           image: {{ .Values.image }}-app:{{ .Values.tag }}
