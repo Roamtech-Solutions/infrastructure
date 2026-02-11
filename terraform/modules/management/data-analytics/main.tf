@@ -41,7 +41,7 @@ module "private_service_access" {
   version     = "26.1.1"
   project_id  = module.project.project_id
   vpc_network = module.network.network_name
-  depends_on  = [module.network]
+  # depends_on  = [module.network]
 }
 
 /* === PostgreSQL Database === */
@@ -127,7 +127,7 @@ resource "google_compute_instance" "airflow" {
   name         = "airflow"
   project      = module.project.project_id
   zone         = data.google_compute_zones.available.names[0]
-  machine_type = "e2-medium"
+  machine_type = "e2-standard-4"
 
   tags = ["iap-ssh"]
 
