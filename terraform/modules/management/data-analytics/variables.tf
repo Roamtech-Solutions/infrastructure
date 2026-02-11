@@ -37,3 +37,8 @@ variable "developers" {
   description = "List of members to give IAM access to the project"
 }
 
+variable "database_connections" {
+	type = list(string)	
+	description = "List of database connection strings"
+}
+

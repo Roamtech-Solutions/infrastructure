@@ -44,21 +44,27 @@ module "private_service_access" {
   # depends_on  = [module.network]
 }
 
-/* === PostgreSQL Database === */
-# module "postgresql" {
-#   source           = "../../cloudsql-pg"
-#   project_id       = module.project.project_id
-#   name             = var.name
-#   database_version = "POSTGRES_16"
-#   region           = var.region
-#   zone             = data.google_compute_zones.available.names[0]
-#   network = {
-#     id   = module.network.network_id
-#     name = module.network.network_name
-#   }
-#   users        = ["airflow"]
-#   tier_primary = "db-custom-1-3840"
-# }
+/* === Resources === */
+resource "google_storage_bucket" "resources" {
+  project                     = module.project.project_id
+  name                        = "${module.project.project_id}-${var.name}-airflow-resources"
+  force_destroy               = true
+  location                    = var.region
+  public_access_prevention    = "enforced"
+  uniform_bucket_level_access = true
+  versioning {
+    enabled = true
+  }
+}
+
+/* CloudSQL Proxy Service Script */
+resource "google_storage_bucket_object" "cloudsql_proxy_service_script" {
+  name     = "cloudsql-proxy.service"
+  content   = local.cloudsql_proxy_service_script
+  bucket   = google_storage_bucket.resources.name
+  metadata = {}
+	source_md5hash = md5(local.cloudsql_proxy_service_script)
+}
 
 /* === Service Accounts & Related Permissions === */
 
@@ -74,6 +80,27 @@ resource "google_project_iam_member" "airflow_roles" {
   project  = module.project.project_id
   role     = each.value
   member   = "serviceAccount:${google_service_account.data_pipelines_airflow_prod.email}"
+}
+
+
+/* CloudSQL Instances Access */
+resource "google_project_iam_member" "airflow_cloudsql_client" {
+  for_each = local.database_connections
+  project  = each.value.project_id
+  role     = "roles/cloudsql.client"
+	member = google_service_account.data_pipelines_airflow_prod.member
+	condition {
+    title       = "OnlyThisInstance"
+    #description = "Allow connecting only to one Cloud SQL instance"
+    expression  = "resource.name == 'projects/${each.value.project_id}/instances/${each.value.name}'"
+  }
+}
+
+resource "google_project_iam_member" "airflow_cloudsql_instance_user" {
+  for_each = toset(local.database_connection_projects)
+  project  = each.value
+  role     = "roles/cloudsql.instanceUser"
+	member = google_service_account.data_pipelines_airflow_prod.member
 }
 
 resource "google_secret_manager_secret_iam_member" "airflow_admin_secret_accessor" {
@@ -153,7 +180,12 @@ resource "google_compute_instance" "airflow" {
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
-  metadata_startup_script = file("${path.module}/resources/airflow-startup.sh")
+  metadata_startup_script = templatefile(
+		"${path.module}/resources/airflow-startup.sh",
+		{
+			resources_bucket = google_storage_bucket.resources.name
+		}
+	)
 }
 
 /* === Firewall Rules === */
