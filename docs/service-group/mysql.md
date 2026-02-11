@@ -70,6 +70,21 @@ mysql -h 127.0.0.1 -u root -p
   history.
 - Store any credentials on the jump box, for example in scripts.
 
+## One-liner for Local Connection
+There is a neat one-line solution here for forwarding a port to your local
+machine so that you can connect via something like MySQL Workbench to
+`localhost:3306` to the remote database.
+
+If you correctly amend the variables below, you should be able to accomplish
+this.
+Please ask a member of the infrastructure team if you are unsure.
+
+```shell
+PROJECT="your-project"
+PORT="3306"
+CONNECTION_NAME="database_connection_name"
+gcloud compute ssh --project ${PROJECT} gke-europe-west1-jump-box --command="cloud-sql-proxy --private-ip ${CONNECTION_NAME}" --port ${PORT} -- -L 3306:localhost:3306
+```
 
 <!-- Links -->
 [jump-box]: /docs/cluster-jump-box.md
