@@ -23,7 +23,7 @@ variable "region" {
 variable "machine_type" {
   type        = string
   description = "Type of machine to use."
-  default    = "e2-medium"
+  default     = "e2-medium"
 }
 
 

@@ -19,7 +19,7 @@ resource "google_secret_manager_secret_version" "users" {
   for_each = google_secret_manager_secret.users
   secret   = each.value.id
   secret_data = jsonencode({
-		host = google_compute_instance.mariadb.network_interface[0].network_ip
+    host = google_compute_instance.mariadb.network_interface[0].network_ip
     port = 3306
     user = each.key
     pass = random_password.users[each.key].result
@@ -49,11 +49,11 @@ resource "google_storage_bucket_object" "repo_setup" {
 
 /* User create script */
 resource "google_storage_bucket_object" "user_create" {
-  name     = "user-create.sql"
-  content   = local.create_users_script
-  bucket   = google_storage_bucket.resources.name
-  metadata = {}
-	source_md5hash = md5(local.create_users_script)
+  name           = "user-create.sql"
+  content        = local.create_users_script
+  bucket         = google_storage_bucket.resources.name
+  metadata       = {}
+  source_md5hash = md5(local.create_users_script)
 }
 
 /* --- Service Account --- */
@@ -104,10 +104,10 @@ resource "google_compute_instance" "mariadb" {
   }
 
   metadata_startup_script = templatefile(
-		"${path.module}/resources/setup.sh",
-		{
-			bucket = google_storage_bucket.resources.name
-		}
-	)
+    "${path.module}/resources/setup.sh",
+    {
+      bucket = google_storage_bucket.resources.name
+    }
+  )
 }
 

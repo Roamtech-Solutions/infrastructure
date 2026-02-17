@@ -60,3 +60,8 @@ variable "postgresql_tier" {
   default = "db-f1-micro"
 }
 
+variable "data_analytics_database_connections" {
+  type    = list(string)
+  default = []
+}
+

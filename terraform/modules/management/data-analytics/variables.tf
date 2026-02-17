@@ -38,7 +38,7 @@ variable "developers" {
 }
 
 variable "database_connections" {
-	type = list(string)	
-	description = "List of database connection strings"
+  type        = list(string)
+  description = "List of database connection strings"
 }
 

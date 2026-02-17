@@ -1,0 +1,20 @@
+[Unit]
+Description=Cloud SQL Auth Proxy
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/cloud-sql-proxy \
+  --auto-iam-authn \
+  --port 6000 \
+  %{ for _, connection in connections ~}
+  ${connection} \
+  %{ endfor ~}
+
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
+

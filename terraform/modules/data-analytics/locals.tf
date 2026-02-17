@@ -9,28 +9,26 @@ locals {
   ]
   analytics_buckets = {
     standard = {
-      name          = "roamtech-data-analytics-prod-standard"
+      name          = "${var.project_id}-data-analytics-standard"
       storage_class = "STANDARD"
     }
     coldline = {
-      name          = "roamtech-data-analytics-prod-coldline"
+      name          = "${var.project_id}-data-analytics-coldline"
       storage_class = "COLDLINE"
     }
   }
   database_connections = {
-    for connection in var.database_connections : connection => {
-      project_id = split(":", connection)[0]
-      region     = split(":", connection)[1]
-      name       = split(":", connection)[2]
-    }
+    for i in data.google_sql_database_instances.all.instances : i.name => i.connection_name
+    if(
+      (var.environment == "production" && i.master_instance_name != "") ||
+      (var.environment != "production" && i.master_instance_name == "")
+    )
   }
-  database_connection_projects = distinct([
-    for connection in var.database_connections : split(":", connection)[0]
-  ])
+
   cloudsql_proxy_service_script = templatefile(
     "${path.module}/resources/cloudsql-proxy.service",
     {
-      connections = var.database_connections
+      connections = local.database_connections
     }
   )
 }

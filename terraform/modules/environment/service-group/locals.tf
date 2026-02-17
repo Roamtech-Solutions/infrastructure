@@ -70,7 +70,7 @@ locals {
   /* --- MariaDB Services --- */
   mariadb_services = concat([
     for k, v in local.application_service_values : k
-    if contains(lookup(v, "requires", []), "mariadb") 
+    if contains(lookup(v, "requires", []), "mariadb")
   ])
 
   /* --- RabbitMQ Services --- */
