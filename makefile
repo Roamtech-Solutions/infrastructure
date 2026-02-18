@@ -116,7 +116,7 @@ refresh: init
 
 .PHONY: destroy
 destroy: init
-	terraform -chdir=$(CHDIR) destroy -auto-approve $(VARS)
+	terraform -chdir=$(CHDIR) destroy $(VARS)
 
 .PHONY: output
 output: init

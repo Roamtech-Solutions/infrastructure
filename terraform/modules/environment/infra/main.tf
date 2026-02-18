@@ -48,3 +48,35 @@ resource "google_compute_firewall" "allow_iap_ssh" {
   target_tags   = ["iap-ssh"]
 }
 
+module "iprs_network" {
+  count        = (var.name == "production") ? 1 : 0
+  source       = "terraform-google-modules/network/google"
+  version      = "9.2.0"
+  project_id   = local.project_id
+  network_name = "iprs"
+  subnets = [
+    {
+      subnet_name           = "iprs-${var.region}"
+      subnet_ip             = "172.24.41.0/24"
+      subnet_region         = var.region
+      subnet_private_access = true
+      subnet_flow_logs      = true
+    }
+  ]
+  shared_vpc_host = false
+}
+
+# resource "google_compute_network_peering" "iprs_peering_1" {
+#   count        = (var.name == "production") ? 1 : 0
+#   name         = "iprs-to-gke"
+#   network      = module.iprs_network[0].network_self_link
+#   peer_network = module.gke.network_self_link
+# }
+# 
+# resource "google_compute_network_peering" "iprs_peering_2" {
+#   count        = (var.name == "production") ? 1 : 0
+#   name         = "gke-to-iprs"
+#   network      = module.gke.network_self_link
+#   peer_network = module.iprs_network[0].network_self_link
+# }
+

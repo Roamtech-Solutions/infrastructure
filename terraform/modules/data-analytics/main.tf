@@ -23,9 +23,9 @@ resource "google_storage_bucket_object" "cloudsql_proxy_service_script" {
 /* === Service Accounts & Related Permissions === */
 
 /* --- Airflow --- */
-resource "google_service_account" "data_pipelines_airflow_prod" {
-  account_id   = "data-pipelines-airflow-prod"
-  display_name = "Data Pipelines Airflow Prod"
+resource "google_service_account" "airflow" {
+  account_id   = "airflow"
+  display_name = "Airflow"
   project      = var.project_id
 }
 
@@ -33,7 +33,7 @@ resource "google_project_iam_member" "airflow_roles" {
   for_each = toset(local.airflow_roles)
   project  = var.project_id
   role     = each.value
-  member   = "serviceAccount:${google_service_account.data_pipelines_airflow_prod.email}"
+  member   = google_service_account.airflow.member
 }
 
 
@@ -42,7 +42,7 @@ resource "google_project_iam_member" "airflow_cloudsql_client" {
   for_each = local.database_connections
   project  = var.project_id
   role     = "roles/cloudsql.client"
-  member   = google_service_account.data_pipelines_airflow_prod.member
+  member   = google_service_account.airflow.member
   condition {
     title = "OnlyThisInstance"
     #description = "Allow connecting only to one Cloud SQL instance"
@@ -50,17 +50,19 @@ resource "google_project_iam_member" "airflow_cloudsql_client" {
   }
 }
 
-resource "google_project_iam_member" "airflow_cloudsql_instance_user" {
-  project = var.project_id
-  role    = "roles/cloudsql.instanceUser"
-  member  = google_service_account.data_pipelines_airflow_prod.member
+resource "google_sql_user" "airflow_iam_user" {
+  for_each = local.database_connections
+	project = var.project_id
+	name = replace(google_service_account.airflow.email, ".gserviceaccount.com", "")
+  instance = each.key
+  type     = "CLOUD_IAM_SERVICE_ACCOUNT"
 }
 
 resource "google_secret_manager_secret_iam_member" "airflow_admin_secret_accessor" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.airflow_admin.secret_id
   role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_service_account.data_pipelines_airflow_prod.email}"
+  member    = google_service_account.airflow.member
 }
 
 resource "google_secret_manager_secret" "airflow_admin" {
@@ -129,7 +131,7 @@ resource "google_compute_instance" "airflow" {
   }
 
   service_account {
-    email  = google_service_account.data_pipelines_airflow_prod.email
+    email  = google_service_account.airflow.email
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 

@@ -16,7 +16,7 @@ variable "environment" {
 }
 
 variable "network_name" {
-	type = string
+  type = string
 }
 
 variable "subnetwork_name" {

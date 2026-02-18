@@ -390,14 +390,14 @@ resource "google_project_iam_member" "cloudsql_viewer" {
 
 # === Data Analytics === #
 module "data_analytics" {
-  source       = "../../data-analytics"
-  count        = (var.service_group == "data") ? 1 : 0
-  project_id   = local.project_id
-  region       = var.region
-  environment  = var.environment
-  name         = var.service_group
-  developers   = var.developers
-  network_name = data.terraform_remote_state.infra.outputs.gke_network.name
+  source          = "../../data-analytics"
+  count           = (var.service_group == "data") ? 1 : 0
+  project_id      = local.project_id
+  region          = var.region
+  environment     = var.environment
+  name            = var.service_group
+  developers      = var.developers
+  network_name    = data.terraform_remote_state.infra.outputs.gke_network.name
   subnetwork_name = values(data.terraform_remote_state.infra.outputs.gke_subnets)[0].name
 }
 

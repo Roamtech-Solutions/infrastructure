@@ -13,6 +13,7 @@ module "cloudsql" {
   database_flags = concat(
     [
       { name = "audit_log", value = "ON" },
+			{ name  = "cloudsql_iam_authentication", value = "on" },
     ],
     var.database_flags
   )

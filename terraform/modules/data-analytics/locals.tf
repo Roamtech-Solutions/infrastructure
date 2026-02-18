@@ -6,6 +6,8 @@ locals {
     "roles/storage.objectViewer",
     "roles/storage.objectCreator",
     "roles/stackdriver.resourceMetadata.writer",
+		"roles/cloudsql.client",
+		"roles/cloudsql.instanceUser",
   ]
   analytics_buckets = {
     standard = {

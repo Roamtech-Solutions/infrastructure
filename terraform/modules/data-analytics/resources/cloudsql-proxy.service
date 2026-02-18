@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 ExecStart=/usr/local/bin/cloud-sql-proxy \
   --auto-iam-authn \
+  --private-ip \
   --port 6000 \
   %{ for _, connection in connections ~}
   ${connection} \
