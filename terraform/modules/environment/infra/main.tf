@@ -61,9 +61,24 @@ module "iprs_network" {
       subnet_region         = var.region
       subnet_private_access = true
       subnet_flow_logs      = true
-    }
+    },
+    # {
+    #   subnet_name           = "iprs-nat-${var.region}"
+    #   subnet_ip             = "172.24.42.0/24"
+    #   subnet_region         = var.region
+    #   subnet_private_access = true
+    #   subnet_flow_logs      = true
+		# 	purpose          = "PRIVATE_NAT"
+    # }
   ]
   shared_vpc_host = false
+}
+
+module "ncc" {
+  source  = "terraform-google-modules/network/google//modules/network-connectivity-center"
+  version = "12.0.0"
+	project_id = local.project_id
+	ncc_hub_name = "default"
 }
 
 # resource "google_compute_network_peering" "iprs_peering_1" {
