@@ -73,6 +73,12 @@ locals {
     if contains(lookup(v, "requires", []), "mariadb")
   ])
 
+  /* --- MongoDB Services --- */
+  mongodb_services = concat([
+    for k, v in local.application_service_values : k
+    if contains(lookup(v, "requires", []), "mongodb")
+  ])
+
   /* --- RabbitMQ Services --- */
   rabbitmq_services = [
     for k, v in local.application_service_values : k

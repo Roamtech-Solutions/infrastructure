@@ -75,16 +75,16 @@ resource "google_secret_manager_secret" "airflow_admin" {
 }
 
 /* --- Metabase --- */
-resource "google_service_account" "visualization_metabase_prod" {
-  account_id   = "visualization-metabase-prod"
-  display_name = "Visualization Metabase Prod"
+resource "google_service_account" "visualization_metabase" {
+  account_id   = "${var.name}-visualization-metabase"
+  display_name = "Visualization Metabase"
   project      = var.project_id
 }
 
 resource "google_project_iam_member" "metabase_bigquery_job_user" {
   project = var.project_id
   role    = "roles/bigquery.jobUser"
-  member  = "serviceAccount:${google_service_account.visualization_metabase_prod.email}"
+  member  = "serviceAccount:${google_service_account.visualization_metabase.email}"
 }
 
 /* === Buckets === **/
@@ -99,7 +99,6 @@ resource "google_storage_bucket" "analytics" {
   uniform_bucket_level_access = true
 
   labels = {
-    env  = "prod"
     tier = each.key
   }
 }
@@ -167,6 +166,13 @@ resource "google_project_iam_member" "bigquery_admin" {
   for_each = toset(var.developers)
   project  = var.project_id
   role     = "roles/bigquery.admin"
+  member   = each.value
+}
+
+resource "google_project_iam_member" "storage_admin" {
+  for_each = toset(var.developers)
+  project  = var.project_id
+  role     = "roles/storage.admin"
   member   = each.value
 }
 

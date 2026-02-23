@@ -64,6 +64,18 @@ module "mariadb" {
   users           = local.mariadb_services
 }
 
+/* === MongoDB === */
+module "mongodb" {
+  count           = length(local.mongodb_services) > 0 ? 1 : 0
+  source          = "../../mongodb"
+  project_id      = local.project_id
+  name            = var.service_group
+  region          = var.region
+  network_name    = data.terraform_remote_state.infra.outputs.gke_network.name
+  subnetwork_name = values(data.terraform_remote_state.infra.outputs.gke_subnets)[0].name
+  users           = local.mongodb_services
+}
+
 /* === Service Group Setup === */
 
 /* --- Ingress --- */
