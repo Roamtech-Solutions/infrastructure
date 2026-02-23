@@ -3,9 +3,6 @@ apt update
 apt install -y gnupg curl
 
 # === MongoDB Setup === #
-# Config
-mkdir -p /etc/mongod.conf.d
-gsutil cp gs://${bucket}/mongod.conf /etc/mongod.conf
 
 # Install
 curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
@@ -14,8 +11,16 @@ curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
 echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 apt update
 apt install -y mongodb-org
+
+# Reload the service
 systemctl daemon-reload
 systemctl enable --now mongod
+
+# Config
+gsutil cp gs://${bucket}/mongod.conf /etc/mongod.conf
+
+# Restart the service with the new config
+systemctl restart mongod
 
 # Give MongoDB a few seconds to start
 sleep 5

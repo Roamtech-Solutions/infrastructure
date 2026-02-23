@@ -20,13 +20,13 @@ resource "google_secret_manager_secret_version" "users" {
   secret   = each.value.id
   secret_data = jsonencode({
     host = google_compute_instance.mongodb.network_interface[0].network_ip
-    port = 3306
+    port = 21017
     user = each.key
     pass = random_password.users[each.key].result
   })
 }
 
-/* === MariaDB Setup Scripts === */
+/* === MongoDB Setup Scripts === */
 resource "google_storage_bucket" "resources" {
   project                     = var.project_id
   name                        = "${var.project_id}-${var.name}-mongodb-resources"
@@ -39,12 +39,13 @@ resource "google_storage_bucket" "resources" {
   }
 }
 
-/* Repo Setup Script */
-resource "google_storage_bucket_object" "repo_setup" {
-  name     = "maria-db-repo-setup.sh"
-  source   = "${path.module}/resources/mongodb-repo-setup.sh"
-  bucket   = google_storage_bucket.resources.name
-  metadata = {}
+/* Mongo Configurations */
+resource "google_storage_bucket_object" "mongod_conf" {
+  name           = "mongod.conf"
+  source        = "${path.module}/resources/mongod.conf"
+  bucket         = google_storage_bucket.resources.name
+  metadata       = {}
+  source_md5hash = md5(local.create_users_script)
 }
 
 /* User create script */
