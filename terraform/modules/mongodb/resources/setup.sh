@@ -27,7 +27,7 @@ sleep 5
 
 # Setup Users
 gsutil cp gs://${bucket}/user-create.js .
-mongosh --file user-create.js
+mongosh < user-create.js
 
 # Enable authorization
 sed -i "s/authorization: disabled/authorization: enabled/g" /etc/mongod.conf

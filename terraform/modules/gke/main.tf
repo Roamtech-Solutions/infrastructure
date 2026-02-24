@@ -10,6 +10,14 @@ module "network" {
       subnet_region         = var.region
       subnet_private_access = true
       subnet_flow_logs      = true
+    },
+    {
+      subnet_name           = "gke-nat-${var.region}"
+      subnet_ip             = "192.168.1.0/24"
+      subnet_region         = var.region
+      subnet_private_access = true
+      subnet_flow_logs      = true
+			purpose          = "PRIVATE_NAT"
     }
   ]
   secondary_ranges = {
@@ -77,7 +85,7 @@ module "gke" {
   grant_registry_access   = true
   cluster_resource_labels = {}
   deletion_protection     = false
-  depends_on              = [module.network]
+  # depends_on              = [module.network]
 }
 
 /* IAM Permissions for connecting and deploying to the cluster */
@@ -103,7 +111,7 @@ module "private_service_access" {
   version     = "26.1.1"
   project_id  = var.project_id
   vpc_network = module.network.network_name
-  depends_on  = [module.network]
+  # depends_on  = [module.network]
 }
 
 module "jump_box" {

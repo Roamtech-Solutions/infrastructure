@@ -8,7 +8,6 @@ module "network_security" {
     var.allowed_networks
   )
 }
-
 module "gke" {
   source               = "../../gke"
   name                 = var.region
@@ -62,36 +61,24 @@ module "iprs_network" {
       subnet_private_access = true
       subnet_flow_logs      = true
     },
-    # {
-    #   subnet_name           = "iprs-nat-${var.region}"
-    #   subnet_ip             = "172.24.42.0/24"
-    #   subnet_region         = var.region
-    #   subnet_private_access = true
-    #   subnet_flow_logs      = true
-		# 	purpose          = "PRIVATE_NAT"
-    # }
   ]
   shared_vpc_host = false
 }
 
 module "ncc" {
+	count = (var.name == "production") ? 1 : 0
   source  = "terraform-google-modules/network/google//modules/network-connectivity-center"
   version = "12.0.0"
 	project_id = local.project_id
-	ncc_hub_name = "default"
+	ncc_hub_name = var.region
+	vpc_spokes = {
+		"gke-${var.region}" = {
+			uri = module.gke.network.id	
+			include_export_ranges = toset(["192.168.1.0/24"])
+		}
+		"iprs-${var.region}" = {
+			uri = module.iprs_network[0].network_id
+		}
+	}
 }
-
-# resource "google_compute_network_peering" "iprs_peering_1" {
-#   count        = (var.name == "production") ? 1 : 0
-#   name         = "iprs-to-gke"
-#   network      = module.iprs_network[0].network_self_link
-#   peer_network = module.gke.network_self_link
-# }
-# 
-# resource "google_compute_network_peering" "iprs_peering_2" {
-#   count        = (var.name == "production") ? 1 : 0
-#   name         = "gke-to-iprs"
-#   network      = module.gke.network_self_link
-#   peer_network = module.iprs_network[0].network_self_link
-# }
 

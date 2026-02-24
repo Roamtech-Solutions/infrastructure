@@ -45,7 +45,7 @@ resource "google_storage_bucket_object" "mongod_conf" {
   source        = "${path.module}/resources/mongod.conf"
   bucket         = google_storage_bucket.resources.name
   metadata       = {}
-  source_md5hash = md5(local.create_users_script)
+  source_md5hash = filemd5("${path.module}/resources/mongod.conf")
 }
 
 /* User create script */
