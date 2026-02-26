@@ -29,6 +29,7 @@ on:
           - tumatuma
           - ecommerce
           - mistari
+          - roamtech
         required: true
 jobs:
   install:
