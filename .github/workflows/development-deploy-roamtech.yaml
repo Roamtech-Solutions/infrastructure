@@ -1,0 +1,17 @@
+name: Development - Deploy Roamtech
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * 1-6"  # Monday - Saturday at 16:00 UTC (19:00 Kenya Time)
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      id-token: write
+    name: "Development - Deploy Roamtech"
+    uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
+    with:
+      environment: development
+      service_group: roamtech
+    secrets: inherit
+
