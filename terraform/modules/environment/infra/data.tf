@@ -14,3 +14,8 @@ data "terraform_remote_state" "management" {
   }
 }
 
+data "google_compute_zones" "available" {
+  project = local.project_id
+  region  = var.region
+}
+

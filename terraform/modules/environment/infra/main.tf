@@ -118,6 +118,7 @@ resource "google_compute_router_nat" "iprs_private_nat" {
 }
 
 resource "google_compute_firewall" "iprs_allow_gke_private_nat" {
+	count = (var.name == "production") ? 1 : 0
   project     = local.project_id
   name        = "iprs-allow-gke-private-nat-ingress"
   network     = module.iprs_network[0].network_name
@@ -125,10 +126,45 @@ resource "google_compute_firewall" "iprs_allow_gke_private_nat" {
 
   allow {
     protocol  = "tcp"
-    ports     = ["80"]
+    ports     = ["80", "443", "9003", "9004"]
   }
 
 	direction = "INGRESS"
 	source_ranges = [module.gke.private_nat_cidr]
+}
+
+resource "google_service_account" "iprs_proxy" {
+  account_id   = "iprs-proxy"
+  display_name = "iprs-proxy"
+  project      = local.project_id
+}
+
+resource "google_compute_instance" "iprs_proxy" {
+  name         = "iprs-proxy"
+  project      = local.project_id
+  zone         = data.google_compute_zones.available.names[0]
+  machine_type = "e2-small"
+
+  tags = ["iap-ssh"]
+
+  boot_disk {
+    initialize_params {
+      image = "projects/debian-cloud/global/images/family/debian-12"
+      size  = 30
+      type  = "pd-balanced"
+    }
+  }
+
+  network_interface {
+    network            = module.iprs_network[0].network_name
+     subnetwork           = "iprs-${var.region}"
+    subnetwork_project = local.project_id
+		network_ip = "172.24.41.9"
+  }
+
+  service_account {
+    email  = google_service_account.iprs_proxy.email
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+  }
 }
 
