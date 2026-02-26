@@ -10,6 +10,18 @@ output "network" {
   }
 }
 
+output "nat_router_name" {
+	value = module.nat.router_name
+}
+
+output "private_nat_subnet" {
+      value           = "gke-nat-${var.region}"
+}
+
+output "private_nat_cidr" {
+	value = local.private_nat_cidr
+}
+
 output "network_self_link" {
   value = module.network.network_self_link
 }

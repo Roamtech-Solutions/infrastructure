@@ -266,6 +266,7 @@ resource "helm_release" "service_group" {
     mysql_services      = local.mysql_services
     postgresql_services = local.postgresql_services
     mariadb_services    = local.mariadb_services
+    mongodb_services    = local.mongodb_services
     ingress_services    = local.ingress_services
     kafka_services      = local.kafka_services
     certificates        = local.certificates

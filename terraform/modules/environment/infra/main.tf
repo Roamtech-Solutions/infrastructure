@@ -8,6 +8,7 @@ module "network_security" {
     var.allowed_networks
   )
 }
+
 module "gke" {
   source               = "../../gke"
   name                 = var.region
@@ -74,11 +75,60 @@ module "ncc" {
 	vpc_spokes = {
 		"gke-${var.region}" = {
 			uri = module.gke.network.id	
-			include_export_ranges = toset(["192.168.1.0/24"])
+			include_export_ranges = toset([module.gke.private_nat_cidr])
 		}
 		"iprs-${var.region}" = {
 			uri = module.iprs_network[0].network_id
 		}
 	}
+}
+
+import {
+  id = "projects/${local.project_id}/regions/${var.region}/routers/${module.gke.nat_router_name}/iprs"
+  to = google_compute_router_nat.iprs_private_nat[0]
+}
+
+resource "google_compute_router_nat" "iprs_private_nat" {
+	count = (var.name == "production") ? 1 : 0
+  name                                = "iprs"
+  router                              = module.gke.nat_router_name
+  region                              = var.region
+  source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+  enable_dynamic_port_allocation      = true
+  enable_endpoint_independent_mapping = false
+  type                                = "PRIVATE"
+	log_config {
+  	enable = false
+  	filter = "ALL"
+	}
+	rules {
+            description = null
+          match       = "nexthop.is_hybrid || nexthop.hub == '//networkconnectivity.googleapis.com/${module.ncc[0].ncc_hub.id}'"
+          rule_number = 1000
+
+          action {
+              source_nat_active_ips    = []
+              source_nat_active_ranges = [
+                  "https://www.googleapis.com/compute/v1/projects/${local.project_id}/regions/${var.region}/subnetworks/${module.gke.private_nat_subnet}",
+                ]
+              source_nat_drain_ips     = []
+              source_nat_drain_ranges  = []
+            }
+        }
+}
+
+resource "google_compute_firewall" "iprs_allow_gke_private_nat" {
+  project     = local.project_id
+  name        = "iprs-allow-gke-private-nat-ingress"
+  network     = module.iprs_network[0].network_name
+  description = "Allow ingress from the GKE private NAT"
+
+  allow {
+    protocol  = "tcp"
+    ports     = ["80"]
+  }
+
+	direction = "INGRESS"
+	source_ranges = [module.gke.private_nat_cidr]
 }
 

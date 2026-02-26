@@ -1,0 +1,24 @@
+{{- if (len .Values.mongodb_services) }}
+
+# === Configure Secrets for Each Service === #
+{{- range $k := .Values.mongodb_services }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mongodb-{{ $k }}
+spec:
+  refreshInterval: 60s
+  secretStoreRef:
+    name: default
+    kind: SecretStore
+  target:
+    name: mongodb-{{ $k }}
+    creationPolicy: Owner
+  dataFrom:
+    - extract:
+        key: {{ $.Release.Name }}-mongodb-{{ $k }}
+{{- end }}
+
+{{- end }}
+

@@ -52,6 +52,30 @@ spec:
                   key: pass
             {{- end }}
 
+            # --- MongoDB --- #
+            {{- if has "mongodb" .Values.requires }}
+            - name: MONGODB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-{{ .Release.Name }}
+                  key: host
+            - name: MONGODB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-{{ .Release.Name }}
+                  key: port
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-{{ .Release.Name }}
+                  key: user
+            - name: MONGODB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST

@@ -13,7 +13,7 @@ module "network" {
     },
     {
       subnet_name           = "gke-nat-${var.region}"
-      subnet_ip             = "192.168.1.0/24"
+      subnet_ip             = local.private_nat_cidr
       subnet_region         = var.region
       subnet_private_access = true
       subnet_flow_logs      = true
