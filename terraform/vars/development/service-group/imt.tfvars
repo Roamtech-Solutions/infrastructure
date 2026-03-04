@@ -6,6 +6,7 @@ host          = "afrisend.com"
 developers = [
   "user:vanessa.chilumo@roamtech.com",
   "user:jennifer.wairimu@roamtech.com",
+  "user:winnie.wandia@roamtech.com"
 ]
 
 allowed_networks = {
