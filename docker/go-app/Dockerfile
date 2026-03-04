@@ -10,7 +10,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 RUN mkdir -p resources migrations
-
+ENV GOWORK=off
 RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | head -n1) && \
     echo "Building from $src_dir" && \
     CGO_ENABLED=${CGO_ENABLED} GOOS=linux go build -o app "$src_dir"
