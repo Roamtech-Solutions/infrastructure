@@ -79,7 +79,9 @@ module "cloudsql" {
       disk_autoresize_limit = 0
       disk_size             = var.disk_size
       user_labels           = {}
-      database_flags        = []
+      database_flags        = [
+			{ name  = "cloudsql_iam_authentication", value = "on" },
+			]
       encryption_key_name   = null
       ip_configuration = {
         ipv4_enabled       = false

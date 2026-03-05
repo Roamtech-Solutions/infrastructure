@@ -53,10 +53,14 @@ locals {
   keycloak_enabled = length(local.keycloak_services) > 0
 
   /* --- MySQL Services --- */
-  mysql_services = concat([
+  sg_mysql_services = [
     for k, v in local.application_service_values : k
     if contains(lookup(v, "requires", []), "mysql") || v.type == "wordpress"
-  ], ["metabase"])
+  ]
+  mysql_services = concat(
+  	local.sg_mysql_services,
+		(length(local.sg_mysql_services) > 0) ? ["metabase"] : []
+	)
 
   /* --- PostgreSQL Services --- */
   postgresql_services = distinct(concat(

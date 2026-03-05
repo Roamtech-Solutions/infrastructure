@@ -21,10 +21,7 @@ locals {
   }
   database_connections = {
     for i in data.google_sql_database_instances.all.instances : i.name => i.connection_name
-    if(
-      (var.environment == "production" && i.master_instance_name != "") ||
-      (var.environment != "production" && i.master_instance_name == "")
-    )
+    if ( i.master_instance_name == "" )
   }
 
   cloudsql_proxy_service_script = templatefile(
