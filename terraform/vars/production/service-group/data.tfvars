@@ -8,3 +8,9 @@ allowed_networks = {
   roamtech-office-ethernet = "197.232.33.60/32"
 }
 
+developers = [
+  "user:henry.kuria@roamtech.com",
+  "user:teresia.elijah@roamtech.com",
+  "user:mark.omari@roamtech.com",
+]
+
