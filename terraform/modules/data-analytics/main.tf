@@ -110,7 +110,7 @@ resource "google_compute_instance" "airflow" {
   zone         = data.google_compute_zones.available.names[0]
   machine_type = "e2-standard-4"
 
-  tags = ["iap-ssh"]
+  tags = ["iap-ssh", "airflow"]
 
   boot_disk {
     initialize_params {
@@ -124,6 +124,10 @@ resource "google_compute_instance" "airflow" {
     network            = var.network_name
     subnetwork         = var.subnetwork_name
     subnetwork_project = var.project_id
+		# alias_ip_range {
+		# 	ip_cidr_range = "10.2.64.0/18"
+		# 	subnetwork_range_name = "gke-${var.region}-private-pods"
+		# }
     access_config {
       /* Ephemeral public IP */
     }

@@ -17,4 +17,4 @@ kafka:
 # mysql_services: []
 # ingress_services: []
 # mongodb_services: []
-
+# external_endpoints: []

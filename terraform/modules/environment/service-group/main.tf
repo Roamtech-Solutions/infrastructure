@@ -268,6 +268,13 @@ resource "helm_release" "service_group" {
     mariadb_services    = local.mariadb_services
     mongodb_services    = local.mongodb_services
     ingress_services    = local.ingress_services
+		external_endpoints = [
+			for i in module.data_analytics : {
+				name = "airflow-instance"
+				port = 8080
+				address = i.airflow_private_ip
+			}
+		]
     kafka_services      = local.kafka_services
     certificates        = local.certificates
     host                = local.host
@@ -404,7 +411,7 @@ resource "google_project_iam_member" "cloudsql_viewer" {
 # === Data Analytics === #
 module "data_analytics" {
   source          = "../../data-analytics"
-  count           = (var.service_group == "data") ? 1 : 0
+  count           = (var.service_group == "data" && var.environment == "production") ? 1 : 0
   project_id      = local.project_id
   region          = var.region
   environment     = var.environment

@@ -46,6 +46,20 @@ spec:
               number: {{ $s.port }}
   {{- end }}
   {{- end }}
+  {{- range $endpoint := $.Values.external_endpoints }}
+  {{- if $endpoint.ingress }}
+  - host: {{ $endpoint.name }}.{{ $.Values.host }}
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ $endpoint.name }}
+            port:
+              number: {{ $endpoint.port }}
+  {{- end }}
+  {{- end }}
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
