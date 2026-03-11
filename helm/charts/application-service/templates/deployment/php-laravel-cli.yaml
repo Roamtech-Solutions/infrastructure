@@ -1,0 +1,343 @@
+{{- if (eq "php-laravel-cli" .Values.type) }} 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+        # --- Main CLI Service  --- #
+        - name: {{ .Release.Name }}-cli
+          image: {{ .Values.image }}-cli:{{ .Values.tag }}
+          command:
+            {{- toYaml .Values.command | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: APP_NAME
+              value: {{ .Release.Name }}
+            - name: VITE_APP_NAME
+              value: {{ .Release.Name }}
+            - name: APP_URL
+              value: https://{{ .Release.Name }}.{{ .Values.host }}
+            - name: LOG_CHANNEL
+              value: stdout
+
+            # --- MySQL --- #
+            {{- if has "mysql" .Values.requires }}
+            - name: DB_CONNECTION
+              value: mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- RabbitMQ --- #
+            {{- if has "rabbitmq" .Values.requires }}
+            - name: QUEUE_CONNECTION
+              value: rabbitmq
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: port
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            {{- end }}
+
+            # --- Redis --- #
+            {{- if has "redis" .Values.requires }}
+            # Set Laravel to use redis
+            - name: REDIS_CLIENT
+              value: phpredis
+            - name: SESSION_DRIVER
+              value: redis
+            - name: CACHE_DRIVER
+              value: redis
+            # Provide redis connection information
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: port
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: user
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-redis
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
+          volumeMounts:
+            - name: public-assets
+              mountPath: /var/www/public
+            {{- if has "mysql" .Values.requires }}
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs/mysql-ca.pem
+              subPath: mysql-ca.pem
+              readOnly: true
+            {{- end }}
+
+        # --- Sidecar Services --- #
+        {{- range $svc_name, $svc := .Values.sidecar_services }}
+        - name: {{ $.Release.Name }}-{{ $svc_name }}
+          # NOTE: For now we are assuming the side car services are just going
+          #       to be using the CLI image.
+          image: {{ $.Values.image }}-cli:{{ $.Values.tag }}
+          command:
+            {{- toYaml $svc.command | nindent 12 }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          env:
+            - name: APP_NAME
+              value: {{ $.Release.Name }}
+            - name: VITE_APP_NAME
+              value: {{ $.Release.Name }}
+            - name: APP_URL
+              value: https://{{ $.Values.host }}
+            - name: LOG_CHANNEL
+              value: stdout
+
+            # --- MySQL --- #
+            {{- if has "mysql" $.Values.requires }}
+            - name: DB_CONNECTION
+              value: mysql
+            - name: MYSQL_ATTR_SSL_CA
+              value: /etc/ssl/certs/mysql-ca.pem
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: port
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ $.Release.Name }}
+                  key: pass
+            {{- end }}
+
+            # --- RabbitMQ --- #
+            {{- if has "rabbitmq" $.Values.requires }}
+            - name: QUEUE_CONNECTION
+              value: rabbitmq
+            - name: RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: host
+            - name: RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: port
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: username
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-default-user
+                  key: password
+            {{- end }}
+
+            # --- Redis --- #
+            {{- if has "redis" $.Values.requires }}
+            # Set Laravel to use redis
+            - name: REDIS_CLIENT
+              value: phpredis
+            - name: SESSION_DRIVER
+              value: redis
+            - name: CACHE_DRIVER
+              value: redis
+            # Provide redis connection information
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: port
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: user
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: pass
+            {{- end }}
+
+            # --- User Managed Environment Variables --- #
+            {{- range $k := $.Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := $.Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
+          volumeMounts:
+            - name: public-assets
+              mountPath: /var/www/public
+            {{- if has "mysql" $.Values.requires }}
+            - name: mysql-cert
+              mountPath: /etc/ssl/certs/mysql-ca.pem
+              subPath: mysql-ca.pem
+              readOnly: true
+            {{- end }}
+        {{- end }}
+
+      initContainers:
+        # --- Prepare Shared Volume --- #
+        # The build folder will just be empty unless it is preloaded
+        # with the data already available on the NGINX container image.
+        - name: init-shared-volume
+          image: {{ .Values.image }}-nginx:{{ .Values.tag }}
+          command: [sh, -c]
+          args: ["ls /var/www/public/* && cp -r /var/www/public/* /data || echo No files to copy"]
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 1Gi
+              memory: 64Mi
+          volumeMounts:
+            - name: public-assets
+              mountPath: /data
+
+        # --- Wait for Migration Job to complete --- #
+        {{- if ne "none" .Values.migration_type }}
+        - name: wait-for-migration
+          image: {{ .Values.image }}-cli:{{ .Values.tag }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until kubectl get job {{ .Release.Name }}-migration-{{ .Values.tag_short }} \
+                -o jsonpath='{.status.succeeded}' | grep 1; do
+                echo "Waiting for migration job to complete..."
+                sleep 5
+              done
+          resources:
+            limits:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              ephemeral-storage: 100Mi
+              memory: 64Mi
+        {{- end }}
+
+      volumes:
+        # --- Public assets are shared across the NGINX and FPM container --- #
+        - name: public-assets
+          emptyDir:
+            sizeLimit: 1Gi
+        {{- if has "mysql" .Values.requires }}
+        # --- MySQL Certificate --- #
+        - name: mysql-cert
+          secret:
+            secretName: cloudsql-cert
+            items:
+              - key: data
+                path: mysql-ca.pem
+        {{- end }}
+{{- end }}
+

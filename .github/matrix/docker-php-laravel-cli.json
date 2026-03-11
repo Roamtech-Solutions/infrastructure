@@ -1,0 +1,9 @@
+{
+	"include": [
+		{
+			"name": "cli",
+			"dockerfile": "docker/php-laravel-cli/Dockerfile"
+		}
+	]
+}
+
