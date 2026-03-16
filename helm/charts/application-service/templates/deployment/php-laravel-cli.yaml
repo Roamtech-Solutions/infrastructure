@@ -139,8 +139,6 @@ spec:
             {{- end }}
 
           volumeMounts:
-            - name: public-assets
-              mountPath: /var/www/public
             {{- if has "mysql" .Values.requires }}
             - name: mysql-cert
               mountPath: /etc/ssl/certs/mysql-ca.pem
@@ -270,8 +268,6 @@ spec:
             {{- end }}
 
           volumeMounts:
-            - name: public-assets
-              mountPath: /var/www/public
             {{- if has "mysql" $.Values.requires }}
             - name: mysql-cert
               mountPath: /etc/ssl/certs/mysql-ca.pem
@@ -281,26 +277,6 @@ spec:
         {{- end }}
 
       initContainers:
-        # --- Prepare Shared Volume --- #
-        # The build folder will just be empty unless it is preloaded
-        # with the data already available on the NGINX container image.
-        - name: init-shared-volume
-          image: {{ .Values.image }}-nginx:{{ .Values.tag }}
-          command: [sh, -c]
-          args: ["ls /var/www/public/* && cp -r /var/www/public/* /data || echo No files to copy"]
-          resources:
-            limits:
-              cpu: 50m
-              ephemeral-storage: 1Gi
-              memory: 64Mi
-            requests:
-              cpu: 50m
-              ephemeral-storage: 1Gi
-              memory: 64Mi
-          volumeMounts:
-            - name: public-assets
-              mountPath: /data
-
         # --- Wait for Migration Job to complete --- #
         {{- if ne "none" .Values.migration_type }}
         - name: wait-for-migration
@@ -326,10 +302,6 @@ spec:
         {{- end }}
 
       volumes:
-        # --- Public assets are shared across the NGINX and FPM container --- #
-        - name: public-assets
-          emptyDir:
-            sizeLimit: 1Gi
         {{- if has "mysql" .Values.requires }}
         # --- MySQL Certificate --- #
         - name: mysql-cert
