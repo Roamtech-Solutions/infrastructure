@@ -1,0 +1,11 @@
+services:
+  app:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-app:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/java-spring-boot/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - JAVA_VERSION=${JAVA_VERSION}
+
