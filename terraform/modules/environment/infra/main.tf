@@ -83,11 +83,6 @@ module "ncc" {
 	}
 }
 
-import {
-  id = "projects/${local.project_id}/regions/${var.region}/routers/${module.gke.nat_router_name}/iprs"
-  to = google_compute_router_nat.iprs_private_nat[0]
-}
-
 resource "google_compute_router_nat" "iprs_private_nat" {
 	count = (var.name == "production") ? 1 : 0
   name                                = "iprs"
@@ -140,6 +135,7 @@ resource "google_service_account" "iprs_proxy" {
 }
 
 resource "google_compute_instance" "iprs_proxy" {
+  count        = (var.name == "production") ? 1 : 0
   name         = "iprs-proxy"
   project      = local.project_id
   zone         = data.google_compute_zones.available.names[0]

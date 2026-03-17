@@ -35,6 +35,11 @@ spec:
                 secretKeyRef:
                   name: cloudsql-{{ .Release.Name }}
                   key: host
+            - name: MYSQL_REPLICA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: replica_host
             - name: MYSQL_PORT
               valueFrom:
                 secretKeyRef:

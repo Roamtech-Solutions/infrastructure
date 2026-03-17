@@ -11,7 +11,7 @@ hosts = [
 ]
 
 allowed_networks = {
-  bob                      = "109.151.130.185/32"
+  bob                      = "81.156.238.206/32"
   roamtech-office          = "41.139.128.197/32"
   roamtech-office-ethernet = "197.232.33.60/32"
 }

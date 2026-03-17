@@ -29,9 +29,19 @@ in your source code, see more [here][go-env-vars].
 | Name			| Description 					|
 |-----------------------|-----------------------------------------------|
 | `MYSQL_HOST`		| IP address/hostname of the MySQL instance.	|
+| `MYSQL_REPLICA_HOST`	| IP address/hostname of the replica instance.	|
 | `MYSQL_PORT`		| Port the instance is listening on.		|
 | `MYSQL_USER`		| Username for the service to use.		|
 | `MYSQL_PASS`		| Password for the service to use.		|
+
+### MongoDB (`mongodb`)
+
+| Name			| Description 					|
+|-----------------------|-----------------------------------------------|
+| `MONGODB_HOST`		| IP address/hostname of the instance.	|
+| `MONGODB_PORT`		| Port the instance is listening on.	|
+| `MONGODB_USER`		| Username for the service to use.	|
+| `MONGODB_PASS`		| Password for the service to use.	|
 
 
 ### RabbitMQ (`rabbitmq`)
