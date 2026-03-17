@@ -1,0 +1,24 @@
+services:
+  app:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-app:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/go-app/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - GO_VERSION=${GO_VERSION}
+        - GO_RUN_IMAGE=${GO_RUN_IMAGE}
+        - CGO_ENABLED=${CGO_ENABLED}
+  cli:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-cli:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/go-cli/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - GO_VERSION=${GO_VERSION}
+        - GO_RUN_IMAGE=${GO_RUN_IMAGE}
+        - CGO_ENABLED=${CGO_ENABLED}
+

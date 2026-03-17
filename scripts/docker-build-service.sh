@@ -52,33 +52,25 @@ export GROUP=$(echo "${SERVICE_NAME}" | cut -d '-' -f 1)
 export VERSION=$(git rev-parse HEAD)
 export TYPE=$(yq '.type' ${SERVICE_DIR}/env/${ENVIRONMENT}.yaml)
 
-go_config() {
-	if [ -z "${SERVICE_DIR}" ]; then
-		echo "${0}:${LINENO}: Project directory has not been set"
-		exit 1
-	fi
+# --- Go Version --- #
+if [ -f ${SERVICE_DIR}/go.mod ]; then
+	# Extract version from the .mod file
+	export GO_VERSION=$(grep -E '^go ' ${SERVICE_DIR}/go.mod | cut -d' ' -f 2)
+else
+	export GO_VERSION=1.23.0
+fi
 
-	# --- Go Version --- #
-	if [ -f ${SERVICE_DIR}/go.mod ]; then
-		# Extract version from the .mod file
-		export GO_VERSION=$(grep -E '^go ' ${SERVICE_DIR}/go.mod | cut -d' ' -f 2)
-	else
-		export GO_VERSION=1.23.0
-	fi
-
-        # --- Go Run Image --- #
-        # Some dependencies mean that we can't build static binaries,
-	# such as v8go.
-        # In this case CGO_ENABLED is set to 1 and another image is used.
-        if [ -f ${SERVICE_DIR}/go.mod && grep -e 'v8go' ${SERVICE_DIR}/go.mod ]; then 
-		export GO_RUN_IMAGE=golang:${GO_VERSION}
-		export CGO_ENABLED=1
-	else
-            export GO_RUN_IMAGE=alpine:latest
-            export CGO_ENABLED=0
-	fi
-}
-
+# --- Go Run Image --- #
+# Some dependencies mean that we can't build static binaries,
+# such as v8go.
+# In this case CGO_ENABLED is set to 1 and another image is used.
+if [ -f ${SERVICE_DIR}/go.mod && grep -e 'v8go' ${SERVICE_DIR}/go.mod ]; then 
+	export GO_RUN_IMAGE=golang:${GO_VERSION}
+	export CGO_ENABLED=1
+else
+    export GO_RUN_IMAGE=alpine:latest
+    export CGO_ENABLED=0
+fi
 
 # --- PHP Version --- #
 if [ -f ${SERVICE_DIR}/composer.json ]; then
