@@ -64,7 +64,7 @@ fi
 # Some dependencies mean that we can't build static binaries,
 # such as v8go.
 # In this case CGO_ENABLED is set to 1 and another image is used.
-if [ -f ${SERVICE_DIR}/go.mod && grep -e 'v8go' ${SERVICE_DIR}/go.mod ]; then 
+if [ -f ${SERVICE_DIR}/go.mod ] && grep -e 'v8go' ${SERVICE_DIR}/go.mod; then 
 	export GO_RUN_IMAGE=golang:${GO_VERSION}
 	export CGO_ENABLED=1
 else
