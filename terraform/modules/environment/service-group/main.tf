@@ -36,6 +36,7 @@ module "cloudsql" {
   users               = local.mysql_services
   deletion_protection = (var.environment == "production")
   database_flags      = var.mysql_database_flags
+	developers = var.developers
 }
 
 /* === PostgreSQL Database === */
