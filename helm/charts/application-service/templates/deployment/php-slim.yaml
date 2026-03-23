@@ -57,22 +57,22 @@ spec:
 
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
-            - name: RABBIT_HOST
+            - name: RABBITMQ_HOST
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: host
-            - name: RABBIT_PORT
+            - name: RABBITMQ_PORT
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: port
-            - name: RABBIT_USER
+            - name: RABBITMQ_USER
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
                   key: username
-            - name: RABBIT_PASS
+            - name: RABBITMQ_PASS
               valueFrom:
                 secretKeyRef:
                   name: rabbitmq-default-user
