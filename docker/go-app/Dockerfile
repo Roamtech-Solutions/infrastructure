@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.19
+ARG GO_VERSION=1.24
 ARG GO_RUN_IMAGE=alpine:latest
 
 # == Build Image === #
@@ -12,9 +12,9 @@ COPY . .
 RUN mkdir -p resources migrations
 ENV GOWORK=off
 #RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | head -n1) && \
-RUN src=$(grep -rn "func main" | grep -v migrate | head -1 | cut -d ':' -f 1) && \
-    echo "Building from $src" && \
-    CGO_ENABLED=${CGO_ENABLED} GOOS=linux go build -o app "$src"
+RUN src_dir=$(find . -type f -name '*.go' -exec dirname {} \; | sort | uniq | grep -v migrate | head -n1) && \
+    echo "Building from $src_dir" && \
+    CGO_ENABLED=${CGO_ENABLED} GOOS=linux go build -o app $src_dir/*.go
 
 
 # === Run Image === #
