@@ -52,6 +52,11 @@ export GROUP=$(echo "${SERVICE_NAME}" | cut -d '-' -f 1)
 export VERSION=$(cd ${SERVICE_DIR} && git rev-parse HEAD)
 export TYPE=$(yq '.type' ${SERVICE_DIR}/env/${ENVIRONMENT}.yaml)
 
+if [ -z "${TYPE}" ]; then
+	echo "Could not determine type ($(echo ${SERVICE_DIR}/env/${ENVIRONMENT}.yaml))"
+	exit 1
+fi
+
 # --- Go Version --- #
 if [ -f ${SERVICE_DIR}/go.mod ]; then
 	# Extract version from the .mod file

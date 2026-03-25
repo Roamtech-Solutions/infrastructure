@@ -104,7 +104,7 @@ init-upgrade:
 
 .PHONY: plan
 plan: init
-	terraform -chdir=$(CHDIR) plan $(VARS)
+	terraform -chdir=$(CHDIR) plan $(VARS) $(TF_ARGS)
 
 .PHONY: apply
 apply: init
