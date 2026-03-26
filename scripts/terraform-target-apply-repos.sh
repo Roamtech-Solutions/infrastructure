@@ -33,8 +33,8 @@ for repo in ${*}; do
 	TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_actions_secret.infra-pat[\\\"${resource_key}\\\"]\""
 	TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_actions_variable.service_group[\\\"${resource_key}\\\"]\""
 	TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_actions_variable.service_name[\\\"${resource_key}\\\"]\""
-	#TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_repository_file.workflow_development[\\\"${resource_key}\\\"]\""
-	#TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_repository_file.workflow_staging[\\\"${resource_key}\\\"]\""
+	TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_repository_file.workflow_development[\\\"${resource_key}\\\"]\""
+	TF_ARGS="${TF_ARGS} -target=\"module.github_actions.github_repository_file.workflow_staging[\\\"${resource_key}\\\"]\""
 done
 
 export TF_ARGS

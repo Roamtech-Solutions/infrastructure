@@ -24,5 +24,34 @@ spec:
               containerPort: {{ .Values.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+
+            # --- MySQL --- #
+            {{- if has "mysql" .Values.requires }}
+            - name: MYSQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: host
+            - name: MYSQL_REPLICA_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: replica_host
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: port
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: user
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
 {{- end }}
 

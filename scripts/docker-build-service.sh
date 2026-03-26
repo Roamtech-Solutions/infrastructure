@@ -91,6 +91,17 @@ else
 	export JAVA_VERSION=17
 fi
 
+# --- Node Version --- #
+if [ -f "${SERVICE_DIR}/package.json" ]; then 
+	node_version=$( \
+		jq -r '.engines.node // "24" | match("[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"; "g") | last(.).string' \
+		${SERVICE_DIR}/package.json
+	)
+	export NODE_VERSION=${node_version}
+else
+	export NODE_VERSION=24
+fi
+
 # --- Build & push the images --- #
 docker compose -f docker/${TYPE}.yaml build
 docker compose -f docker/${TYPE}.yaml push --ignore-push-failures
