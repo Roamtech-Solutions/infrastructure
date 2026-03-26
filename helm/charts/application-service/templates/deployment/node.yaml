@@ -25,6 +25,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 
+          env:
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}
             - name: MYSQL_HOST
@@ -53,5 +54,6 @@ spec:
                   name: cloudsql-{{ .Release.Name }}
                   key: pass
             {{- end }}
+
 {{- end }}
 
