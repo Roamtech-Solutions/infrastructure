@@ -1,0 +1,29 @@
+services:
+  nginx:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-nginx:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/php-laravel-nginx/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - PHP_VERSION=${PHP_VERSION}
+  fpm:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-fpm:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/php-laravel-fpm/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - PHP_VERSION=${PHP_VERSION}
+  cli:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-cli:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/php-laravel-cli/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - PHP_VERSION=${PHP_VERSION}
+
