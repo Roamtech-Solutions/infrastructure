@@ -4,13 +4,13 @@
 #	./scripts/cloudsql-port-forward.sh
 #
 # SYNOPSIS
-#	./scripts/cloudsql-port-forward.sh CONNECTION_NAME [PORT]
+#	./scripts/cloudsql-port-forward.sh CONNECTION_NAME [PORT:3306]
 #
 # DESCRIPTION
 #	Create a tunneled connection to the CloudSQL instance making it
 #	available at localhost:3306 on your machine.
 #	If ports are clashing on the jump box, you can provide one. It will
-#	still be available locally on your machine at localhost:3306.
+#	be available locally on your machine at localhost:PORT.
 #
 # EXAMPLES
 #
@@ -18,8 +18,7 @@
 #	./scripts/cloudsql-port-forward.sh \
 #		production-e6a8:europe-west1:emalify-1b805db5
 #
-#	# Connection to emalify production database with port 6000 on the jump
-#	# box:
+#	# Connection to emalify production database with port 6000:
 #	./scripts/cloudsql-port-forward.sh \
 #		production-e6a8:europe-west1:emalify-1b805db5 6000
 #
@@ -49,4 +48,4 @@ gcloud compute ssh \
 	--project ${PROJECT} gke-europe-west1-jump-box \
 	--command="cloud-sql-proxy --private-ip ${CONNECTION_NAME} --port ${PORT}" \
 	-- \
-	-L 3306:localhost:${PORT}
+	-L ${PORT}:localhost:${PORT}
