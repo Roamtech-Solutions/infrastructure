@@ -26,6 +26,21 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
 
           env:
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+
             # --- MySQL --- #
             {{- if has "mysql" .Values.requires }}
             - name: MYSQL_HOST
