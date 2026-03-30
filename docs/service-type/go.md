@@ -14,6 +14,17 @@ go 1.23.0
 
 If this isn't found, the Go version will default to `1.23.0`.
 
+## Custom environment variables
+
+Environment variables used in Go projects can be found quite reliably with
+this command:
+```shell
+grep -rnoP 'os.Getenv\(.*\)' | sed -E 's/.*Getenv\("(.*)"\)*$/\1/g'
+```
+
+These then need to be configured in the configuration YAML files either the
+`env` block or in `secrets`.
+See more [here][service-configuration].
 
 ## Required Service Environment Variables
 
@@ -66,4 +77,5 @@ in your source code, see more [here][go-env-vars].
 
 <!-- Links -->
 [go-env-vars]: https://gobyexample.com/environment-variables
+[service-configuration]: /docs/service-configuration.md
 
