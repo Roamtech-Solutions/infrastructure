@@ -1,0 +1,9 @@
+services:
+  custom:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-custom:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+

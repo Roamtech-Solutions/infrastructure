@@ -28,6 +28,7 @@ allowed_networks = {
 
 service_groups = [
   "data",
+  "adenzo",
   "ecommerce",
   "afrisend",
   "imt",
