@@ -50,3 +50,8 @@ variable "edition" {
   default = "ENTERPRISE"
 }
 
+variable "developers" {
+	type = list(string)
+	default = []
+}
+

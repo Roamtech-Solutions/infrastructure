@@ -105,3 +105,15 @@ resource "google_secret_manager_secret_version" "cert" {
   })
 }
 
+# === IAM === #
+resource "google_project_iam_member" "cloudsql_studio_user" {
+	for_each = toset(var.developers)
+  project = var.project_id
+  role    = "roles/cloudsql.studioUser"
+  member  = each.key 
+  condition {
+    title       = "${module.cloudsql.instance_name}-access"
+    expression  = "resource.name == 'projects/${var.project_id}/instances/${module.cloudsql.instance_name}'"
+  }
+}
+

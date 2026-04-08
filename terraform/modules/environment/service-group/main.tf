@@ -51,6 +51,7 @@ module "postgresql" {
   network          = data.terraform_remote_state.infra.outputs.gke_network
   tier_primary     = var.postgresql_tier
   users            = local.postgresql_services
+	developers = var.developers
 }
 
 /* === MariaDB === */
