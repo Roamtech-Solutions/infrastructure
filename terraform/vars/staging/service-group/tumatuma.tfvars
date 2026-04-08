@@ -10,5 +10,6 @@ allowed_networks = {
 # TODO: This should just be a group, not individuals
 developers = [
   "user:joshua.moracha@roamtech.com",
+  "user:meriem.abubeker@roamtech.com",
 ]
 
