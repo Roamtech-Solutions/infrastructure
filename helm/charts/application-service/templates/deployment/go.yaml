@@ -81,6 +81,30 @@ spec:
                   key: pass
             {{- end }}
 
+            # --- PostgreSQL --- #
+            {{- if has "postgresql" .Values.requires }}
+            - name: POSTGRESQL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: host
+            - name: POSTGRESQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: port
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: user
+            - name: POSTGRESQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-pg-{{ .Release.Name }}
+                  key: pass
+            {{- end }}
+
             # --- RabbitMQ --- #
             {{- if has "rabbitmq" .Values.requires }}
             - name: RABBITMQ_HOST

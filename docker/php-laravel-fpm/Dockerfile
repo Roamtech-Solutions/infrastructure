@@ -137,15 +137,6 @@ COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 # -----------------------------------------------------------
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Enable PHP-FPM status page by modifying zz-docker.conf with sed
-RUN sed -i '/\[www\]/a pm.status_path = /status' /usr/local/etc/php-fpm.d/zz-docker.conf
-
-# Make sure PHP can access variables
-RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
-
-# Stop errors about max children being exceeded
-RUN sed -i '/^pm.max_children/c\pm.max_children = 32' /usr/local/etc/php-fpm.d/www.conf
-
 # Copy the application code and dependencies from the build stage
 COPY --from=builder /var/www /var/www
 
@@ -160,6 +151,9 @@ RUN chown -R www-data:www-data /var/www
 
 # Make sure PHP can acces variables
 RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
+
+COPY docker/php-laravel-fpm/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
+COPY docker/php-laravel-fpm/php-fpm.conf /usr/local/etc/php-fpm.conf
 
 # Switch to the non-privileged user to run the application
 USER www-data

@@ -310,6 +310,12 @@ module "keycloak" {
 }
 
 /* === Application Services === */
+import {
+  for_each      = data.google_storage_bucket_object_content.application_service_values
+  to       = module.application_service[each.key].helm_release.application_service
+  id       = "${var.service_group}/${each.key}"
+}
+
 module "application_service" {
   for_each      = data.google_storage_bucket_object_content.application_service_values
   source        = "../../application-service"
