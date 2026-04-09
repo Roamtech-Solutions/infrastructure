@@ -1,0 +1,17 @@
+name: Staging Deploy TumaTuma
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1,2,3,4,5"  # Monday-Friday at 04:00 UTC (07:00 Kenya Time)
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      id-token: write
+    name: "Deploy"
+    uses: Roamtech-Solutions/infrastructure/.github/workflows/deploy-service-group.yaml@master
+    with:
+      environment: staging
+      service_group: tumatuma
+    secrets: inherit
+
