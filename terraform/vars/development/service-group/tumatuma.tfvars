@@ -1,7 +1,6 @@
 service_group = "tumatuma"
 region        = "europe-west1"
-host          = "roamtech.whitemire-technologies.com"
-sub_host      = "tt"
+host          = "tumatuma.com"
 
 # TODO: This should just be a group, not individuals
 developers = [
