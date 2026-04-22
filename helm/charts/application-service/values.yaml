@@ -27,6 +27,13 @@ resources:
 # === Secrets === #
 secrets: []
 
+# === Horizontal Pod Autoscaling (HPA) === #
+hpa:
+  enabled: false
+  replicas:
+    min: 2
+    max: 4
+
 # === Other === #
 migration_type: none
 mysql: false
