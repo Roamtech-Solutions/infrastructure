@@ -119,12 +119,12 @@ resource "google_storage_bucket" "values" {
 }
 
 /* GitHub Actions Set up */
-module "github_actions" {
-  source              = "../../github-actions"
-  project_id          = module.project.project_id
-  github_organisation = var.github_organisation
-  prefixes            = var.service_groups
-}
+# module "github_actions" {
+#   source              = "../../github-actions"
+#   project_id          = module.project.project_id
+#   github_organisation = var.github_organisation
+#   prefixes            = var.service_groups
+# }
 
 /* === GitHub Actions === */
 resource "google_secret_manager_secret" "gh_app" {

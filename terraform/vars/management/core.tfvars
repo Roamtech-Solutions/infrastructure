@@ -37,5 +37,6 @@ service_groups = [
   "tumatuma",
   "mistari",
   "roamtech",
+  "senti",
 ]
 

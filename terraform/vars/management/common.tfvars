@@ -11,6 +11,7 @@ hosts = [
   "adenzo.co.ke",
   "adenzo.shop",
   "mistari.africa",
+  "senti.co.ke",
 ]
 
 allowed_networks = {

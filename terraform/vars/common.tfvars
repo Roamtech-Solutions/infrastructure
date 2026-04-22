@@ -8,11 +8,11 @@ hosts = [
   "emalify.com",
   "mistari.co",
   "tumatuma.com",
+  "senti.co.ke",
 ]
 
 allowed_networks = {
   bob                      = "109.181.189.243/32"
-  bob_2                      = "81.156.238.206/32"
   roamtech-office          = "41.139.128.197/32"
   roamtech-office-ethernet = "197.232.33.60/32"
 }
