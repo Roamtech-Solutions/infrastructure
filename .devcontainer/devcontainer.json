@@ -11,7 +11,7 @@
         },
         "ghcr.io/devcontainers/features/python:1": {},
         "./apt": {
-		    "packages": "make,vim"
+		    "packages": "make,vim,dos2unix"
 	    },
         "ghcr.io/devcontainers/features/github-cli:1": {}
     },
