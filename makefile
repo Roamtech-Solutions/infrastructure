@@ -20,10 +20,10 @@ endif
 # === Module === #
 
 ifeq ($(ENV),management)
-  ALLOWED_MODS := $(shell ls -d terraform/modules/management/*/ | cut -f4 -d'/')
+  ALLOWED_MODS := $(notdir $(patsubst %/,%,$(wildcard terraform/modules/management/*/)))
   MOD ?= core
 else
-  ALLOWED_MODS := $(shell ls -d terraform/modules/environment/*/ | cut -f4 -d'/')
+  ALLOWED_MODS := $(notdir $(patsubst %/,%,$(wildcard terraform/modules/environment/*/)))
   MOD ?= service-group
 endif
 
