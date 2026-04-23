@@ -2,7 +2,7 @@ name: Staging Deploy TumaTuma
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * 1,2,3,4,5"  # Monday-Friday at 04:00 UTC (07:00 Kenya Time)
+    - cron: "45 3 * * 1,2,3,4,5"  # Monday-Friday at 03:45 UTC (06:45 Kenya Time)
 jobs:
   deploy:
     permissions:
