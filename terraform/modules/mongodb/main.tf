@@ -42,7 +42,7 @@ resource "google_storage_bucket" "resources" {
 /* Mongo Configurations */
 resource "google_storage_bucket_object" "mongod_conf" {
   name           = "mongod.conf"
-  source        = "${path.module}/resources/mongod.conf"
+  source         = "${path.module}/resources/mongod.conf"
   bucket         = google_storage_bucket.resources.name
   metadata       = {}
   source_md5hash = filemd5("${path.module}/resources/mongod.conf")

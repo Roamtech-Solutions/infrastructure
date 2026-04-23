@@ -13,7 +13,7 @@ module "cloudsql" {
   database_flags = concat(
     [
       { name = "audit_log", value = "ON" },
-			{ name  = "cloudsql_iam_authentication", value = "on" },
+      { name = "cloudsql_iam_authentication", value = "on" },
     ],
     var.database_flags
   )
@@ -79,10 +79,10 @@ module "cloudsql" {
       disk_autoresize_limit = 0
       disk_size             = var.disk_size
       user_labels           = {}
-      database_flags        = [
-			{ name  = "cloudsql_iam_authentication", value = "on" },
-			]
-      encryption_key_name   = null
+      database_flags = [
+        { name = "cloudsql_iam_authentication", value = "on" },
+      ]
+      encryption_key_name = null
       ip_configuration = {
         ipv4_enabled       = false
         ssl_mode           = "ENCRYPTED_ONLY"
@@ -113,13 +113,13 @@ resource "google_secret_manager_secret_version" "default" {
   for_each = google_secret_manager_secret.default
   secret   = each.value.id
   secret_data = jsonencode({
-    host = module.cloudsql.private_ip_address
-		replica_host = (var.read_replica != null) ?  module.cloudsql.replicas[0].private_ip_address : module.cloudsql.private_ip_address
-    port = 3306
-    user = each.key
-    pass = random_password.default[each.key].result
-		}
-	)
+    host         = module.cloudsql.private_ip_address
+    replica_host = (var.read_replica != null) ? module.cloudsql.replicas[0].private_ip_address : module.cloudsql.private_ip_address
+    port         = 3306
+    user         = each.key
+    pass         = random_password.default[each.key].result
+    }
+  )
 }
 
 resource "google_secret_manager_secret" "cert" {
@@ -151,19 +151,19 @@ resource "google_storage_bucket" "exports" {
 
 resource "google_storage_bucket_iam_member" "exports" {
   bucket = google_storage_bucket.exports.name
-  role = "roles/storage.admin"
+  role   = "roles/storage.admin"
   member = "serviceAccount:${module.cloudsql.instance_service_account_email_address}"
 }
 
 # === IAM === #
 resource "google_project_iam_member" "cloudsql_studio_user" {
-	for_each = toset(var.developers)
-  project = var.project_id
-  role    = "roles/cloudsql.studioUser"
-  member  = each.key 
+  for_each = toset(var.developers)
+  project  = var.project_id
+  role     = "roles/cloudsql.studioUser"
+  member   = each.key
   condition {
-    title       = "${module.cloudsql.instance_name}-access"
-    expression  = "resource.name == 'projects/${var.project_id}/instances/${module.cloudsql.instance_name}'"
+    title      = "${module.cloudsql.instance_name}-access"
+    expression = "resource.name == 'projects/${var.project_id}/instances/${module.cloudsql.instance_name}'"
   }
 }
 

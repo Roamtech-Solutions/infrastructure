@@ -58,9 +58,9 @@ locals {
     if contains(lookup(v, "requires", []), "mysql") || v.type == "wordpress"
   ]
   mysql_services = concat(
-  	local.sg_mysql_services,
-		(length(local.sg_mysql_services) > 0) ? ["metabase"] : []
-	)
+    local.sg_mysql_services,
+    (length(local.sg_mysql_services) > 0) ? ["metabase"] : []
+  )
 
   /* --- PostgreSQL Services --- */
   postgresql_services = distinct(concat(

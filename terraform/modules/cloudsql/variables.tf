@@ -65,7 +65,7 @@ variable "database_flags" {
 }
 
 variable "developers" {
-	type = list(string)
-	default = []
+  type    = list(string)
+  default = []
 }
 

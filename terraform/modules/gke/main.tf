@@ -17,7 +17,7 @@ module "network" {
       subnet_region         = var.region
       subnet_private_access = true
       subnet_flow_logs      = true
-			purpose          = "PRIVATE_NAT"
+      purpose               = "PRIVATE_NAT"
     }
   ]
   secondary_ranges = {

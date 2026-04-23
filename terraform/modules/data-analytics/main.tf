@@ -52,8 +52,8 @@ resource "google_project_iam_member" "airflow_cloudsql_client" {
 
 resource "google_sql_user" "airflow_iam_user" {
   for_each = local.database_connections
-	project = var.project_id
-	name = replace(google_service_account.airflow.email, ".gserviceaccount.com", "")
+  project  = var.project_id
+  name     = replace(google_service_account.airflow.email, ".gserviceaccount.com", "")
   instance = each.key
   type     = "CLOUD_IAM_SERVICE_ACCOUNT"
 }
@@ -124,10 +124,10 @@ resource "google_compute_instance" "airflow" {
     network            = var.network_name
     subnetwork         = var.subnetwork_name
     subnetwork_project = var.project_id
-		# alias_ip_range {
-		# 	ip_cidr_range = "10.2.64.0/18"
-		# 	subnetwork_range_name = "gke-${var.region}-private-pods"
-		# }
+    # alias_ip_range {
+    # 	ip_cidr_range = "10.2.64.0/18"
+    # 	subnetwork_range_name = "gke-${var.region}-private-pods"
+    # }
     access_config {
       /* Ephemeral public IP */
     }

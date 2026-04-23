@@ -36,7 +36,7 @@ module "cloudsql" {
   users               = local.mysql_services
   deletion_protection = (var.environment == "production")
   database_flags      = var.mysql_database_flags
-	developers = var.developers
+  developers          = var.developers
 }
 
 /* === PostgreSQL Database === */
@@ -51,7 +51,7 @@ module "postgresql" {
   network          = data.terraform_remote_state.infra.outputs.gke_network
   tier_primary     = var.postgresql_tier
   users            = local.postgresql_services
-	developers = var.developers
+  developers       = var.developers
 }
 
 /* === MariaDB === */
@@ -247,6 +247,11 @@ resource "google_compute_security_policy" "restricted_services" {
 }
 
 /* --- Service Group Helm Chart --- */
+# import {
+#   to = helm_release.service_group
+#   id = "${var.service_group}/${var.service_group}"
+# }
+
 resource "helm_release" "service_group" {
   name  = var.service_group
   chart = "${path.module}/../../../../helm/charts/service-group"
@@ -270,13 +275,13 @@ resource "helm_release" "service_group" {
     mariadb_services    = local.mariadb_services
     mongodb_services    = local.mongodb_services
     ingress_services    = local.ingress_services
-		external_endpoints = [
-			for i in module.data_analytics : {
-				name = "airflow-instance"
-				port = 8080
-				address = i.airflow_private_ip
-			}
-		]
+    external_endpoints = [
+      for i in module.data_analytics : {
+        name    = "airflow-instance"
+        port    = 8080
+        address = i.airflow_private_ip
+      }
+    ]
     kafka_services      = local.kafka_services
     certificates        = local.certificates
     host                = local.host
@@ -290,6 +295,11 @@ resource "helm_release" "service_group" {
 }
 
 /* === Redis === */
+# import {
+#     to = module.redis[0].helm_release.redis
+#     id = "${var.service_group}/redis"
+# }
+
 module "redis" {
   count      = (length(local.redis_services) > 0) ? 1 : 0
   source     = "../../redis"
@@ -312,7 +322,7 @@ module "keycloak" {
 
 /* === Application Services === */
 # import {
-#   for_each      = data.google_storage_bucket_object_content.application_service_values
+#   for_each = data.google_storage_bucket_object_content.application_service_values
 #   to       = module.application_service[each.key].helm_release.application_service
 #   id       = "${var.service_group}/${each.key}"
 # }

@@ -67,24 +67,24 @@ module "iprs_network" {
 }
 
 module "ncc" {
-	count = (var.name == "production") ? 1 : 0
-  source  = "terraform-google-modules/network/google//modules/network-connectivity-center"
-  version = "12.0.0"
-	project_id = local.project_id
-	ncc_hub_name = var.region
-	vpc_spokes = {
-		"gke-${var.region}" = {
-			uri = module.gke.network.id	
-			include_export_ranges = toset([module.gke.private_nat_cidr])
-		}
-		"iprs-${var.region}" = {
-			uri = module.iprs_network[0].network_id
-		}
-	}
+  count        = (var.name == "production") ? 1 : 0
+  source       = "terraform-google-modules/network/google//modules/network-connectivity-center"
+  version      = "12.0.0"
+  project_id   = local.project_id
+  ncc_hub_name = var.region
+  vpc_spokes = {
+    "gke-${var.region}" = {
+      uri                   = module.gke.network.id
+      include_export_ranges = toset([module.gke.private_nat_cidr])
+    }
+    "iprs-${var.region}" = {
+      uri = module.iprs_network[0].network_id
+    }
+  }
 }
 
 resource "google_compute_router_nat" "iprs_private_nat" {
-	count = (var.name == "production") ? 1 : 0
+  count                               = (var.name == "production") ? 1 : 0
   name                                = "iprs"
   router                              = module.gke.nat_router_name
   region                              = var.region
@@ -92,40 +92,40 @@ resource "google_compute_router_nat" "iprs_private_nat" {
   enable_dynamic_port_allocation      = true
   enable_endpoint_independent_mapping = false
   type                                = "PRIVATE"
-	log_config {
-  	enable = false
-  	filter = "ALL"
-	}
-	rules {
-            description = null
-          match       = "nexthop.is_hybrid || nexthop.hub == '//networkconnectivity.googleapis.com/${module.ncc[0].ncc_hub.id}'"
-          rule_number = 1000
+  log_config {
+    enable = false
+    filter = "ALL"
+  }
+  rules {
+    description = null
+    match       = "nexthop.is_hybrid || nexthop.hub == '//networkconnectivity.googleapis.com/${module.ncc[0].ncc_hub.id}'"
+    rule_number = 1000
 
-          action {
-              source_nat_active_ips    = []
-              source_nat_active_ranges = [
-                  "https://www.googleapis.com/compute/v1/projects/${local.project_id}/regions/${var.region}/subnetworks/${module.gke.private_nat_subnet}",
-                ]
-              source_nat_drain_ips     = []
-              source_nat_drain_ranges  = []
-            }
-        }
+    action {
+      source_nat_active_ips = []
+      source_nat_active_ranges = [
+        "https://www.googleapis.com/compute/v1/projects/${local.project_id}/regions/${var.region}/subnetworks/${module.gke.private_nat_subnet}",
+      ]
+      source_nat_drain_ips    = []
+      source_nat_drain_ranges = []
+    }
+  }
 }
 
 resource "google_compute_firewall" "iprs_allow_gke_private_nat" {
-	count = (var.name == "production") ? 1 : 0
+  count       = (var.name == "production") ? 1 : 0
   project     = local.project_id
   name        = "iprs-allow-gke-private-nat-ingress"
   network     = module.iprs_network[0].network_name
   description = "Allow ingress from the GKE private NAT"
 
   allow {
-    protocol  = "tcp"
-    ports     = ["80", "443", "9003", "9004"]
+    protocol = "tcp"
+    ports    = ["80", "443", "9003", "9004"]
   }
 
-	direction = "INGRESS"
-	source_ranges = [module.gke.private_nat_cidr]
+  direction     = "INGRESS"
+  source_ranges = [module.gke.private_nat_cidr]
 }
 
 resource "google_service_account" "iprs_proxy" {
@@ -153,9 +153,9 @@ resource "google_compute_instance" "iprs_proxy" {
 
   network_interface {
     network            = module.iprs_network[0].network_name
-     subnetwork           = "iprs-${var.region}"
+    subnetwork         = "iprs-${var.region}"
     subnetwork_project = local.project_id
-		network_ip = "172.24.41.9"
+    network_ip         = "172.24.41.9"
   }
 
   service_account {
