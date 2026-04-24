@@ -1,0 +1,10 @@
+services:
+  business:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/tumatuma/business-custom:${TUMATUMA_BUSINESS_VERSION}
+    build:
+      context: git@${GITHUB_HOST}:${GITHUB_ORG}/tumatuma-business.git#${TUMATUMA_BUSINESS_VERSION}
+  backend:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/tumatuma/backend-custom:${TUMATUMA_BACKEND_VERSION}
+    build:
+      context: git@${GITHUB_HOST}:${GITHUB_ORG}/tumatuma-backend.git#${TUMATUMA_BACKEND_VERSION}
+

@@ -124,7 +124,10 @@ spec:
             {{- end }}
 
             # --- User Managed Environment Variables --- #
-            {{- toYaml .Values.env | nindent 12 }}
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
 
             # --- User Managed Secrets --- #
             {{- range $s := .Values.secrets }}

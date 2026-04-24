@@ -134,3 +134,14 @@ apply-target: init
 state-list: init
 	terraform -chdir=$(CHDIR) state list
 
+.PHONY: build
+build:
+	docker compose -f services\$(SG).yaml \
+		--env-file services\.env.$(ENV) build
+
+.PHONY: push
+push:
+	docker compose -f services\$(SG).yaml \
+		--env-file services\.env.$(ENV) push \
+		--ignore-push-failures
+
