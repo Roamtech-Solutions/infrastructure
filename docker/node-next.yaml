@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-app:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/node-next/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - NODE_VERSION=${NODE_VERSION}
+
