@@ -10,6 +10,8 @@ module "cloudsql" {
   deletion_protection  = var.deletion_protection
   disk_size            = var.disk_size
 
+  database_flags = var.database_flags
+
   tier                            = var.tier_primary
   zone                            = var.zone
   availability_type               = "REGIONAL"

@@ -55,3 +55,8 @@ variable "developers" {
   default = []
 }
 
+variable "database_flags" {
+  type    = list(map(string))
+  default = []
+}
+

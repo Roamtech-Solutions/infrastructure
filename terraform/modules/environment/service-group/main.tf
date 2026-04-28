@@ -52,6 +52,7 @@ module "postgresql" {
   tier_primary     = var.postgresql_tier
   users            = local.postgresql_services
   developers       = var.developers
+  database_flags      = var.postgresql_database_flags
 }
 
 /* === MariaDB === */

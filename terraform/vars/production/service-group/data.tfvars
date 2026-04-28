@@ -14,3 +14,7 @@ developers = [
   "user:mark.omari@roamtech.com",
 ]
 
+postgresql_database_flags = [
+  { name = "max_connections", value = "64" }
+]
+
