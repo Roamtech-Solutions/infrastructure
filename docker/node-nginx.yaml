@@ -8,4 +8,5 @@ services:
         - NAME=${NAME}
         - VERSION=${VERSION}
         - NODE_VERSION=${NODE_VERSION}
+        - ENVIRONMENT=${ENVIRONMENT}
 
