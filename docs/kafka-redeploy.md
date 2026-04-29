@@ -15,3 +15,10 @@ kubectl -n ${SG} delete pvc/data-0-paykit-controller-1
 helm -n ${SG} upgrade ${SG} helm/charts/service-group --reuse-values
 ```
 
+If you are on the infrastructure repository, using the makefile is going to be
+the easiest way to do this:
+```shell
+# make ENV=${ENVIRONMENT} SG=${SERVICE_GROUP} kafka-reset
+make ENV=staging SG=paykit kafka-reset
+```
+
