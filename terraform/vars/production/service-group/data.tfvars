@@ -15,6 +15,6 @@ developers = [
 ]
 
 postgresql_database_flags = [
-  { name = "max_connections", value = "64" }
+  { name = "max_connections", value = "128" }
 ]
 
