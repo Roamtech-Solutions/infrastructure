@@ -1,9 +1,3 @@
-# === General Configurations === #
-
-MANAGEMENT_PROJECT_ID := management-b6d6
-STATE_BUCKET := $(MANAGEMENT_PROJECT_ID)-tfstate
-
-
 # === Environment configuration === #
 
 ALLOWED_ENVS := management development staging production
@@ -15,6 +9,23 @@ endif
 ifneq ($(filter $(ENV),$(ALLOWED_ENVS)),$(ENV))
   $(error ENV must be one of: $(ALLOWED_ENVS))
 endif
+
+export ENVIRONMENT := $(ENV)
+
+# === Google Cloud Platform === #
+export MANAGEMENT_PROJECT_ID := management-b6d6
+export REGION := europe-west1
+PROJECT_ID_development := development-30af
+PROJECT_ID_staging := staging-3924
+PROJECT_ID_production := production-e6a8
+
+PROJECT_ID := $(PROJECT_ID_$(ENVIRONMENT))
+
+GAR_BASE := $(REGION)-docker.pkg.dev/$(MANAGEMENT_PROJECT_ID)/$(SERVICE_GROUP)
+
+STATE_BUCKET := $(MANAGEMENT_PROJECT_ID)-tfstate
+
+
 
 
 # === Module === #
@@ -144,4 +155,20 @@ push:
 	docker compose -f services\$(SG).yaml \
 		--env-file services\.env.$(ENV) push \
 		--ignore-push-failures
+
+.PHONY: gke-connect
+gke-connect:
+	gcloud container clusters get-credentials \
+		europe-west1 \
+		--region $(REGION) \
+		--project $(PROJECT_ID)
+
+.PHONY: kafka-reset
+kafka-reset: gke-connect
+	kubectl -n ${SG} get kafkanodepools
+	kubectl -n ${SG} delete --ignore-not-found kafkanodepools/broker
+	kubectl -n ${SG} delete --ignore-not-found kafkanodepools/controller
+	kubectl -n ${SG} delete --ignore-not-found pvc/data-0-paykit-broker-0 
+	kubectl -n ${SG} delete --ignore-not-found pvc/data-0-paykit-controller-1
+	helm -n ${SG} upgrade ${SG} helm/charts/service-group --reuse-values
 
