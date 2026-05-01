@@ -1,0 +1,43 @@
+{{- if eq "vite-react" .Values.type }} 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image }}-app:{{ .Values.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
+            # --- User Managed Secrets --- #
+            {{- range $s := .Values.secrets }}
+            - name: {{ $s }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}
+                  key:  {{ $s }}
+            {{- end }}
+{{- end }}
