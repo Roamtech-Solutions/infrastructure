@@ -49,7 +49,7 @@ cp -r docker ${SERVICE_DIR}
 # Service type & configurations
 export NAME=$(echo "${SERVICE_NAME}" | sed 's/^[^-]*//g;s/^.//g')
 export GROUP=$(echo "${SERVICE_NAME}" | cut -d '-' -f 1)
-export VERSION=$(cd ${SERVICE_DIR} && git rev-parse HEAD)
+export VERSION=$(cd ${SERVICE_DIR} && (git describe --tags --exact-match 2>/dev/null || git rev-parse HEAD))
 export TYPE=$(yq '.type' ${SERVICE_DIR}/env/${ENVIRONMENT}.yaml)
 
 if [ -z "${TYPE}" ]; then
