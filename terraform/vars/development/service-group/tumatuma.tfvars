@@ -6,6 +6,7 @@ host          = "tumatuma.com"
 developers = [
   "user:winnie.wandia@roamtech.com",
   "user:joshua.moracha@roamtech.com",
+  "user:victor.misiko@roamtech.com",
 ]
 
 allowed_networks = {

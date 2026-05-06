@@ -13,5 +13,6 @@ allowed_networks = {
 developers = [
   "user:joshua.moracha@roamtech.com",
   "user:meriem.abubeker@roamtech.com",
+  "user:victor.misiko@roamtech.com",
 ]
 
