@@ -248,11 +248,6 @@ resource "google_compute_security_policy" "restricted_services" {
 }
 
 /* --- Service Group Helm Chart --- */
-# import {
-#   to = helm_release.service_group
-#   id = "${var.service_group}/${var.service_group}"
-# }
-
 resource "helm_release" "service_group" {
   name  = var.service_group
   chart = "${path.module}/../../../../helm/charts/service-group"
@@ -296,11 +291,6 @@ resource "helm_release" "service_group" {
 }
 
 /* === Redis === */
-# import {
-#     to = module.redis[0].helm_release.redis
-#     id = "${var.service_group}/redis"
-# }
-
 module "redis" {
   count      = (length(local.redis_services) > 0) ? 1 : 0
   source     = "../../redis"
@@ -322,12 +312,6 @@ module "keycloak" {
 }
 
 /* === Application Services === */
-# import {
-#   for_each = data.google_storage_bucket_object_content.application_service_values
-#   to       = module.application_service[each.key].helm_release.application_service
-#   id       = "${var.service_group}/${each.key}"
-# }
-
 module "application_service" {
   for_each      = data.google_storage_bucket_object_content.application_service_values
   source        = "../../application-service"
