@@ -6,6 +6,7 @@ host          = "emalify.com"
 developers = [
   "user:fidelis.wambui@roamtech.com",
   "user:joshua.moracha@roamtech.com",
+  "user:teresia.elijah@roamtech.com",
 ]
 
 allowed_networks = {
