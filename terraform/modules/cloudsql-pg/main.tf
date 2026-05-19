@@ -1,7 +1,7 @@
 /* === CloudSQL Instance === */
 module "cloudsql" {
   source               = "GoogleCloudPlatform/sql-db/google//modules/postgresql"
-  version              = "26.1.1"
+  version              = "28.1.1"
   name                 = "pg-${var.name}"
   random_instance_name = true
   project_id           = var.project_id

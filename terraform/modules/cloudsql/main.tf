@@ -1,7 +1,7 @@
 /* === CloudSQL Instance === */
 module "cloudsql" {
   source               = "GoogleCloudPlatform/sql-db/google//modules/mysql"
-  version              = "26.1.1"
+  version              = "28.1.1"
   name                 = var.name
   random_instance_name = true
   project_id           = var.project_id
@@ -32,6 +32,7 @@ module "cloudsql" {
     query_string_length     = 1024
     record_application_tags = true
     record_client_address   = true
+		enhanced_query_insights_enabled = false
   }
 
   ip_configuration = {
@@ -46,7 +47,7 @@ module "cloudsql" {
     binary_log_enabled             = true
     start_time                     = "00:00"
     location                       = "EU"
-    transaction_log_retention_days = null
+    transaction_log_retention_days = 0
     retained_backups               = 7
     retention_unit                 = "COUNT"
   }
@@ -165,5 +166,14 @@ resource "google_project_iam_member" "cloudsql_studio_user" {
     title      = "${module.cloudsql.instance_name}-access"
     expression = "resource.name == 'projects/${var.project_id}/instances/${module.cloudsql.instance_name}'"
   }
+}
+
+resource "google_sql_user" "developers" {
+  for_each = toset(var.developers)
+  project  = var.project_id
+  name     = split(":", each.key)[1]
+  instance = module.cloudsql.instance_name
+  type     = "CLOUD_IAM_USER"
+	database_roles = ["cloudsqlsuperuser"]
 }
 

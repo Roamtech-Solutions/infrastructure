@@ -4,6 +4,7 @@ host          = "emalify.com"
 
 # TODO: This should just be a group, not individuals
 developers = [
+  "user:bob.crutchley@roamtech.com",
   "user:fidelis.wambui@roamtech.com",
   "user:joshua.moracha@roamtech.com",
   "user:teresia.elijah@roamtech.com",
