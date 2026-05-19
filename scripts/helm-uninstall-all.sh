@@ -12,7 +12,7 @@ service_groups=$( \
 	| tr -d ' ' \
 	| grep -vE "${EXCLUDE}"
 )
-echo "Uninstallin: ${service_groups}"
+echo "Uninstalling: ${service_groups}"
 
 for sg in ${service_groups}; do
 	echo "=== ${sg} ==="
