@@ -295,7 +295,7 @@ jobs:
           ./google-cloud-sdk/bin/gcloud --version
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.12.1"
+          terraform_version: "1.15.3"
       # --- Upload values file --- #
       - name: Update values
         run: |

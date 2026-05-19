@@ -57,7 +57,7 @@ jobs:
           create_credentials_file: true
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.12.1"
+          terraform_version: "1.15.3"
       - uses: actions/setup-node@v6
         with:
           node-version: 24
