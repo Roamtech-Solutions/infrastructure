@@ -10,10 +10,15 @@ metadata:
 spec:
   selector:
     app: {{ .Release.Name }}
+  {{- if .Values.ports }}
+  ports:
+    {{- toYaml .Values.ports | nindent 4 }}
+  {{- else }}
   ports:
     - protocol: TCP
       port: {{ .Values.port }}
       targetPort: {{ .Values.port }}
+  {{- end }}
   type: ClusterIP
 ---
 apiVersion: cloud.google.com/v1
@@ -30,5 +35,9 @@ spec:
     unhealthyThreshold: 2
     type: HTTP
     requestPath: {{ .Values.health_check_path }}
+    {{- if .Values.ports }}
+    port: {{ (.Values.ports | first).port }}
+    {{- else }}
     port: {{ .Values.port }}
+    {{- end }}
 
