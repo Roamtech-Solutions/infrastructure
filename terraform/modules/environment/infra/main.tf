@@ -164,3 +164,14 @@ resource "google_compute_instance" "iprs_proxy" {
   }
 }
 
+# === Sonarqube === #
+module "sonarqube" {
+  source          = "../../sonarqube"
+  count           = (var.name == "production") ? 1 : 0
+  project_id      = local.project_id
+  region          = var.region
+  developers      = var.developers
+  network_name    = local.gke_network.name
+  subnetwork_name = values(module.gke.network.subnets)[0].name
+}
+

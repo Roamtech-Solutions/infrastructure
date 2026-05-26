@@ -38,5 +38,6 @@ service_groups = [
   "mistari",
   "roamtech",
   "senti",
+  "infra",
 ]
 

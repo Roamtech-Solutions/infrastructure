@@ -6,10 +6,7 @@ output "gke_cluster" {
 }
 
 output "gke_network" {
-  value = {
-    id   = module.gke.network.id
-    name = module.gke.network.name
-  }
+  value = local.gke_network
 }
 
 output "gke_subnets" {
