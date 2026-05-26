@@ -4,6 +4,9 @@
 set -e
 set -x
 
+export ENV
+export ENVIRONMENT=${ENV}
+
 export MANAGEMENT_PROJECT_ID="management-b6d6"
 export REGION="europe-west1"
 

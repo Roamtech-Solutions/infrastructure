@@ -71,7 +71,7 @@ resource "google_compute_instance" "default" {
   zone         = data.google_compute_zones.available.names[0]
   machine_type = var.machine_type
 
-  tags = ["iap-ssh", "default"]
+  tags = ["iap-ssh", var.name]
 
   boot_disk {
     initialize_params {
@@ -98,6 +98,26 @@ resource "google_compute_instance" "default" {
 
   metadata_startup_script = local.startup_script
 }
+
+# --- Allow Traffic --- #
+resource "google_compute_firewall" "default" {
+	project = var.project_id
+  name    = "${var.name}-ingress"
+  network = var.network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["9000"]
+  }
+
+  direction     = "INGRESS"
+
+	# TODO: Don't hard code GKE network ranges
+  source_ranges = ["10.2.64.0/18", "10.2.128.0/20"]
+
+  target_tags = [var.name]
+}
+
 
 /* === Developer IAM  Access === */
 

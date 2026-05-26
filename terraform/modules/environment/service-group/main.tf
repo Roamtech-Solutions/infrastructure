@@ -271,13 +271,22 @@ resource "helm_release" "service_group" {
     mariadb_services    = local.mariadb_services
     mongodb_services    = local.mongodb_services
     ingress_services    = local.ingress_services
-    external_endpoints = [
-      for i in module.data_analytics : {
-        name    = "airflow-instance"
-        port    = 8080
-        address = i.airflow_private_ip
-      }
-    ]
+    external_endpoints = concat(
+			[
+				for i in module.data_analytics : {
+					name    = "airflow-instance"
+					port    = 8080
+					address = i.airflow_private_ip
+				}
+			],
+			[
+				for i in data.terraform_remote_state.infra.outputs.sonarqube : {
+					name    = "sonarqube-instance"
+					port    = 9000
+					address = i.private_ip
+				}
+			]
+		)
     kafka_services      = local.kafka_services
     certificates        = local.certificates
     host                = local.host
