@@ -8,6 +8,9 @@ export ENV
 export ENVIRONMENT=${ENV}
 
 export MANAGEMENT_PROJECT_ID="management-b6d6"
+export PROJECT_ID_MANAGEMENT="management-b6d6"
+export PROJECT_ID_PRODUCTION="production-e6a8"
+
 export REGION="europe-west1"
 
 export GITHUB_HOST="github.com"

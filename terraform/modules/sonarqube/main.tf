@@ -1,12 +1,18 @@
-/* === Resources === */
-
-/* CloudSQL Proxy Service Script */
-# resource "google_storage_bucket_object" "cloudsql_proxy_service_script" {
-#   name           = "cloudsql-proxy.service"
-#   content        = local.cloudsql_proxy_service_script
-#   bucket         = google_storage_bucket.resources.name
-#   metadata       = {}
-#   source_md5hash = md5(local.cloudsql_proxy_service_script)
+/* --- MySQL Database --- */
+# module "cloudsql" {
+#   source           = "../cloudsql"
+#   project_id       = var.project_id
+#   name             = var.name
+#   database_version = "MYSQL_8_0"
+#   region           = var.region
+#   zone             = data.google_compute_zones.available.names[0]
+#   read_replica = null
+#   network             = var.network_name
+#   tier_primary        = "db-f1-micro"
+#   users               = []
+#   deletion_protection = true
+#   database_flags      = []
+#   developers          = var.developers
 # }
 
 /* === Service Accounts & Related Permissions === */
@@ -96,7 +102,17 @@ resource "google_compute_instance" "default" {
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
-  metadata_startup_script = local.startup_script
+	metadata_startup_script = <<-EOT
+		# Make sure Docker is installed
+		type docker || curl https://get.docker.com | bash
+
+		# Sonarqube installation
+		mkdir -p /opt/sonarqube
+		cat <<-'DOCKER_COMPOSE' > /opt/sonarqube/docker-compose.yaml
+		${yamlencode(local.docker_compose)}
+		DOCKER_COMPOSE
+		docker-compose -f /opt/sonarqube/docker-compose.yaml up -d 
+	EOT
 }
 
 # --- Allow Traffic --- #
