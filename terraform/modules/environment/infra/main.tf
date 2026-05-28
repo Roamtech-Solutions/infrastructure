@@ -27,6 +27,7 @@ module "gke" {
       ci_runner = "${var.ci_runner_ip}/32"
   } : {})
   jump_box_enabled = true
+	# NOTE: Toggle to false on initial setup, then back to true to enable CloudSQL access
   enable_psa       = true
 }
 

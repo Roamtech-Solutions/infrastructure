@@ -1,6 +1,6 @@
 # === Environment configuration === #
 
-ALLOWED_ENVS := management development staging production
+ALLOWED_ENVS := management development staging production sandbox
 
 # Check if ENV is set and valid
 ifndef ENV
