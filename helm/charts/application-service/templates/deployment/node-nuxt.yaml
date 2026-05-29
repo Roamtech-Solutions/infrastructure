@@ -27,6 +27,12 @@ spec:
 
           env:
 
+            # --- User Managed Environment Variables --- #
+            {{- range $k := .Values.env }}
+            - name: {{ $k.name | quote }}
+              value: {{ $k.value | quote }}
+            {{- end }}
+
             # --- MySQL --- #
             {{- if (.Values.mysql) }}
             - name: MYSQL_HOST
