@@ -89,8 +89,14 @@ COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 # -----------------------------------------------------------
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Enable PHP-FPM status page by modifying zz-docker.conf with sed
-RUN sed -i '/\[www\]/a pm.status_path = /status' /usr/local/etc/php-fpm.d/zz-docker.conf
+# Enable PHP-FPM status page in an idempotent, non-failing way for shared builds
+RUN if grep -q '^pm.status_path = /status$' /usr/local/etc/php-fpm.d/zz-docker.conf; then \
+            echo "pm.status_path already configured"; \
+        elif grep -q '^\[www\]$' /usr/local/etc/php-fpm.d/zz-docker.conf; then \
+            sed -i '/^\[www\]$/a pm.status_path = /status' /usr/local/etc/php-fpm.d/zz-docker.conf; \
+        else \
+            echo "WARN: [www] section not found in zz-docker.conf; skipping pm.status_path injection"; \
+        fi
 # Update the variables_order to include E (for ENV)
 #RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"/' "$PHP_INI_DIR/php.ini"
 
