@@ -52,7 +52,7 @@ resource "google_compute_firewall" "allow_iap_ssh" {
 module "iprs_network" {
   count        = (var.name == "production") ? 1 : 0
   source       = "terraform-google-modules/network/google"
-  version      = "9.2.0"
+  version      = "18.1.0"
   project_id   = local.project_id
   network_name = "iprs"
   subnets = [
@@ -172,7 +172,7 @@ module "sonarqube" {
   project_id      = local.project_id
   region          = var.region
   developers      = var.developers
-  network_name    = local.gke_network.name
+  network    = local.gke_network
   subnetwork_name = values(module.gke.network.subnets)[0].name
 }
 

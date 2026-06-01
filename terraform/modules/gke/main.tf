@@ -1,6 +1,6 @@
 module "network" {
   source       = "terraform-google-modules/network/google"
-  version      = "9.2.0"
+  version      = "18.1.0"
   project_id   = var.project_id
   network_name = "gke-${var.name}"
   subnets = [
@@ -45,7 +45,7 @@ resource "google_compute_address" "nat" {
 
 module "nat" {
   source        = "terraform-google-modules/cloud-nat/google"
-  version       = "5.3.0"
+  version       = "7.0.0"
   project_id    = var.project_id
   region        = var.region
   network       = module.network.network_name
@@ -57,7 +57,7 @@ module "nat" {
 /* The Cluster */
 module "gke" {
   source            = "terraform-google-modules/kubernetes-engine/google//modules/beta-autopilot-private-cluster"
-  version           = "36.0.1"
+  version           = "44.2.0"
   project_id        = var.project_id
   name              = var.name
   region            = var.region
@@ -108,7 +108,7 @@ resource "google_project_iam_member" "logging_viewer" {
 module "private_service_access" {
   count       = (var.enable_psa) ? 1 : 0
   source      = "terraform-google-modules/sql-db/google//modules/private_service_access"
-  version     = "26.1.1"
+  version     = "28.1.0"
   project_id  = var.project_id
   vpc_network = module.network.network_name
   # depends_on  = [module.network]

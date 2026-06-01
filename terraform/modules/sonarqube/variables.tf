@@ -26,8 +26,11 @@ variable "boot_disk_size" {
 	default = 30
 }
 
-variable "network_name" {
-  type = string
+variable "network" {
+  type = object({
+		id = string
+		name = string
+	})
 }
 
 variable "subnetwork_name" {

@@ -1,19 +1,19 @@
 /* --- MySQL Database --- */
-# module "cloudsql" {
-#   source           = "../cloudsql"
-#   project_id       = var.project_id
-#   name             = var.name
-#   database_version = "MYSQL_8_0"
-#   region           = var.region
-#   zone             = data.google_compute_zones.available.names[0]
-#   read_replica = null
-#   network             = var.network_name
-#   tier_primary        = "db-f1-micro"
-#   users               = []
-#   deletion_protection = true
-#   database_flags      = []
-#   developers          = var.developers
-# }
+module "cloudsql" {
+  source           = "../cloudsql"
+  project_id       = var.project_id
+  name             = var.name
+  database_version = "MYSQL_8_0"
+  region           = var.region
+  zone             = data.google_compute_zones.available.names[0]
+  read_replica = null
+  network             = var.network
+  tier_primary        = "db-f1-micro"
+  users               = []
+  deletion_protection = true
+  database_flags      = []
+  developers          = var.developers
+}
 
 /* === Service Accounts & Related Permissions === */
 
@@ -88,7 +88,7 @@ resource "google_compute_instance" "default" {
   }
 
   network_interface {
-    network            = var.network_name
+    network            = var.network.name
     subnetwork         = var.subnetwork_name
     subnetwork_project = var.project_id
     # }
@@ -119,7 +119,7 @@ resource "google_compute_instance" "default" {
 resource "google_compute_firewall" "default" {
 	project = var.project_id
   name    = "${var.name}-ingress"
-  network = var.network_name
+  network = var.network.name
 
   allow {
     protocol = "tcp"
