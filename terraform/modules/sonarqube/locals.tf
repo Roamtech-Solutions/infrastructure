@@ -15,8 +15,10 @@ locals {
 		    network_mode = "host"
 		    read_only = true
 		    environment = {
-		      SONAR_JDBC_URL = "jdbc:mysql://localhost:3306/default?useConfigs=maxPerformance&useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true&useSSL=false"
-		      SONAR_JDBC_USERNAME = google_service_account.default.email
+					SONAR_JDBC_URL = "jdbc:postgresql://localhost:5432/default?sslmode=disable"
+					SONAR_JDBC_USERNAME = "${var.name}@${var.project_id}.iam"
+					# CloudSQL Proxy will inject a token, password not needed
+					SONAR_JDBC_PASSWORD = ""
 				}
 		      # SONAR_JDBC_PASSWORD = sonar
 		    volumes = [
@@ -31,7 +33,7 @@ locals {
       cloudsql-proxy = {
         network_mode = "host"
         image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.22.0"
-        command = "--auto-iam-authn --address 0.0.0.0 --port 3306 --private-ip ${module.cloudsql.connection_name}"
+        command = "--auto-iam-authn --address 0.0.0.0 --port 5432 --private-ip ${module.cloudsql.connection_name}"
 			}
 		}
 		volumes = {

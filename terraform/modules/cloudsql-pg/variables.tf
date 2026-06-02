@@ -45,6 +45,11 @@ variable "users" {
   default = []
 }
 
+variable "iam_service_users" {
+  type    = list(string)
+  default = []
+}
+
 variable "edition" {
   type    = string
   default = "ENTERPRISE"

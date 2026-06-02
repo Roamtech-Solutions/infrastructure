@@ -1,18 +1,18 @@
 /* --- MySQL Database --- */
 module "cloudsql" {
-  source           = "../cloudsql"
+  source           = "../cloudsql-pg"
   project_id       = var.project_id
   name             = var.name
-  database_version = "MYSQL_8_0"
+  database_version = "POSTGRES_16"
   region           = var.region
   zone             = data.google_compute_zones.available.names[0]
-  read_replica = null
   network             = var.network
   tier_primary        = "db-f1-micro"
   users               = []
   deletion_protection = true
   database_flags      = []
   developers          = var.developers
+	iam_service_users = [google_service_account.default.email]
 }
 
 /* === Service Accounts & Related Permissions === */
@@ -29,46 +29,6 @@ resource "google_project_iam_member" "default_roles" {
   role     = each.value
   member   = google_service_account.default.member
 }
-
-/* CloudSQL Instances Access */
-# resource "google_project_iam_member" "default_cloudsql_client" {
-#   for_each = local.database_connections
-#   project  = var.project_id
-#   role     = "roles/cloudsql.client"
-#   member   = google_service_account.default.member
-#   condition {
-#     title = "OnlyThisInstance"
-#     #description = "Allow connecting only a specific Cloud SQL instance"
-#     expression = "resource.name == 'projects/${var.project_id}/instances/${each.key}'"
-#   }
-# }
-
-/* Database User */
-# resource "google_sql_user" "default_iam_user" {
-#   for_each = local.database_connections
-#   project  = var.project_id
-#   name     = replace(google_service_account.default.email, ".gserviceaccount.com", "")
-#   instance = each.key
-#   type     = "CLOUD_IAM_SERVICE_ACCOUNT"
-# 	database_roles = ["cloudsqlsuperuser"]
-# }
-
-/* Admin Credentials */
-# resource "google_secret_manager_secret_iam_member" "default_admin_secret_accessor" {
-#   project   = var.project_id
-#   secret_id = google_secret_manager_secret.default_admin.secret_id
-#   role      = "roles/secretmanager.secretAccessor"
-#   member    = google_service_account.default.member
-# }
-# 
-# resource "google_secret_manager_secret" "default_admin" {
-#   project   = var.project_id
-#   secret_id = "default-admin-credentials"
-# 
-#   replication {
-#     auto {}
-#   }
-# }
 
 /* === SonarQube Instance === */
 resource "google_compute_instance" "default" {
@@ -106,12 +66,17 @@ resource "google_compute_instance" "default" {
 		# Make sure Docker is installed
 		type docker || curl https://get.docker.com | bash
 
+		# Increase mmap size for Elasticsearch, which is embedded in Sonarqube
+		sysctl -w vm.max_map_count=262144
+
 		# Sonarqube installation
 		mkdir -p /opt/sonarqube
+
 		cat <<-'DOCKER_COMPOSE' > /opt/sonarqube/docker-compose.yaml
 		${yamlencode(local.docker_compose)}
 		DOCKER_COMPOSE
-		docker-compose -f /opt/sonarqube/docker-compose.yaml up -d 
+
+		docker compose -f /opt/sonarqube/docker-compose.yaml up -d 
 	EOT
 }
 
@@ -136,24 +101,6 @@ resource "google_compute_firewall" "default" {
 
 
 /* === Developer IAM  Access === */
-
-# resource "google_project_iam_custom_role" "set_instance_metadata" {
-#   project     = var.project_id
-#   role_id     = "DataSetInstanceMetadata"
-#   title       = "Set Compute Instance Metadata"
-#   description = "Allows updating metadata on Compute Engine instances"
-#   permissions = [
-#     "compute.instances.get",
-#     "compute.instances.setMetadata",
-#   ]
-# }
-
-# resource "google_project_iam_member" "set_instance_metadata" {
-#   for_each = toset(var.developers)
-#   project  = var.project_id
-#   role     = google_project_iam_custom_role.set_instance_metadata.name
-#   member   = each.value
-# }
 
 resource "google_project_iam_member" "os_login" {
   for_each = toset(var.developers)
