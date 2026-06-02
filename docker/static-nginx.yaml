@@ -1,0 +1,10 @@
+services:
+  nginx:
+    image: ${REGION}-docker.pkg.dev/${MANAGEMENT_PROJECT_ID}/${GROUP}/${NAME}-nginx:${VERSION}
+    build:
+      context: ${SERVICE_DIR}
+      dockerfile: ${INFRA_DIR}/docker/static-nginx/Dockerfile
+      args:
+        - NAME=${NAME}
+        - VERSION=${VERSION}
+        - ENVIRONMENT=${ENVIRONMENT}
