@@ -1,4 +1,5 @@
 {{- if or (len .Values.mysql_services) (len .Values.postgresql_services) }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,5 +53,27 @@ spec:
             cpu: 50m
             ephemeral-storage: 1Gi
             memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudsql-proxy
+  labels:
+    app: cloudsql-proxy
+spec:
+  selector:
+    app: cloudsql-proxy
+  ports:
+    {{- if (len .Values.mysql_services) }}
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+    {{- end }}
+    {{- if (len .Values.postgresql_services) }}
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+    {{- end }}
+  type: ClusterIP
 {{- end }}
 
