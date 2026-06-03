@@ -271,10 +271,10 @@ resource "helm_release" "service_group" {
     cloudsql_connection_name = {
       mysql = (
         length(local.mysql_services) > 0
-      ) ? module.cloudsql.connection_name : ""
+      ) ? module.cloudsql[0].connection_name : ""
       postgresql = (
         length(local.postgresql_services) > 0
-      ) ? module.postgresql.connection_name : ""
+      ) ? module.postgresql[0].connection_name : ""
     }
     postgresql_services = local.postgresql_services
     mariadb_services    = local.mariadb_services

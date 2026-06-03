@@ -27,6 +27,7 @@ spec:
           - "--private-ip"
           - "--health-check"
           - "--http-port=8080"
+          - "--http-address=0.0.0.0"
         ports:
           - containerPort: 5432
             name: poastgresql
@@ -42,5 +43,14 @@ spec:
           httpGet:
             path: /readiness
             port: health
+        resources:
+          limits:
+            cpu: 100m
+            ephemeral-storage: 1Gi
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            ephemeral-storage: 1Gi
+            memory: 64Mi
 {{- end }}
 
