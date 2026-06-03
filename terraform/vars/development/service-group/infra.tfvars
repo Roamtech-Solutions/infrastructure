@@ -1,7 +1,7 @@
 service_group = "infra"
 region        = "europe-west1"
 host          = "paykit.africa"
-sub_host = "infra"
+sub_host      = "infra"
 
 # TODO: This should just be a group, not individuals
 developers = [

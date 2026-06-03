@@ -1,0 +1,46 @@
+{{- if or (len .Values.mysql_services) (len .Values.postgresql_services) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudsql-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudsql-proxy
+  template:
+    metadata:
+      labels:
+        app: cloudsql-proxy
+    spec:
+      containers:
+      - name: proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.22.0
+        args:
+          - "--address=0.0.0.0"
+          {{- if (len .Values.mysql_services) }}
+          - "{{ .Values.cloudsql_connection_name.mysql }}?port=3306"
+          {{- end }}
+          {{- if (len .Values.postgresql_services) }}
+          - "{{ .Values.cloudsql_connection_name.postgresql }}?port=5432"
+          {{- end }}
+          - "--private-ip"
+          - "--health-check"
+          - "--http-port=8080"
+        ports:
+          - containerPort: 5432
+            name: poastgresql
+          - containerPort: 3306
+            name: mysql
+          - containerPort: 8080
+            name: health
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: health
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: health
+{{- end }}
+

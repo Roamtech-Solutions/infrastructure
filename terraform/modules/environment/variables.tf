@@ -55,7 +55,7 @@ variable "log_retention_days" {
 }
 
 variable "developers" {
-	type = list(string)
-	default = []
+  type    = list(string)
+  default = []
 }
 

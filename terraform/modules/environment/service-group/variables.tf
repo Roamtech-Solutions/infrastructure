@@ -73,22 +73,22 @@ variable "data_analytics_database_connections" {
 # === Dynamic Imports === #
 
 variable "import_sg_release" {
-	type = bool
-	default = false
+  type    = bool
+  default = false
 }
 
 variable "import_redis_release" {
-	type = bool
-	default = false
+  type    = bool
+  default = false
 }
 
 variable "import_service_releases" {
-	type = bool
-	default = false
+  type    = bool
+  default = false
 }
 
 variable "excluded_service_releases" {
-	type = string
-	default = ""
+  type    = string
+  default = ""
 }
 

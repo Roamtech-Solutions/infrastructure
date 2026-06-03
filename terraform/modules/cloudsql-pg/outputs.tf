@@ -7,5 +7,5 @@ output "private_ip_address" {
 }
 
 output "connection_name" {
-	value = module.cloudsql.instance_connection_name
+  value = module.cloudsql.instance_connection_name
 }

@@ -1,26 +1,26 @@
 /* --- MySQL Database --- */
 module "cloudsql" {
-  source           = "../cloudsql-pg"
-  project_id       = var.project_id
-  name             = var.name
-  database_version = "POSTGRES_16"
-  region           = var.region
-  zone             = data.google_compute_zones.available.names[0]
+  source              = "../cloudsql-pg"
+  project_id          = var.project_id
+  name                = var.name
+  database_version    = "POSTGRES_16"
+  region              = var.region
+  zone                = data.google_compute_zones.available.names[0]
   network             = var.network
   tier_primary        = "db-f1-micro"
   users               = []
   deletion_protection = true
   database_flags      = []
   developers          = var.developers
-	iam_service_users = [google_service_account.default.email]
+  iam_service_users   = [google_service_account.default.email]
 }
 
 /* === Service Accounts & Related Permissions === */
 
 /* --- SonarQube --- */
 resource "google_service_account" "default" {
-  account_id   = var.name
-  project      = var.project_id
+  account_id = var.name
+  project    = var.project_id
 }
 
 resource "google_project_iam_member" "default_roles" {
@@ -62,7 +62,7 @@ resource "google_compute_instance" "default" {
     scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 
-	metadata_startup_script = <<-EOT
+  metadata_startup_script = <<-EOT
 		# Make sure Docker is installed
 		type docker || curl https://get.docker.com | bash
 
@@ -82,7 +82,7 @@ resource "google_compute_instance" "default" {
 
 # --- Allow Traffic --- #
 resource "google_compute_firewall" "default" {
-	project = var.project_id
+  project = var.project_id
   name    = "${var.name}-ingress"
   network = var.network.name
 
@@ -91,9 +91,9 @@ resource "google_compute_firewall" "default" {
     ports    = ["9000"]
   }
 
-  direction     = "INGRESS"
+  direction = "INGRESS"
 
-	# TODO: Don't hard code GKE network ranges
+  # TODO: Don't hard code GKE network ranges
   source_ranges = ["10.2.64.0/18", "10.2.128.0/20"]
 
   target_tags = [var.name]

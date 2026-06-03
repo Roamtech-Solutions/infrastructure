@@ -28,11 +28,11 @@ module "cloudsql" {
   user_labels = {}
 
   insights_config = {
-    query_plans_per_minute  = 5
-    query_string_length     = 1024
-    record_application_tags = true
-    record_client_address   = true
-		enhanced_query_insights_enabled = false
+    query_plans_per_minute          = 5
+    query_string_length             = 1024
+    record_application_tags         = true
+    record_client_address           = true
+    enhanced_query_insights_enabled = false
   }
 
   ip_configuration = {
@@ -169,11 +169,11 @@ resource "google_project_iam_member" "cloudsql_studio_user" {
 }
 
 resource "google_sql_user" "developers" {
-  for_each = toset(var.developers)
-  project  = var.project_id
-  name     = split(":", each.key)[1]
-  instance = module.cloudsql.instance_name
-  type     = "CLOUD_IAM_USER"
-	database_roles = ["cloudsqlsuperuser"]
+  for_each       = toset(var.developers)
+  project        = var.project_id
+  name           = split(":", each.key)[1]
+  instance       = module.cloudsql.instance_name
+  type           = "CLOUD_IAM_USER"
+  database_roles = ["cloudsqlsuperuser"]
 }
 

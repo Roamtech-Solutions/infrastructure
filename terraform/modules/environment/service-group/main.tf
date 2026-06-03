@@ -52,7 +52,7 @@ module "postgresql" {
   tier_primary     = var.postgresql_tier
   users            = local.postgresql_services
   developers       = var.developers
-  database_flags      = var.postgresql_database_flags
+  database_flags   = var.postgresql_database_flags
 }
 
 /* === MariaDB === */
@@ -266,27 +266,36 @@ resource "helm_release" "service_group" {
     rabbitmq = {
       enabled = (length(local.rabbitmq_services) > 0)
     }
-    mysql_services      = local.mysql_services
+    mysql_services = local.mysql_services
+
+    cloudsql_connection_name = {
+      mysql = (
+        length(local.mysql_services) > 0
+      ) ? module.cloudsql.connection_name : ""
+      postgresql = (
+        length(local.postgresql_services) > 0
+      ) ? module.postgresql.connection_name : ""
+    }
     postgresql_services = local.postgresql_services
     mariadb_services    = local.mariadb_services
     mongodb_services    = local.mongodb_services
     ingress_services    = local.ingress_services
     external_endpoints = concat(
-			[
-				for i in module.data_analytics : {
-					name    = "airflow-instance"
-					port    = 8080
-					address = i.airflow_private_ip
-				}
-			],
-			[
-				for i in data.terraform_remote_state.infra.outputs.sonarqube : {
-					name    = "sonarqube-instance"
-					port    = 9000
-					address = i.private_ip
-				}
-			]
-		)
+      [
+        for i in module.data_analytics : {
+          name    = "airflow-instance"
+          port    = 8080
+          address = i.airflow_private_ip
+        }
+      ],
+      [
+        for i in data.terraform_remote_state.infra.outputs.sonarqube : {
+          name    = "sonarqube-instance"
+          port    = 9000
+          address = i.private_ip
+        }
+      ]
+    )
     kafka_services      = local.kafka_services
     certificates        = local.certificates
     host                = local.host

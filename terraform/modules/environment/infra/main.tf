@@ -27,8 +27,8 @@ module "gke" {
       ci_runner = "${var.ci_runner_ip}/32"
   } : {})
   jump_box_enabled = true
-	# NOTE: Toggle to false on initial setup, then back to true to enable CloudSQL access
-  enable_psa       = true
+  # NOTE: Toggle to false on initial setup, then back to true to enable CloudSQL access
+  enable_psa = true
 }
 
 /* === Firewall Rules === */
@@ -172,7 +172,7 @@ module "sonarqube" {
   project_id      = local.project_id
   region          = var.region
   developers      = var.developers
-  network    = local.gke_network
+  network         = local.gke_network
   subnetwork_name = values(module.gke.network.subnets)[0].name
 }
 

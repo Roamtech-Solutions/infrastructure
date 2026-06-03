@@ -1,14 +1,14 @@
 variable "project_id" {
-	type = string
+  type = string
 }
 
 variable "name" {
-	type = string
-	default = "sonarqube"
+  type    = string
+  default = "sonarqube"
 }
 
 variable "developers" {
-	type = list(string)
+  type = list(string)
 }
 
 variable "region" {
@@ -17,20 +17,20 @@ variable "region" {
 
 # --- Compute Instance --- #
 variable "machine_type" {
-	type = string
-	default = "c3-highcpu-4"
+  type    = string
+  default = "c3-highcpu-4"
 }
 
 variable "boot_disk_size" {
-	type = number
-	default = 30
+  type    = number
+  default = 30
 }
 
 variable "network" {
   type = object({
-		id = string
-		name = string
-	})
+    id   = string
+    name = string
+  })
 }
 
 variable "subnetwork_name" {

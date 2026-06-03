@@ -125,21 +125,21 @@ resource "google_project_iam_member" "cloudsql_studio_user" {
 }
 
 resource "google_sql_user" "developers" {
-  for_each = toset(var.developers)
-  project  = var.project_id
-  name     = split(":", each.key)[1] # assuming 'user:EMAIL', extracting 'EMAIL'
-  instance = module.cloudsql.instance_name
-  type     = "CLOUD_IAM_USER"
-	database_roles = ["cloudsqlsuperuser"]
+  for_each       = toset(var.developers)
+  project        = var.project_id
+  name           = split(":", each.key)[1] # assuming 'user:EMAIL', extracting 'EMAIL'
+  instance       = module.cloudsql.instance_name
+  type           = "CLOUD_IAM_USER"
+  database_roles = ["cloudsqlsuperuser"]
 }
 
 resource "google_sql_user" "iam_service_users" {
   for_each = toset(var.iam_service_users)
   project  = var.project_id
-	# Assuming that it is just a service account email that has been provided.
-  name     = replace(each.key, ".gserviceaccount.com", "")
-  instance = module.cloudsql.instance_name
-  type     = "CLOUD_IAM_SERVICE_ACCOUNT"
-	database_roles = ["cloudsqlsuperuser"]
+  # Assuming that it is just a service account email that has been provided.
+  name           = replace(each.key, ".gserviceaccount.com", "")
+  instance       = module.cloudsql.instance_name
+  type           = "CLOUD_IAM_SERVICE_ACCOUNT"
+  database_roles = ["cloudsqlsuperuser"]
 }
 

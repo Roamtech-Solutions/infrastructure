@@ -22,6 +22,6 @@ output "gke_svc_cidr" {
 }
 
 output "sonarqube" {
-	value = [for i in module.sonarqube : i]
+  value = [for i in module.sonarqube : i]
 }
 

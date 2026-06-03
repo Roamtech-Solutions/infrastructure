@@ -12,8 +12,8 @@ developers = [
 ]
 
 allowed_networks = {
-  bob                      = "81.146.4.244/32"
-  bob_2                    = "109.181.189.243/32"
+  bob   = "81.146.4.244/32"
+  bob_2 = "109.181.189.243/32"
 
   # Internal access points
   roamtech-office          = "41.139.128.197/32"
