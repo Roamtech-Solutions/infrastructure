@@ -127,7 +127,7 @@ refresh: init
 
 .PHONY: destroy
 destroy: init
-	terraform -chdir=$(CHDIR) destroy $(VARS)
+	terraform -chdir=$(CHDIR) destroy $(VARS) $(TF_ARGS)
 
 .PHONY: output
 output: init
