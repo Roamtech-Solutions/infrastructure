@@ -31,7 +31,7 @@ spec:
           - "--http-address=0.0.0.0"
         ports:
           - containerPort: 5432
-            name: poastgresql
+            name: postgresql
           - containerPort: 3306
             name: mysql
           - containerPort: 8080
@@ -65,12 +65,14 @@ spec:
     app: cloudsql-proxy
   ports:
     {{- if (len .Values.mysql_services) }}
-    - protocol: TCP
+    - name: mysql
+      protocol: TCP
       port: 3306
       targetPort: 3306
     {{- end }}
     {{- if (len .Values.postgresql_services) }}
-    - protocol: TCP
+    - name: postgresql
+      protocol: TCP
       port: 5432
       targetPort: 5432
     {{- end }}
