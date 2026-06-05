@@ -1,3 +1,9 @@
+{{- if eq .Values.environment "sandbox" }}
+version: /v1beta
+{{- else }}
+version: /v1beta
+{{-end}}
+
 {{- if (len .Values.kafka_services) }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
