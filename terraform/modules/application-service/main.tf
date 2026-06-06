@@ -82,9 +82,15 @@ resource "google_storage_bucket" "public" {
   }
 }
 
+# resource "google_storage_bucket_iam_member" "member" {
+#   for_each = google_storage_bucket.public
+#   bucket   = each.value.name
+#   role     = "roles/storage.objectViewer"
+#   member   = "allUsers"
+# }
 resource "google_storage_bucket_iam_member" "member" {
-  for_each = google_storage_bucket.public
-  bucket   = each.value.name
+  for_each = toset(lookup(local.values, "gcs_buckets_public", []))
+  bucket   = google_storage_bucket.public[each.key].name
   role     = "roles/storage.objectViewer"
   member   = "allUsers"
 }
