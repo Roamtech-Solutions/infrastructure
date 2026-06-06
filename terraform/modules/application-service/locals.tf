@@ -25,9 +25,19 @@ locals {
     lookup(local.values, "allowed_networks", {}) != {}
   ) ? "${var.service_group}-${var.name}" : var.service_group
 
+  # all_buckets = merge(
+  #   google_storage_bucket.default,
+  #   { for k, v in google_storage_bucket.public : "public-${k}" => v }
+  # )
+  /* All buckets for IAM */
   all_buckets = merge(
-    google_storage_bucket.default,
-    { for k, v in google_storage_bucket.public : "public-${k}" => v }
-  )
+    { for k in toset(lookup(local.values, "gcs_buckets", [])) :
+      k => google_storage_bucket.default[k]
+    },
+    { for k in toset(lookup(local.values, "gcs_buckets_public", [])) :
+      "public-${k}" => google_storage_bucket.public[k]
+    }
+)
+
 }
 
