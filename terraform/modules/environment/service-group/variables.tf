@@ -47,7 +47,7 @@ variable "allowed_networks" {
 
 variable "mysql_tier" {
   type    = string
-  default = "db-f1-micro"
+  default = "db-n1-standard-1"
 }
 
 variable "mysql_database_flags" {

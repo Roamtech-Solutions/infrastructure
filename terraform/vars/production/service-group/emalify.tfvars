@@ -16,3 +16,5 @@ allowed_networks = {
   roamtech-office-ethernet = "197.232.33.60/32"
 }
 
+mysql_tier = "db-custom-2-8192"
+
