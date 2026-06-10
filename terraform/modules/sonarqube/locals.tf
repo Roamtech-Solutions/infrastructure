@@ -11,11 +11,11 @@ locals {
   docker_compose = {
     services = {
       sonarqube = {
-        image        = "sonarqube:enterprise"
+        image        = "sonarqube:2026.1-enterprise"
         network_mode = "host"
         read_only    = true
         environment = {
-          SONAR_JDBC_URL      = "jdbc:postgresql://localhost:5432/default?sslmode=disable"
+          SONAR_JDBC_URL      = "jdbc:postgresql://localhost:5432/sonarqube?sslmode=disable"
           SONAR_JDBC_USERNAME = "${var.name}@${var.project_id}.iam"
           # CloudSQL Proxy will inject a token, password not needed
           SONAR_JDBC_PASSWORD = ""

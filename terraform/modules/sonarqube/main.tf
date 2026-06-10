@@ -3,16 +3,17 @@ module "cloudsql" {
   source              = "../cloudsql-pg"
   project_id          = var.project_id
   name                = var.name
-  database_version    = "POSTGRES_16"
+  database_version    = "POSTGRES_17"
   region              = var.region
   zone                = data.google_compute_zones.available.names[0]
   network             = var.network
   tier_primary        = "db-f1-micro"
-  users               = []
-  deletion_protection = true
+  users               = ["sonarqube"]
+  deletion_protection = false
   database_flags      = []
   developers          = var.developers
   iam_service_users   = [google_service_account.default.email]
+	enable_exports_bucket = true
 }
 
 /* === Service Accounts & Related Permissions === */
