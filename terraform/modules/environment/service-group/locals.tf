@@ -88,6 +88,7 @@ locals {
     for k, v in local.application_service_values : k
     if contains(lookup(v, "requires", []), "rabbitmq")
   ]
+  rabbitmq_enabled = length(local.rabbitmq_services) > 0
 
   /* --- Redis Services --- */
   redis_services = [
@@ -110,6 +111,13 @@ locals {
     (local.keycloak_enabled) ? [{
       name             = "keycloak",
       port             = 8080
+      custom_host      = "",
+      additional_hosts = [],
+    }] : [],
+		/* RabbitMQ Ingress */
+    (local.rabbitmq_enabled) ? [{
+      name             = "rabbitmq",
+      port             = 15672
       custom_host      = "",
       additional_hosts = [],
     }] : []

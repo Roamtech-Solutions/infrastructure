@@ -96,7 +96,7 @@ resource "google_dns_record_set" "default" {
       },
       {
         for ah in lookup(i, "additional_hosts", []) : "${ah}" => local.application_service_values[i.name]
-      }
+      },
     ) if contains(keys(local.application_service_values), i.name)
     ]...
   )
@@ -107,6 +107,16 @@ resource "google_dns_record_set" "default" {
     ) ? "${local.host}." : (
     lookup(each.value, "custom_host", "") != ""
   ) ? "${each.value.custom_host}.${local.host}." : "${each.key}.${local.host}."
+  managed_zone = replace(var.host, ".", "-")
+  type         = "A"
+  ttl          = "300"
+  rrdatas      = [google_compute_global_address.default.0.address]
+}
+
+resource "google_dns_record_set" "rabbitmq" {
+	count = (local.rabbitmq_enabled) ? 1 : 0
+  project = var.management_project_id
+	name = "rabbitmq.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"

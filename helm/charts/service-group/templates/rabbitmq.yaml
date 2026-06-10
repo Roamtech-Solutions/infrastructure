@@ -14,5 +14,24 @@ spec:
     limits:
       cpu: {{ .Values.rabbitmq.cpu }}
       memory: {{ .Values.rabbitmq.memory }}
+  service:
+    annotations:
+      cloud.google.com/backend-config: '{"default": "rabbitmq"}'
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rabbitmq
+spec:
+  securityPolicy:
+    name: {{ .Release.Name }}
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: '/'
+    port: 15672
 {{ end }}
 
