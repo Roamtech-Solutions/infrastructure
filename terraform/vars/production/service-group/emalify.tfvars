@@ -12,6 +12,7 @@ developers = [
 ]
 
 allowed_networks = {
+	bob = "80.71.4.141/32"
   roamtech-office          = "41.139.128.197/32"
   roamtech-office-ethernet = "197.232.33.60/32"
 }
