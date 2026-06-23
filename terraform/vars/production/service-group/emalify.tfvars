@@ -19,3 +19,7 @@ allowed_networks = {
 
 mysql_tier = "db-custom-2-8192"
 
+mysql_database_flags = [
+  { name = "max_connections", value = "500" }
+]
+
