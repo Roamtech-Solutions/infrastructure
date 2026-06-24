@@ -38,7 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bcmath \
     soap \
     sockets \
-    gd
+    gd \
+    exif
 
 # Only install redis via pecl when PHP version >= 7.4
 RUN phpv=$(printf "${PHP_VERSION}\n7.4" | sort -V | tail -1); \
@@ -109,7 +110,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bcmath \
     soap \
     sockets \
-    gd
+    gd \
+    exif
 
 # Download and install php-fpm health check script
 RUN curl -o /usr/local/bin/php-fpm-healthcheck \
