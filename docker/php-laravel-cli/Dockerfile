@@ -37,7 +37,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bcmath \
     soap \
     sockets \
-    gd 
+    gd \
+    exif
 # Only install redis via pecl when PHP version >= 7.4
 RUN phpv=$(printf "${PHP_VERSION}\n7.4" | sort -V | tail -1); \
 	(test "${PHP_VERSION}" = "7.4" || test "${phpv}" != "7.4") \
