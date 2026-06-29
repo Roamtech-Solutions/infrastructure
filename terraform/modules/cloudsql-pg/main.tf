@@ -106,7 +106,7 @@ resource "google_secret_manager_secret" "cert" {
 }
 
 resource "google_storage_bucket" "exports" {
-	count = (var.enable_exports_bucket) ? 1 : 0
+  count                       = (var.enable_exports_bucket) ? 1 : 0
   project                     = var.project_id
   name                        = "${var.project_id}-cloudsql-pg-${var.name}-exports"
   force_destroy               = true
@@ -119,7 +119,7 @@ resource "google_storage_bucket" "exports" {
 }
 
 resource "google_storage_bucket_iam_member" "exports" {
-	count = length(google_storage_bucket.exports)
+  count  = length(google_storage_bucket.exports)
   bucket = google_storage_bucket.exports[0].name
   role   = "roles/storage.admin"
   member = "serviceAccount:${module.cloudsql.instance_service_account_email_address}"

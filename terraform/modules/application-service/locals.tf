@@ -37,7 +37,7 @@ locals {
     { for k in toset(lookup(local.values, "gcs_buckets_public", [])) :
       "public-${k}" => google_storage_bucket.public[k]
     }
-)
+  )
 
 }
 

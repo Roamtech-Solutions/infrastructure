@@ -114,7 +114,7 @@ locals {
       custom_host      = "",
       additional_hosts = [],
     }] : [],
-		/* RabbitMQ Ingress */
+    /* RabbitMQ Ingress */
     (local.rabbitmq_enabled) ? [{
       name             = "rabbitmq",
       port             = 15672

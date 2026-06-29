@@ -66,7 +66,7 @@ variable "database_flags" {
 }
 
 variable "enable_exports_bucket" {
-	type = bool
-	default = false
+  type    = bool
+  default = false
 }
 

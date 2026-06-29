@@ -41,18 +41,19 @@ module "cloudsql" {
 
 /* === PostgreSQL Database === */
 module "postgresql" {
-  count            = length(local.postgresql_services) > 0 ? 1 : 0
-  source           = "../../cloudsql-pg"
-  project_id       = local.project_id
-  name             = var.service_group
-  database_version = "POSTGRES_16"
-  region           = var.region
-  zone             = data.google_compute_zones.available.names[0]
-  network          = data.terraform_remote_state.infra.outputs.gke_network
-  tier_primary     = var.postgresql_tier
-  users            = local.postgresql_services
-  developers       = var.developers
-  database_flags   = var.postgresql_database_flags
+  count                 = length(local.postgresql_services) > 0 ? 1 : 0
+  source                = "../../cloudsql-pg"
+  project_id            = local.project_id
+  name                  = var.service_group
+  database_version      = "POSTGRES_16"
+  region                = var.region
+  zone                  = data.google_compute_zones.available.names[0]
+  network               = data.terraform_remote_state.infra.outputs.gke_network
+  tier_primary          = var.postgresql_tier
+  users                 = local.postgresql_services
+  developers            = var.developers
+  database_flags        = var.postgresql_database_flags
+  enable_exports_bucket = true
 }
 
 /* === MariaDB === */
@@ -114,9 +115,9 @@ resource "google_dns_record_set" "default" {
 }
 
 resource "google_dns_record_set" "rabbitmq" {
-	count = (local.rabbitmq_enabled) ? 1 : 0
-  project = var.management_project_id
-	name = "rabbitmq.${local.host}."
+  count        = (local.rabbitmq_enabled) ? 1 : 0
+  project      = var.management_project_id
+  name         = "rabbitmq.${local.host}."
   managed_zone = replace(var.host, ".", "-")
   type         = "A"
   ttl          = "300"
