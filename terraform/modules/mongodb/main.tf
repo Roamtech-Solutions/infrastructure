@@ -80,7 +80,10 @@ resource "google_compute_instance" "mongodb" {
   zone         = data.google_compute_zones.available.names[0]
   machine_type = "e2-small"
 
-  tags = ["iap-ssh"]
+  tags = [
+		"iap-ssh",
+		"${var.name}-mongodb"
+	]
 
   boot_disk {
     initialize_params {
@@ -110,5 +113,23 @@ resource "google_compute_instance" "mongodb" {
       bucket = google_storage_bucket.resources.name
     }
   )
+}
+
+
+/* === Firewall Rule === */
+resource "google_compute_firewall" "allow_mongodb" {
+	project = var.project_id
+  name    = "${var.name}-allow-mongodb"
+  network = var.network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["27017"]
+  }
+
+	# TODO: Don't hard-code CIDRs
+	source_ranges = ["10.2.64.0/18", "10.2.128.0/20"]
+
+  target_tags = ["${var.name}-mongodb"]
 }
 
