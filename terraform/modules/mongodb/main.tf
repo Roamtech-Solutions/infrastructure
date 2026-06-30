@@ -20,7 +20,7 @@ resource "google_secret_manager_secret_version" "users" {
   secret   = each.value.id
   secret_data = jsonencode({
     host = google_compute_instance.mongodb.network_interface[0].network_ip
-    port = 21017
+    port = 27017
     user = each.key
     pass = random_password.users[each.key].result
   })
