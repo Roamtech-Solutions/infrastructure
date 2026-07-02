@@ -16,6 +16,7 @@ locals {
     var.allowed_networks,
     {
       "vpn" = "${data.terraform_remote_state.management.outputs.vpn_address}/32"
+      "bob" = "80.71.4.141/32"
     }
   )
 
