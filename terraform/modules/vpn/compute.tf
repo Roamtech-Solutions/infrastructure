@@ -1,6 +1,6 @@
 module "umig" {
   source             = "terraform-google-modules/vm/google//modules/umig"
-  version            = "13.2.0"
+  version            = "15.2.1"
   project_id         = var.project_id
   region             = var.region
   hostname           = "${var.region}-vpn"

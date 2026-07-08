@@ -7,7 +7,11 @@ hosts = [
   "afrisend.com",
   "emalify.com",
   "mistari.co",
+  # TumaTuma
   "tumatuma.com",
+  "tumatuma.co.uk",
+  "tumatuma.co",
+  "tumatuma.uk",
   "adenzo.co.ke",
   "adenzo.shop",
   "mistari.africa",

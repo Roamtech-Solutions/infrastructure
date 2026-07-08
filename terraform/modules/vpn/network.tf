@@ -1,6 +1,6 @@
 module "network" {
   source       = "terraform-google-modules/network/google"
-  version      = "9.2.0"
+  version      = "18.1.0"
   project_id   = var.project_id
   network_name = "vpn"
   subnets = [
@@ -35,7 +35,7 @@ resource "google_compute_address" "vpn" {
 
 module "lb" {
   source                          = "GoogleCloudPlatform/lb-http/google"
-  version                         = "12.1.0"
+  version                         = "14.2.0"
   project                         = var.project_id
   name                            = "vpn-web-console"
   target_tags                     = ["allow-lb-service"]
@@ -60,7 +60,7 @@ module "lb" {
         unhealthy_threshold = 5
         port                = 80
         request_path        = "/check"
-        host                = module.umig.instances_details[0].network_interface.0.network_ip
+        host                = nonsensitive(module.umig.instances_details[0].network_interface.0.network_ip)
         logging             = true
       }
       groups = [{ group = module.umig.self_links[0] }]
