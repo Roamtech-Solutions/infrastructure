@@ -6,7 +6,7 @@ region        = "europe-west1"
 # TODO: This should just be a group, not individuals
 developers = [
   "user:kevin.kariuki@roamtech.com",
-  "user:hosea@geartrain.co",
+  #"user:hosea@geartrain.co",
   "user:francis.kiarie@roamtech.com",
   "user:victor.kinoti@roamtech.com"
 ]
