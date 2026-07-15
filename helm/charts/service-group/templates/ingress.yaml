@@ -45,6 +45,20 @@ spec:
             port:
               number: {{ $s.port }}
   {{- end }}
+
+{{- range $custom_domain := $s.custom_domains }}
+  # Fully-qualified domain, used as-is (no service-group host suffix)
+  - host: {{ $custom_domain.host }}
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ $s.name }}
+            port:
+              number: {{ $s.port }}
+  {{- end }}
   {{- end }}
   {{- range $endpoint := $.Values.external_endpoints }}
   {{- if $endpoint.ingress }}
@@ -90,6 +104,9 @@ spec:
     {{- range $additional_host := $s.additional_hosts }}
     - {{ $additional_host }}.{{ $.Values.host }}
     {{- end }}
+{{- range $custom_domain := $s.custom_domains }}
+    - {{ $custom_domain.host }}
+    {{- end }}    
 {{- end }}
 
 {{ end }}

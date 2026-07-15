@@ -34,6 +34,14 @@ data "terraform_remote_state" "management" {
   }
 }
 
+data "terraform_remote_state" "management_core" {
+         backend = "gcs"
+         config = {
+           bucket = "${var.management_project_id}-tfstate"
+           prefix = "management/core"
+         }
+       }
+
 /* === GKE Cluster Information === */
 data "google_client_config" "default" {}
 

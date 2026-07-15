@@ -106,6 +106,7 @@ locals {
         port             = lookup(v, "port", 8080),
         custom_host      = lookup(v, "custom_host", ""),
         additional_hosts = lookup(v, "additional_hosts", []),
+        custom_domains   = lookup(v, "custom_domains", []),
       }
       if lookup(v, "ingress", false)
     ],
@@ -114,6 +115,7 @@ locals {
       port             = 8080
       custom_host      = "",
       additional_hosts = [],
+      custom_domains   = [],
     }] : [],
     /* RabbitMQ Ingress */
     (local.rabbitmq_enabled) ? [{
@@ -121,8 +123,16 @@ locals {
       port             = 15672
       custom_host      = "",
       additional_hosts = [],
+      custom_domains   = [],
     }] : []
   ))
+
+  /* --- Custom (fully-qualified) Domain Records --- */
+  custom_domain_records = merge([
+    for i in local.ingress_services : {
+      for cd in i.custom_domains : cd.host => { zone = cd.zone }
+    }
+  ]...)
 
   /* --- Kafka Services --- */
   kafka_services = [

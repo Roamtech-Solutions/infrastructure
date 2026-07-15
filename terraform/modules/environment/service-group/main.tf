@@ -135,6 +135,16 @@ resource "google_dns_record_set" "keycloak" {
   rrdatas      = [google_compute_global_address.default.0.address]
 }
 
+resource "google_dns_record_set" "custom_domain" {
+  for_each     = local.custom_domain_records
+  project      = var.management_project_id
+  name         = "${each.key}."
+managed_zone = data.terraform_remote_state.management_core.outputs.dns_zones[each.value.zone].name
+  type         = "A"
+  ttl          = "300"
+  rrdatas      = [google_compute_global_address.default.0.address]
+}
+
 resource "google_compute_security_policy" "default" {
   project = local.project_id
   name    = var.service_group
