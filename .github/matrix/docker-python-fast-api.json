@@ -1,0 +1,8 @@
+{
+  "include": [
+    {
+      "name": "app",
+      "dockerfile": "docker/python-fast-api/Dockerfile"
+    }
+  ]
+}
