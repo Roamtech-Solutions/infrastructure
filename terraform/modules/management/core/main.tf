@@ -160,3 +160,25 @@ module "gke_gh_actions" {
   jump_box_enabled = false
 }
 
+
+/* Shopify Email Verification Records for adenzo.co.ke */
+locals {
+  shopify_cnames = {
+    "dch._domainkey"           = "dkim1.d0d1e838e436.p721.email.myshopify.com."
+    "dch2._domainkey"          = "dkim2.d0d1e838e436.p721.email.myshopify.com."
+    "pdk1._domainkey.mailerf4q" = "dkim3.b5c40c9207d.p719.email.myshopify.com."
+    "pdk2._domainkey.mailerf4q" = "dkim4.b5c40c9207d.p719.email.myshopify.com."
+    "mailerdch"                = "d0d1e838e436.p721.email.myshopify.com."
+    "mailerf4q"                = "b5c40c9207d.p719.email.myshopify.com."
+  }
+}
+
+resource "google_dns_record_set" "shopify_cnames" {
+  for_each     = local.shopify_cnames
+  project      = module.project.project_id
+  managed_zone = google_dns_managed_zone.default["adenzo.co.ke"].name
+  name         = "${each.key}.adenzo.co.ke."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = [each.value]
+}
