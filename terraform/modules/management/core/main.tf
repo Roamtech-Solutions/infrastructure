@@ -161,7 +161,7 @@ module "gke_gh_actions" {
 }
 
 
-/* Shopify Email Verification Records for adenzo.co.ke */
+/* Shopify Email Verification & DMARC Records for adenzo.co.ke */
 locals {
   shopify_cnames = {
     "dch._domainkey"           = "dkim1.d0d1e838e436.p721.email.myshopify.com."
@@ -171,6 +171,10 @@ locals {
     "mailerdch"                = "d0d1e838e436.p721.email.myshopify.com."
     "mailerf4q"                = "b5c40c9207d.p719.email.myshopify.com."
   }
+
+  shopify_txts = {
+    "_dmarc" = "\"v=DMARC1; p=none;\""
+  }
 }
 
 resource "google_dns_record_set" "shopify_cnames" {
@@ -179,6 +183,16 @@ resource "google_dns_record_set" "shopify_cnames" {
   managed_zone = google_dns_managed_zone.default["adenzo.co.ke"].name
   name         = "${each.key}.adenzo.co.ke."
   type         = "CNAME"
+  ttl          = 300
+  rrdatas      = [each.value]
+}
+
+resource "google_dns_record_set" "shopify_txts" {
+  for_each     = local.shopify_txts
+  project      = module.project.project_id
+  managed_zone = google_dns_managed_zone.default["adenzo.co.ke"].name
+  name         = "${each.key}.adenzo.co.ke."
+  type         = "TXT"
   ttl          = 300
   rrdatas      = [each.value]
 }
