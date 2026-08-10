@@ -5,7 +5,8 @@ sub_host      = "infra"
 
 # TODO: This should just be a group, not individuals
 developers = [
-  "user:bob.crutchley@roamtech.com",
+  # "user:bob.crutchley@roamtech.com",
+  "user:ian.gacheru@roamtech.com",
 ]
 
 allowed_networks = {
