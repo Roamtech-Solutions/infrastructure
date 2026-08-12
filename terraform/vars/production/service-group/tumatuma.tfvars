@@ -15,5 +15,6 @@ developers = [
   "user:meriem.abubeker@roamtech.com",
   "user:andy.ruland@jiabalicrest.com",
   "user:victor.misiko@roamtech.com",
+  "user:einstein.njoroge@afrisend.com",
 ]
 
