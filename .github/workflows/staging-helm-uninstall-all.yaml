@@ -47,5 +47,5 @@ jobs:
           gcloud container clusters get-credentials europe-west1 --region europe-west1 --project staging-3924
 
           # Uninstall all of the services
-          EXCLUDE="tumatuma|afrisend|paykit" ./scripts/helm-uninstall-all.sh
+          EXCLUDE="tumatuma|afrisend" ./scripts/helm-uninstall-all.sh
 
