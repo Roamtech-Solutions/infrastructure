@@ -3,27 +3,31 @@ set -e
 
 # Initialize storage directory if empty
 # -----------------------------------------------------------
-# If the storage directory is empty, copy the initial contents
-# and set the correct permissions.
-# -----------------------------------------------------------
-if [ ! "$(ls -A /var/www/storage)" ]; then
-	echo "Initializing storage directory..."
-	cp -R /var/www/storage-init/. /var/www/storage
-	mkdir -p storage/framework/views
-	chown -R www-data:www-data /var/www/storage
+if [ -d "/var/www/storage-init" ]; then
+	if [ ! "$(ls -A /var/www/storage 2>/dev/null)" ]; then
+		echo "Initializing storage directory..."
+		cp -R /var/www/storage-init/. /var/www/storage
+	fi
+	rm -rf /var/www/storage-init
 fi
 
-# Remove storage-init directory
-rm -rf /var/www/storage-init
+# Ensure all required framework directories exist at runtime
+# -----------------------------------------------------------
+mkdir -p /var/www/storage/framework/cache/data \
+         /var/www/storage/framework/sessions \
+         /var/www/storage/framework/views \
+         /var/www/storage/logs \
+         /var/www/bootstrap/cache
+
+# Enforce 775 permissions on storage and cache folders
+chmod -R 775 /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
 
 # Clear and cache configurations
 # -----------------------------------------------------------
-# Improves performance by caching config and routes.
-# -----------------------------------------------------------
-if [ grep -i 'lumen' composer.json > /dev/null 2>&1 ] || [ "${PHP_CONFIG_CACHE_SKIP}" = "true" ]; then
-	echo "Laravel Lumen project - Skipping config and route cache"
+if grep -q -i 'lumen' composer.json 2>/dev/null || [ "${PHP_CONFIG_CACHE_SKIP}" = "true" ]; then
+	echo "Laravel Lumen project or cache skip enabled - Skipping config and route cache"
 else
-	php artisan config:cache  && php artisan route:cache
+	php artisan config:cache && php artisan route:cache
 fi
 
 # Run the default command
