@@ -4,8 +4,6 @@ ARG PHP_VERSION=8.4
 FROM php:${PHP_VERSION}-fpm AS builder
 
 # Install system dependencies and PHP extensions for Laravel with MySQL/PostgreSQL support.
-# Dependencies in this stage are only required for building the final image.
-# Node.js and asset building are handled in the Nginx stage, not here.
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/install-php-extensions && sync
@@ -52,21 +50,7 @@ RUN apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
 # Set the working directory inside the container
 WORKDIR /var/www
 
-# Copy the entire Laravel application code into the container
-# -----------------------------------------------------------
-# In Laravel, `composer install` may trigger scripts
-# needing access to application code.
-# For example, the `post-autoload-dump` event might execute
-# Artisan commands like `php artisan package:discover`. If the
-# application code (including the `artisan` file) is not
-# present, these commands will fail, leading to build errors.
-#
-# By copying the entire application code before running
-# `composer install`, we ensure that all necessary files are
-# available, allowing these scripts to run successfully.
-# In other cases, it would be possible to copy composer files
-# first, to leverage Docker's layer caching mechanism.
-# -----------------------------------------------------------
+# Copy the entire application code into the container
 COPY . /var/www
 
 # Install Composer and dependencies
@@ -87,8 +71,7 @@ RUN phpv=$(printf "${PHP_VERSION}\n8.0" | sort -V | tail -1); \
 	&& install-php-extensions http opentelemetry \
 	|| install-php-extensions http 
 
-# Install only runtime libraries needed in production
-# libfcgi-bin and procps are required for the php-fpm-healthcheck script
+# Install runtime libraries needed in production
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
@@ -125,45 +108,42 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # Copy the initial storage structure
 COPY ./storage /var/www/storage-init
 
-# Copy PHP extensions and libraries from the builder stage
+# Copy PHP extensions and libraries from builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 
-# Use the recommended production PHP configuration
-# -----------------------------------------------------------
-# PHP provides development and production configurations.
-# Here, we replace the default php.ini with the production
-# version to apply settings optimized for performance and
-# security in a live environment.
-# -----------------------------------------------------------
+# Use production PHP configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Copy the application code and dependencies from the build stage
+# Copy application code and dependencies from builder stage
 COPY --from=builder /var/www /var/www
 
 # Set working directory
 WORKDIR /var/www
 
-# Make sure views directory exists
-RUN mkdir -p storage/framework/views
+# Ensure all required storage and cache directory structures exist
+RUN mkdir -p storage/framework/cache/data \
+             storage/framework/sessions \
+             storage/framework/views \
+             storage/logs \
+             bootstrap/cache
 
-# Ensure correct permissions
-RUN chown -R www-data:www-data /var/www
+# Ensure correct ownership (www-data) and 775 directory permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Make sure PHP can acces variables
+# Make sure PHP can access environment variables
 RUN sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"\nclear_env = no/g' /usr/local/etc/php/php.ini
 
 COPY docker/php-laravel-fpm/zz-docker.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 COPY docker/php-laravel-fpm/php-fpm.conf /usr/local/etc/php-fpm.conf
 
-# Switch to the non-privileged user to run the application
+# Switch to non-privileged user
 USER www-data
 
-# Change the default command to run the entrypoint script
+# Set entrypoint and default command
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
-
