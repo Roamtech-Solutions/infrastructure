@@ -8,6 +8,8 @@ metadata:
     app: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicas }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -26,6 +28,24 @@ spec:
               containerPort: {{ .Values.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.enable_probes }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.health_check_path | default "/health" }}
+              port: {{ .Values.port }}
+            initialDelaySeconds: 45
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.health_check_path | default "/health" }}
+              port: {{ .Values.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          {{- end }}
 
           env:
             - name: ENVIRONMENT
@@ -119,4 +139,3 @@ spec:
             {{- end }}
 
 {{- end }}
-
