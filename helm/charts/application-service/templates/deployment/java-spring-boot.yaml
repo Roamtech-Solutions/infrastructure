@@ -33,7 +33,7 @@ spec:
             httpGet:
               path: {{ .Values.health_check_path | default "/health" }}
               port: {{ .Values.port }}
-            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds | default 600 }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds | default 180 }}
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
@@ -41,7 +41,7 @@ spec:
             httpGet:
               path: {{ .Values.health_check_path | default "/health" }}
               port: {{ .Values.port }}
-            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds | default 600 }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds | default 180 }}
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
