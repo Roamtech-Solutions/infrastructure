@@ -116,6 +116,9 @@ COPY --from=builder /var/www /var/www
 # Set working directory
 WORKDIR /var/www
 
+# Trick Crater into thinking it is already installed
+RUN mkdir -p storage/app && touch storage/app/installed
+
 # Ensure correct permissions
 RUN chown -R www-data:www-data /var/www
 
