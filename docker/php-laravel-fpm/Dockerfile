@@ -129,6 +129,13 @@ RUN mkdir -p storage/framework/cache/data \
              storage/logs \
              bootstrap/cache
 
+# Trick Crater into thinking it is already installed and DB is set up
+RUN mkdir -p storage/app && touch storage/app/installed storage/app/database_created
+
+# Ensure correct ownership (www-data) and 775 directory permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
 # Ensure correct ownership (www-data) and 775 directory permissions
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
