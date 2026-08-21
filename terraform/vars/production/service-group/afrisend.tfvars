@@ -9,6 +9,7 @@ developers = [
   "user:teresia.elijah@roamtech.com",
   "user:timothy.kimani@roamtech.com",
   "user:einstein.njoroge@afrisend.com",
+  "user:muchami.ngotho@afrisend.com",
 ]
 
 allowed_networks = {
