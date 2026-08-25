@@ -7,6 +7,8 @@ sub_host      = "infra"
 developers = [
   # "user:bob.crutchley@roamtech.com",
   "user:ian.gacheru@roamtech.com",
+  "user:einstein.njoroge@afrisend.com",
+  "user:muchami.ngotho@afrisend.com",
 ]
 
 allowed_networks = {
