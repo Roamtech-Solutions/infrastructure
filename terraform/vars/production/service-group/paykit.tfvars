@@ -8,6 +8,7 @@ developers = [
   "user:kevin.kariuki@roamtech.com",
   "user:francis.kiarie@roamtech.com",
   "user:einstein.njoroge@afrisend.com",
+  "user:muchami.ngotho@afrisend.com",
   # "user:hosea@geartrain.co",
   "user:victor.kinoti@roamtech.com"
 ]
