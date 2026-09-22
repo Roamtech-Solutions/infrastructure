@@ -12,6 +12,7 @@ developers = [
 ]
 
 allowed_networks = {
+  afrisend-office          = "34.22.227.147/32"
   bob                      = "80.71.4.141/32"
   bob_2                    = "109.181.189.243/32"
   roamtech-office          = "41.139.128.197/32"
